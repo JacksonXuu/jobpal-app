@@ -1,0 +1,270 @@
+<template>
+  <view class="auth-page">
+    <!-- 渐变头部 -->
+    <view class="header">
+      <text class="header-title">欢迎使用AI求职助手</text>
+      <text class="header-subtitle">简历管理 · AI简历优化 · 智能助手</text>
+    </view>
+
+    <!-- 主体卡片 -->
+    <view class="card">
+      <!-- Tab 切换 -->
+      <view class="tabs">
+        <view
+          class="tab-item"
+          :class="{ active: activeTab === 'login' }"
+          @tap="switchAuthTab('login')"
+        >
+          登录
+          <view v-if="activeTab === 'login'" class="tab-underline" />
+        </view>
+        <view
+          class="tab-item"
+          :class="{ active: activeTab === 'register' }"
+          @tap="switchAuthTab('register')"
+        >
+          注册
+          <view v-if="activeTab === 'register'" class="tab-underline" />
+        </view>
+      </view>
+
+      <!-- 表单 -->
+      <view class="form">
+        <view class="input-wrap">
+          <text class="input-icon">👤</text>
+          <input
+            class="input"
+            v-model="form.username"
+            placeholder="请输入用户名"
+            maxlength="20"
+          />
+        </view>
+
+        <view class="input-wrap">
+          <text class="input-icon">🔒</text>
+          <input
+            class="input"
+            v-model="form.password"
+            placeholder="请输入密码"
+            :password="!showPwd"
+            maxlength="20"
+          />
+          <text class="pwd-toggle" @tap="showPwd = !showPwd">
+            {{ showPwd ? '🙈' : '👁' }}
+          </text>
+        </view>
+
+        <!-- 错误提示 -->
+        <view v-if="errorMsg" class="error-msg">{{ errorMsg }}</view>
+
+        <!-- 提交按钮 -->
+        <button class="submit-btn" :loading="loading" @tap="handleSubmit">
+          {{ activeTab === 'login' ? '立即登录' : '立即注册' }}
+        </button>
+      </view>
+    </view>
+  </view>
+</template>
+
+<script setup lang="ts">
+import { ref, reactive } from 'vue'
+import { onLoad } from '@dcloudio/uni-app'
+import { login, register, validateUsername, validatePassword } from '@/apis/auth'
+import { useAuthStore } from '@/stores/auth'
+
+const authStore = useAuthStore()
+
+onLoad(() => {
+  // 已登录则直接跳转首页
+  if (authStore.isLogin) {
+    uni.switchTab({ url: '/pages/home' })
+  }
+})
+
+const activeTab = ref<'login' | 'register'>('login')
+const showPwd = ref(false)
+const loading = ref(false)
+const errorMsg = ref('')
+
+const form = reactive({
+  username: '',
+  password: '',
+})
+
+/** 切换 Tab，清空表单和校验 */
+function switchAuthTab(tab: 'login' | 'register') {
+  activeTab.value = tab
+  form.username = ''
+  form.password = ''
+  errorMsg.value = ''
+}
+
+/**
+ * 前端校验（复用 API 层共享验证函数）
+ * - 登录/注册 Tab 共用基础校验
+ * - admin 仅在注册时拦截
+ */
+function validate(): string | null {
+  const nameErr = validateUsername(form.username)
+  // 登录 Tab 允许输入 admin（已注册的用户可以登录）
+  if (nameErr && !(activeTab.value === 'login' && nameErr === '该用户名已被保留')) {
+    return nameErr
+  }
+  return validatePassword(form.password)
+}
+
+/** 提交 */
+async function handleSubmit() {
+  errorMsg.value = ''
+
+  const err = validate()
+  if (err) {
+    errorMsg.value = err
+    return
+  }
+
+  loading.value = true
+  try {
+    const api = activeTab.value === 'login' ? login : register
+    const res = await api({
+      username: form.username,
+      password: form.password,
+    })
+
+    authStore.setLogin(res.token, res.userInfo)
+    uni.switchTab({ url: '/pages/home' })
+  } catch (e: unknown) {
+    errorMsg.value = (e as Error).message || '操作失败'
+  } finally {
+    loading.value = false
+  }
+}
+</script>
+
+<style scoped>
+.auth-page {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: #ecfefe;
+}
+
+.header {
+  padding: 100rpx 48rpx 60rpx;
+}
+
+.header-title {
+  display: block;
+  font-size: 48rpx;
+  font-weight: 700;
+  color: #1A1A2E;
+  letter-spacing: 2rpx;
+}
+
+.header-subtitle {
+  display: block;
+  font-size: 26rpx;
+  color: #0cb5b2;
+  margin-top: 16rpx;
+}
+
+.card {
+  background: #F5F7FA;
+  border-radius: 40rpx 40rpx 0 0;
+  padding: 48rpx 40rpx;
+  flex: 1;
+}
+
+/* === Tabs === */
+.tabs {
+  display: flex;
+  justify-content: center;
+  gap: 80rpx;
+  margin-bottom: 48rpx;
+}
+
+.tab-item {
+  position: relative;
+  font-size: 34rpx;
+  color: #8E8E93;
+  padding-bottom: 12rpx;
+  transition: all 0.3s;
+}
+
+.tab-item.active {
+  color: #0cb5b2;
+  font-weight: 600;
+}
+
+.tab-underline {
+  width: 48rpx;
+  height: 6rpx;
+  background: #0cb5b2;
+  border-radius: 3rpx;
+  margin: 8rpx auto 0;
+}
+
+/* === Form === */
+.input-wrap {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 0 24rpx;
+  margin-bottom: 24rpx;
+  border: 2rpx solid transparent;
+  transition: border-color 0.3s;
+}
+
+.input-wrap:focus-within {
+  border-color: #0cb5b2;
+}
+
+.input-icon {
+  font-size: 36rpx;
+  margin-right: 16rpx;
+}
+
+.input {
+  flex: 1;
+  height: 96rpx;
+  font-size: 30rpx;
+  color: #1A1A2E;
+}
+
+.pwd-toggle {
+  font-size: 32rpx;
+  padding: 12rpx;
+}
+
+/* === Error === */
+.error-msg {
+  color: #FF4757;
+  font-size: 26rpx;
+  padding: 8rpx 8rpx 0;
+  margin-bottom: 8rpx;
+}
+
+/* === Button === */
+.submit-btn {
+  width: 100%;
+  height: 96rpx;
+  line-height: 96rpx;
+  background: #0cb5b2;
+  color: #fff;
+  font-size: 34rpx;
+  font-weight: 600;
+  border-radius: 48rpx;
+  border: none;
+  margin-top: 48rpx;
+  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.3);
+}
+
+.submit-btn::after {
+  border: none;
+}
+
+.submit-btn[loading] {
+  opacity: 0.7;
+}
+</style>

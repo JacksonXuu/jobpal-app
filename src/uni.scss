@@ -1,1 +1,24 @@
 /* 全局样式变量 */
+
+/* 主题色 */
+$primary-bg: #ecfefe;
+$primary-color: #0cb5b2;
+
+/* 背景 */
+$bg-color: #F5F7FA;
+$card-bg: #FFFFFF;
+
+/* 文字 */
+$text-primary: #1A1A2E;
+$text-secondary: #8E8E93;
+$text-white: #FFFFFF;
+
+/* 圆角 */
+$radius-sm: 8rpx;
+$radius-md: 16rpx;
+$radius-lg: 20rpx;
+$radius-xl: 40rpx;
+
+/* 阴影 */
+$shadow-card: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+$shadow-btn: 0 8rpx 24rpx rgba(12, 181, 178, 0.3);

@@ -12,6 +12,9 @@ node_modules
 dist
 *.local
 
+# Claude Code pass files (临时许可标记)
+.claude/pass/
+
 # Editor directories and files
 .idea
 *.suo

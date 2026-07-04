@@ -34,6 +34,8 @@
     "build:quickapp-webview": "uni build -p quickapp-webview",
     "build:quickapp-webview-huawei": "uni build -p quickapp-webview-huawei",
     "build:quickapp-webview-union": "uni build -p quickapp-webview-union",
+    "test": "vitest run --reporter=verbose",
+    "test:watch": "vitest",
     "type-check": "vue-tsc --noEmit"
   },
   "dependencies": {
@@ -53,6 +55,10 @@
     "@dcloudio/uni-mp-weixin": "3.0.0-4080420251103001",
     "@dcloudio/uni-mp-xhs": "3.0.0-4080420251103001",
     "@dcloudio/uni-quickapp-webview": "3.0.0-4080420251103001",
+    "@vue/devtools-api": "^8.1.5",
+    "jsencrypt": "^3.5.4",
+    "mockjs": "^1.1.0",
+    "pinia": "^2.3.1",
     "vue": "^3.4.21",
     "vue-i18n": "^9.1.9"
   },
@@ -62,11 +68,13 @@
     "@dcloudio/uni-cli-shared": "3.0.0-4080420251103001",
     "@dcloudio/uni-stacktracey": "3.0.0-4080420251103001",
     "@dcloudio/vite-plugin-uni": "3.0.0-4080420251103001",
+    "@types/mockjs": "^1.0.10",
     "@vue/runtime-core": "^3.4.21",
     "@vue/tsconfig": "^0.1.3",
     "sass": "^1.101.0",
     "typescript": "^4.9.4",
     "vite": "5.2.8",
+    "vitest": "^2.1.0",
     "vue-tsc": "^1.0.24"
   }
 }

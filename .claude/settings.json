@@ -1,0 +1,11 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hook": "检查用户的 Bash 命令是否包含 git commit（排除 git commit --amend）。如果是裸 git commit 或 git commit -m，坚决拒绝执行。告诉用户：不允许直接 git commit，请使用 /jp-commit 提交代码。",
+        "description": "拦截裸 git commit"
+      }
+    ]
+  }
+}
