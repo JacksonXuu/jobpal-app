@@ -1,5 +1,4 @@
-import Mock from 'mockjs'
-import { encryptPassword, decryptPassword } from '@/utils/crypto'
+import { request } from '@/utils/request'
 
 // ── 校验常量 ──
 export const USERNAME_MIN = 3
@@ -8,13 +7,6 @@ export const PASSWORD_MIN = 6
 export const PASSWORD_MAX = 20
 
 // ── 类型 ──
-/** 本地存储的用户记录（明文密码不入库，仅存 RSA 密文） */
-interface StoredUser {
-  id: string
-  username: string
-  encryptedPassword: string
-}
-
 /** 登录请求参数 */
 export interface LoginParams {
   username: string
@@ -34,22 +26,6 @@ export interface AuthResult {
     id: string
     username: string
   }
-}
-
-// ── 模拟数据库 ──
-/** 从 localStorage 读取用户列表 */
-function getUsers(): StoredUser[] {
-  try {
-    const data = uni.getStorageSync('mock_users')
-    return data ? JSON.parse(data) : []
-  } catch {
-    return []
-  }
-}
-
-/** 持久化用户列表到 localStorage */
-function saveUsers(users: StoredUser[]) {
-  uni.setStorageSync('mock_users', JSON.stringify(users))
 }
 
 // ── 校验 ──
@@ -81,78 +57,35 @@ export function validatePassword(password: string): string | null {
   return null
 }
 
-/** 生成 mock token，接入真实后端后替换为 JWT */
-function generateToken(): string {
-  return 'mock_token_' + Mock.Random.guid()
-}
-
 // ── API ──
 /**
  * 用户登录
- * - 从 localStorage 查找用户
- * - RSA 解密存储的密文后比对明文（OAEP 每次加密结果不同，不能直接比密文）
- * @throws 用户不存在 / 密码错误
+ * POST /v1/auth/login → { access_token, user: { id, username } }
+ * @throws 用户名或密码错误
  */
 export async function login(params: LoginParams): Promise<AuthResult> {
-  // 模拟网络延迟
-  await new Promise((r) => setTimeout(r, Mock.Random.integer(200, 500)))
-
-  const users = getUsers()
-  const user = users.find((u) => u.username === params.username)
-
-  if (!user) {
-    throw new Error('用户不存在')
-  }
-
-  try {
-    const decrypted = await decryptPassword(user.encryptedPassword)
-    if (params.password !== decrypted) {
-      throw new Error('密码错误')
-    }
-  } catch {
-    throw new Error('密码错误')
-  }
-
+  const res = await request<{ access_token: string; user: { id: string; username: string } }>({
+    url: '/v1/auth/login',
+    method: 'POST',
+    data: params as Record<string, unknown>,
+  })
   return {
-    token: generateToken(),
-    userInfo: { id: user.id, username: user.username },
+    token: res.data.access_token,
+    userInfo: res.data.user,
   }
 }
 
 /**
- * 用户注册
- * - 校验用户名和密码格式
- * - 检查用户名是否已存在
- * - RSA 加密后存储密文
+ * 用户注册（注册成功后自动登录）
+ * POST /v1/auth/register → POST /v1/auth/login
  * @throws 校验失败 / 用户名已存在
  */
 export async function register(params: RegisterParams): Promise<AuthResult> {
-  // 模拟网络延迟
-  await new Promise((r) => setTimeout(r, Mock.Random.integer(200, 500)))
-
-  const nameError = validateUsername(params.username)
-  if (nameError) throw new Error(nameError)
-
-  const pwdError = validatePassword(params.password)
-  if (pwdError) throw new Error(pwdError)
-
-  const users = getUsers()
-
-  if (users.some((u) => u.username === params.username)) {
-    throw new Error('用户名已存在')
-  }
-
-  const newUser: StoredUser = {
-    id: Mock.Random.guid(),
-    username: params.username,
-    encryptedPassword: await encryptPassword(params.password),
-  }
-
-  users.push(newUser)
-  saveUsers(users)
-
-  return {
-    token: generateToken(),
-    userInfo: { id: newUser.id, username: newUser.username },
-  }
+  await request({
+    url: '/v1/auth/register',
+    method: 'POST',
+    data: params as Record<string, unknown>,
+  })
+  // 注册不返回 token，自动登录
+  return login(params)
 }

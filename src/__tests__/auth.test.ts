@@ -1,138 +1,115 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
-// 每次测试前重置 mock storage
+// mock request 模块
+vi.mock("@/utils/request", () => ({
+  request: vi.fn(),
+}));
+
+import { request } from "@/utils/request";
+import { login, register, validateUsername, validatePassword } from "../apis/auth";
+
 beforeEach(() => {
   vi.clearAllMocks();
-  const storage: Record<string, string> = {};
-  (uni.getStorageSync as any).mockImplementation((key: string) => storage[key] ?? "");
-  (uni.setStorageSync as any).mockImplementation((key: string, value: string) => {
-    storage[key] = value;
+});
+
+// === 纯校验函数测试 ===
+describe("validateUsername", () => {
+  it("正常用户名通过", () => {
+    expect(validateUsername("alice")).toBeNull();
   });
-  (uni.removeStorageSync as any).mockImplementation((key: string) => {
-    delete storage[key];
+
+  it("过短 (<3)", () => {
+    expect(validateUsername("ab")).toContain("用户名需");
+  });
+
+  it("过长 (>20)", () => {
+    expect(validateUsername("a".repeat(21))).toContain("用户名需");
+  });
+
+  it("含特殊字符", () => {
+    expect(validateUsername("alice@bob")).toContain("只能包含");
+  });
+
+  it("中文通过", () => {
+    expect(validateUsername("张三丰")).toBeNull();
+  });
+
+  it("含下划线通过", () => {
+    expect(validateUsername("hello_world")).toBeNull();
+  });
+
+  it("admin 小写拒绝", () => {
+    expect(validateUsername("admin")).toContain("已被保留");
+  });
+
+  it("Admin 混合拒绝", () => {
+    expect(validateUsername("Admin")).toContain("已被保留");
   });
 });
 
-import { login, register } from "../apis/auth";
-
-// === register 测试 ===
-describe("register", () => {
-  it("正常注册返回 token 和 userInfo", async () => {
-    const res = await register({ username: "alice", password: "123456" });
-    expect(res.token).toMatch(/^mock_token_/);
-    expect(res.userInfo.username).toBe("alice");
-    expect(res.userInfo.id).toBeTruthy();
+describe("validatePassword", () => {
+  it("正常密码通过", () => {
+    expect(validatePassword("123456")).toBeNull();
   });
 
-  it("用户名过短（<3 位）应报错", async () => {
-    await expect(register({ username: "ab", password: "123456" })).rejects.toThrow(
-      "用户名需 3-20 位"
-    );
+  it("过短 (<6)", () => {
+    expect(validatePassword("12345")).toContain("密码需");
   });
 
-  it("用户名过长（>20 位）应报错", async () => {
-    await expect(
-      register({ username: "a".repeat(21), password: "123456" })
-    ).rejects.toThrow("用户名需 3-20 位");
-  });
-
-  it("用户名含特殊字符应报错", async () => {
-    await expect(register({ username: "alice@bob", password: "123456" })).rejects.toThrow(
-      "用户名只能包含字母、数字、下划线或中文"
-    );
-  });
-
-  it("中文用户名可正常注册", async () => {
-    const res = await register({ username: "张三丰", password: "123456" });
-    expect(res.userInfo.username).toBe("张三丰");
-  });
-
-  it("admin 小写应被拒绝", async () => {
-    await expect(register({ username: "admin", password: "123456" })).rejects.toThrow(
-      "该用户名已被保留"
-    );
-  });
-
-  it("Admin 大小写混合应被拒绝", async () => {
-    await expect(register({ username: "Admin", password: "123456" })).rejects.toThrow(
-      "该用户名已被保留"
-    );
-  });
-
-  it("密码过短（<6 位）应报错", async () => {
-    await expect(register({ username: "alice", password: "12345" })).rejects.toThrow(
-      "密码需 6-20 位"
-    );
-  });
-
-  it("密码过长（>20 位）应报错", async () => {
-    await expect(
-      register({ username: "alice", password: "1".repeat(21) })
-    ).rejects.toThrow("密码需 6-20 位");
-  });
-
-  it("用户名边界3位可正常注册", async () => {
-    const res = await register({ username: "abc", password: "123456" });
-    expect(res.userInfo.username).toBe("abc");
-  });
-
-  it("用户名含下划线可正常注册", async () => {
-    const res = await register({ username: "hello_world", password: "123456" });
-    expect(res.userInfo.username).toBe("hello_world");
-  });
-
-  it("密码边界6位可正常注册", async () => {
-    const res = await register({ username: "user6", password: "123456" });
-    expect(res.token).toBeTruthy();
-  });
-
-  it("密码边界20位可正常注册", async () => {
-    const res = await register({ username: "user20", password: "1".repeat(20) });
-    expect(res.token).toBeTruthy();
-  });
-
-  it("纯数字密码可正常注册", async () => {
-    const res = await register({ username: "bob", password: "12345678" });
-    expect(res.userInfo.username).toBe("bob");
-  });
-
-  it("重复用户名应报错", async () => {
-    await register({ username: "alice", password: "123456" });
-    await expect(register({ username: "alice", password: "654321" })).rejects.toThrow(
-      "用户名已存在"
-    );
-  });
-
-  it("空用户名为 undefined 时应报错", async () => {
-    await expect(
-      register({ username: "" as any, password: "123456" })
-    ).rejects.toThrow("用户名需 3-20 位");
+  it("过长 (>20)", () => {
+    expect(validatePassword("1".repeat(21))).toContain("密码需");
   });
 });
 
-// === login 测试 ===
+// === API 测试（mock request） ===
 describe("login", () => {
-  const user = { username: "testuser", password: "mypassword" };
+  it("登录成功返回 token 和 userInfo", async () => {
+    (request as any).mockResolvedValueOnce({
+      code: 0,
+      data: {
+        access_token: "jwt_token_xxx",
+        user: { id: "u1", username: "alice" },
+      },
+    });
 
-  beforeEach(async () => {
-    await register(user);
+    const res = await login({ username: "alice", password: "123456" });
+    expect(res.token).toBe("jwt_token_xxx");
+    expect(res.userInfo.username).toBe("alice");
   });
 
-  it("正确密码登录成功", async () => {
-    const res = await login(user);
-    expect(res.token).toMatch(/^mock_token_/);
-    expect(res.userInfo.username).toBe("testuser");
-  });
-
-  it("错误密码登录失败", async () => {
+  it("401 密码错误", async () => {
+    (request as any).mockRejectedValueOnce(new Error("用户名或密码错误"));
     await expect(
-      login({ username: "testuser", password: "wrongpass" })
-    ).rejects.toThrow("密码错误");
+      login({ username: "alice", password: "wrong" })
+    ).rejects.toThrow("用户名或密码错误");
+  });
+});
+
+describe("register", () => {
+  it("注册成功后自动登录返回 token", async () => {
+    // 注册请求
+    (request as any).mockResolvedValueOnce({
+      code: 0,
+      data: { id: "u1", username: "alice", status: "active" },
+    });
+    // 自动登录请求
+    (request as any).mockResolvedValueOnce({
+      code: 0,
+      data: {
+        access_token: "jwt_token_xxx",
+        user: { id: "u1", username: "alice" },
+      },
+    });
+
+    const res = await register({ username: "alice", password: "123456" });
+    expect(res.token).toBe("jwt_token_xxx");
+    expect(res.userInfo.username).toBe("alice");
   });
 
-  it("不存在的用户登录失败", async () => {
+  it("注册用户名已存在", async () => {
+    (request as any).mockRejectedValueOnce(new Error("用户名已存在"));
     await expect(
-      login({ username: "nobody", password: "123456" })
-    ).rejects.toThrow("用户不存在");
+      register({ username: "admin", password: "123456" })
+    ).rejects.toThrow("用户名已存在");
   });
 });

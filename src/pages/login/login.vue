@@ -54,9 +54,6 @@
           </text>
         </view>
 
-        <!-- 错误提示 -->
-        <view v-if="errorMsg" class="error-msg">{{ errorMsg }}</view>
-
         <!-- 提交按钮 -->
         <button class="submit-btn" :loading="loading" @tap="handleSubmit">
           {{ activeTab === 'login' ? '立即登录' : '立即注册' }}
@@ -84,44 +81,40 @@ onLoad(() => {
 const activeTab = ref<'login' | 'register'>('login')
 const showPwd = ref(false)
 const loading = ref(false)
-const errorMsg = ref('')
 
 const form = reactive({
   username: '',
   password: '',
 })
 
-/** 切换 Tab，清空表单和校验 */
+/** 切换 Tab，清空表单 */
 function switchAuthTab(tab: 'login' | 'register') {
   activeTab.value = tab
   form.username = ''
   form.password = ''
-  errorMsg.value = ''
 }
 
 /**
- * 前端校验（复用 API 层共享验证函数）
- * - 登录/注册 Tab 共用基础校验
- * - admin 仅在注册时拦截
+ * 前端校验（复用 API 层共享验证函数），失败时 toast 提示
+ * @returns true 表示通过
  */
-function validate(): string | null {
+function validate(): boolean {
   const nameErr = validateUsername(form.username)
-  // 登录 Tab 允许输入 admin（已注册的用户可以登录）
   if (nameErr && !(activeTab.value === 'login' && nameErr === '该用户名已被保留')) {
-    return nameErr
+    uni.showToast({ title: nameErr, icon: 'none' })
+    return false
   }
-  return validatePassword(form.password)
+  const pwdErr = validatePassword(form.password)
+  if (pwdErr) {
+    uni.showToast({ title: pwdErr, icon: 'none' })
+    return false
+  }
+  return true
 }
 
 /** 提交 */
 async function handleSubmit() {
-  errorMsg.value = ''
-
-  const err = validate()
-  if (err) {
-    errorMsg.value = err
-    return
-  }
+  if (!validate()) return
 
   loading.value = true
   try {
@@ -133,8 +126,8 @@ async function handleSubmit() {
 
     authStore.setLogin(res.token, res.userInfo)
     uni.switchTab({ url: '/pages/home' })
-  } catch (e: unknown) {
-    errorMsg.value = (e as Error).message || '操作失败'
+  } catch {
+    // request.ts 拦截器已统一 toast 错误信息，此处不再重复
   } finally {
     loading.value = false
   }
@@ -235,14 +228,6 @@ async function handleSubmit() {
 .pwd-toggle {
   font-size: 32rpx;
   padding: 12rpx;
-}
-
-/* === Error === */
-.error-msg {
-  color: #FF4757;
-  font-size: 26rpx;
-  padding: 8rpx 8rpx 0;
-  margin-bottom: 8rpx;
 }
 
 /* === Button === */

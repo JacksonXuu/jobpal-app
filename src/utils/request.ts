@@ -22,8 +22,8 @@ interface ApiResponse<T = unknown> {
   data: T
 }
 
-/** Mock 阶段 Base URL，接入真实后端时替换 */
-const BASE_URL = 'https://api.jobpal.com/v1'
+/** 开发环境 Base URL */
+const BASE_URL = 'http://localhost:3000'
 
 /**
  * 通用请求方法
@@ -49,6 +49,14 @@ export function request<T = unknown>(options: RequestOptions): Promise<ApiRespon
         const body = data as ApiResponse<T>
 
         if (statusCode === 401) {
+          // 登录/注册接口的 401 是密码错误或用户不存在，透传后端消息
+          const isAuthEndpoint = options.url.includes('/v1/auth/')
+          if (isAuthEndpoint) {
+            uni.showToast({ title: body.message || '认证失败', icon: 'none' })
+            reject(new Error(body.message || '认证失败'))
+            return
+          }
+          // 其他接口的 401 是 token 过期，清除登录态
           try {
             useAuthStore().logout()
           } catch {
