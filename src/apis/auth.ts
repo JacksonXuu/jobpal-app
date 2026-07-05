@@ -67,7 +67,7 @@ export async function login(params: LoginParams): Promise<AuthResult> {
   const res = await request<{ access_token: string; user: { id: string; username: string } }>({
     url: '/v1/auth/login',
     method: 'POST',
-    data: params as Record<string, unknown>,
+    data: params as unknown as Record<string, unknown>,
   })
   return {
     token: res.data.access_token,
@@ -84,8 +84,19 @@ export async function register(params: RegisterParams): Promise<AuthResult> {
   await request({
     url: '/v1/auth/register',
     method: 'POST',
-    data: params as Record<string, unknown>,
+    data: params as unknown as Record<string, unknown>,
   })
   // 注册不返回 token，自动登录
   return login(params)
+}
+
+/**
+ * 退出登录
+ * POST /v1/auth/logout → 服务端注销 token
+ */
+export async function logoutApi(): Promise<void> {
+  await request({
+    url: '/v1/auth/logout',
+    method: 'POST',
+  })
 }

@@ -25,21 +25,25 @@
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { logoutApi } from '@/apis/auth'
 
 const authStore = useAuthStore()
 
-/** 退出登录：弹窗确认后清除登录态并跳转登录页 */
-function handleLogout() {
-  uni.showModal({
+/** 退出登录：弹窗确认后调后端接口并清除本地状态 */
+async function handleLogout() {
+  const modalRes = await uni.showModal({
     title: '提示',
     content: '确定要退出登录吗？',
-    success: (res) => {
-      if (res.confirm) {
-        authStore.logout()
-        uni.reLaunch({ url: '/pages/login/login' })
-      }
-    },
   })
+  if (!modalRes.confirm) return
+
+  try {
+    await logoutApi()
+    authStore.logout()
+    uni.reLaunch({ url: '/pages/login/login' })
+  } catch {
+    // 服务端注销失败，不清除本地状态保持一致性
+  }
 }
 </script>
 

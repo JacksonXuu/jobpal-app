@@ -6,7 +6,7 @@ vi.mock("@/utils/request", () => ({
 }));
 
 import { request } from "@/utils/request";
-import { login, register, validateUsername, validatePassword } from "../apis/auth";
+import { login, register, logoutApi, validateUsername, validatePassword } from "../apis/auth";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -111,5 +111,18 @@ describe("register", () => {
     await expect(
       register({ username: "admin", password: "123456" })
     ).rejects.toThrow("用户名已存在");
+  });
+});
+
+// === logoutApi 测试 ===
+describe("logoutApi", () => {
+  it("退出登录成功", async () => {
+    (request as any).mockResolvedValueOnce({ code: 0, data: null });
+    await expect(logoutApi()).resolves.toBeUndefined();
+  });
+
+  it("服务端返回错误应抛出异常", async () => {
+    (request as any).mockRejectedValueOnce(new Error("token 无效"));
+    await expect(logoutApi()).rejects.toThrow("token 无效");
   });
 });
