@@ -12,20 +12,16 @@
         <text>关于开发者</text>
         <text class="arrow">›</text>
       </view>
-      <view class="menu-item">
+      <view class="menu-item" @tap="goSettings">
         <text>设置</text>
         <text class="arrow">›</text>
       </view>
     </view>
-
-    <!-- 退出登录 -->
-    <button class="logout-btn" @tap="handleLogout">退出登录</button>
   </view>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
-import { logoutApi } from '@/apis/auth'
 
 const authStore = useAuthStore()
 
@@ -33,21 +29,8 @@ function showAbout() {
   uni.navigateTo({ url: '/pages/about/index' })
 }
 
-/** 退出登录：弹窗确认后调后端接口并清除本地状态 */
-async function handleLogout() {
-  const modalRes = await uni.showModal({
-    title: '提示',
-    content: '确定要退出登录吗？',
-  })
-  if (!modalRes.confirm) return
-
-  try {
-    await logoutApi()
-    authStore.logout()
-    uni.reLaunch({ url: '/pages/login/login' })
-  } catch {
-    // 服务端注销失败，不清除本地状态保持一致性
-  }
+function goSettings() {
+  uni.navigateTo({ url: '/pages/settings/index' })
 }
 </script>
 

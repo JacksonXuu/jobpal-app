@@ -100,3 +100,14 @@ export async function logoutApi(): Promise<void> {
     method: 'POST',
   })
 }
+
+/**
+ * 注销账号
+ * DELETE /v1/auth/account → 永久删除账号
+ */
+export async function deleteAccount(): Promise<void> {
+  await request({
+    url: '/v1/auth/account',
+    method: 'DELETE',
+  })
+}
