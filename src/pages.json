@@ -75,6 +75,12 @@
       }
     },
     {
+      "path": "pages/about/index",
+      "style": {
+        "navigationBarTitleText": "关于开发者"
+      }
+    },
+    {
       "path": "pages/placeholder/index",
       "style": {
         "navigationBarTitleText": ""

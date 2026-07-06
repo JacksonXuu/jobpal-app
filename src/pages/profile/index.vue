@@ -8,8 +8,8 @@
 
     <!-- 菜单列表 -->
     <view class="menu-list">
-      <view class="menu-item">
-        <text>关于我们</text>
+      <view class="menu-item" @tap="showAbout">
+        <text>关于开发者</text>
         <text class="arrow">›</text>
       </view>
       <view class="menu-item">
@@ -28,6 +28,10 @@ import { useAuthStore } from '@/stores/auth'
 import { logoutApi } from '@/apis/auth'
 
 const authStore = useAuthStore()
+
+function showAbout() {
+  uni.navigateTo({ url: '/pages/about/index' })
+}
 
 /** 退出登录：弹窗确认后调后端接口并清除本地状态 */
 async function handleLogout() {
