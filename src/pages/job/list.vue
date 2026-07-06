@@ -72,7 +72,7 @@
           <text class="card-company">{{ item.companyName }}</text>
           <view class="card-bottom">
             <text class="card-salary"><text class="salary-icon">💰</text><text class="salary-num">{{ item.salary }}</text><text class="salary-unit">k</text></text>
-            <text class="card-status" :class="getStatusClass(item.status)">{{ item.status }}</text>
+            <text class="card-status" :class="getStatusClass(item.status)" @tap.stop="openStatusPicker(item)">{{ item.status }}</text>
           </view>
         </view>
       </view>
@@ -105,6 +105,29 @@
         </view>
       </view>
     </view>
+
+    <!-- 快速修改状态 Picker -->
+    <view v-if="statusPickerVisible" class="picker-overlay" @tap="closeStatusPicker">
+      <view class="picker-sheet" @tap.stop="">
+        <view class="picker-header">
+          <text class="picker-cancel" @tap="closeStatusPicker">取消</text>
+          <text class="picker-title">修改状态</text>
+          <text class="picker-confirm" @tap="confirmStatusPicker">确定</text>
+        </view>
+        <view class="picker-body">
+          <view
+            v-for="opt in allStatusOptions"
+            :key="opt"
+            class="picker-option"
+            :class="{ selected: statusPickerTemp === opt }"
+            @tap="statusPickerTemp = opt"
+          >
+            <text>{{ opt }}</text>
+            <text v-if="statusPickerTemp === opt" class="check">✓</text>
+          </view>
+        </view>
+      </view>
+    </view>
   </view>
 </template>
 
@@ -114,6 +137,7 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import {
   getJobList,
   deleteJob,
+  patchJobStatus,
   JOB_STATUS_OPTIONS,
   SOURCE_PLATFORM_OPTIONS,
   SORT_BY_OPTIONS,
@@ -293,6 +317,36 @@ function goForm(id?: string) {
 function handleEdit(id: string) {
   swipedId.value = ''
   goForm(id)
+}
+
+// ── 快速修改状态 ──
+const statusPickerVisible = ref(false)
+const statusPickerTemp = ref('')
+let statusTarget: JobPosition | null = null
+const allStatusOptions = JOB_STATUS_OPTIONS as readonly string[]
+
+function openStatusPicker(item: JobPosition) {
+  statusTarget = item
+  statusPickerTemp.value = item.status
+  statusPickerVisible.value = true
+}
+
+function closeStatusPicker() {
+  statusPickerVisible.value = false
+  statusTarget = null
+}
+
+async function confirmStatusPicker() {
+  if (!statusTarget || statusPickerTemp.value === statusTarget.status) {
+    statusPickerVisible.value = false
+    return
+  }
+  try {
+    await patchJobStatus(statusTarget.id, statusPickerTemp.value)
+    statusPickerVisible.value = false
+    statusTarget = null
+    fetchList()
+  } catch { /* 拦截器已 toast */ }
 }
 
 async function handleDelete(id: string) {

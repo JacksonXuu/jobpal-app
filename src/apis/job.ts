@@ -216,6 +216,19 @@ export async function getInterviewList(query: QueryInterviewParams = {}): Promis
 }
 
 /**
+ * 快速修改状态
+ * PATCH /v1/jobs/:id/status
+ */
+export async function patchJobStatus(id: string, status: string): Promise<JobPosition> {
+  const res = await request<JobPosition>({
+    url: `/v1/jobs/${id}/status`,
+    method: 'PATCH',
+    data: { status } as unknown as Record<string, unknown>,
+  })
+  return res.data
+}
+
+/**
  * 更新备注
  * PUT /v1/jobs/:id { remark }
  */
