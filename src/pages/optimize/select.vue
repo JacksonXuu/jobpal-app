@@ -32,23 +32,40 @@
     <view class="history-section">
       <view class="history-header">
         <text class="section-title">优化历史</text>
-        <view class="history-search">
-          <text class="hs-icon">🔍</text>
-          <input class="hs-input" v-model="historyKeyword" placeholder="搜索..." />
+        <view class="history-actions">
+          <text class="batch-toggle" @tap="toggleBatchMode">
+            {{ batchMode ? '取消' : '批量删除' }}
+          </text>
         </view>
       </view>
       <scroll-view class="history-list" scroll-y>
         <view v-if="filteredHistory.length === 0" class="empty-tip">暂无匹配记录</view>
-        <view v-for="h in filteredHistory" :key="h.id" class="history-card">
+        <view v-for="h in filteredHistory" :key="h.id" class="history-card" :class="{ 'batch-selected': selectedIds.includes(h.id) }" @tap="batchMode ? toggleSelect(h.id) : null">
+          <view v-if="batchMode" class="hc-checkbox" @tap.stop="toggleSelect(h.id)">
+            <text>{{ selectedIds.includes(h.id) ? '☑' : '☐' }}</text>
+          </view>
           <view class="hc-names">
-            <text class="hc-resume" @tap="goResumeDetail(h.resumeId)">{{ h.resume?.title }}</text>
+            <text class="hc-resume" @tap="batchMode ? null : goResumeDetail(h.resumeId)">{{ h.resume?.title }}</text>
             <text class="hc-x">×</text>
-            <text class="hc-job" @tap="goJobDetail(h.jobPositionId)">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
+            <text class="hc-job" @tap="batchMode ? null : goJobDetail(h.jobPositionId)">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
             <text class="hc-x">=</text>
-            <text class="hc-result-btn" @tap="goResult(h.id)">📋</text>
+            <text class="hc-result-btn" @tap="batchMode ? null : goResult(h.id)">
+              <view v-if="generatingIds.has(h.id)" class="spinner-dot" />
+              <text v-else>📋</text>
+            </text>
           </view>
         </view>
       </scroll-view>
+
+      <!-- 批量操作栏 -->
+      <view v-if="batchMode" class="batch-bar">
+        <text class="batch-select-all" @tap="toggleSelectAll">
+          {{ isAllSelected ? '☑' : '☐' }} 全选
+        </text>
+        <text class="batch-delete" :class="{ disabled: selectedIds.length === 0 }" @tap="handleBatchDelete">
+          删除 ({{ selectedIds.length }})
+        </text>
+      </view>
     </view>
 
     <!-- 选择器弹层 -->
@@ -98,7 +115,7 @@ import { ref, computed } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getResumeList, type Resume } from '@/apis/resume'
 import { getJobList, type JobPosition } from '@/apis/job'
-import { getOptimizeHistory, type OptimizeHistoryItem } from '@/apis/optimize'
+import { getOptimizeHistory, deleteOptimizeBatch, requestOptimize, getOptimizeDetail, type OptimizeHistoryItem } from '@/apis/optimize'
 
 // ── 选择 ──
 const selectedResumeId = ref('')
@@ -191,11 +208,89 @@ function selectPickerItem(item: PickerItem) {
 }
 
 // ── 操作 ──
-function startOptimize() {
+const generatingIds = ref(new Set<string>())
+
+async function startOptimize() {
   if (!canOptimize.value) return
-  uni.navigateTo({
-    url: `/pages/optimize/result?resumeId=${selectedResumeId.value}&jobId=${selectedJobId.value}`,
+  const resume = selectedResume.value!
+  const job = selectedJob.value!
+  try {
+    const { recordId } = await requestOptimize(selectedResumeId.value, selectedJobId.value)
+    const id = recordId
+    generatingIds.value.add(id)
+    generatingIds.value = new Set(generatingIds.value)
+    // 插入占位记录到列表顶部
+    const placeholder: OptimizeHistoryItem = {
+      id,
+      resumeId: selectedResumeId.value,
+      jobPositionId: selectedJobId.value,
+      resume: { title: resume.title },
+      jobPosition: { jobName: job.jobName, companyName: job.companyName },
+      tokensUsed: null,
+      createdAt: new Date().toISOString(),
+    }
+    history.value.unshift(placeholder)
+
+    // 轮询直到完成
+    const poll = async () => {
+      try {
+        const detail = await getOptimizeDetail(id)
+        if (detail.optimizedText) {
+          generatingIds.value.delete(id)
+          generatingIds.value = new Set(generatingIds.value)
+          fetchData()
+          uni.navigateTo({ url: `/pages/optimize/result?id=${id}` })
+        } else {
+          setTimeout(poll, 2000)
+        }
+      } catch { generatingIds.value.delete(id); generatingIds.value = new Set(generatingIds.value) }
+    }
+    poll()
+  } catch { /* 拦截器已 toast */ }
+}
+
+// ── 批量删除 ──
+const batchMode = ref(false)
+const selectedIds = ref<string[]>([])
+
+const isAllSelected = computed(() => {
+  return filteredHistory.value.length > 0 && selectedIds.value.length === filteredHistory.value.length
+})
+
+function toggleBatchMode() {
+  batchMode.value = !batchMode.value
+  selectedIds.value = []
+}
+
+function toggleSelect(id: string) {
+  const idx = selectedIds.value.indexOf(id)
+  if (idx > -1) selectedIds.value.splice(idx, 1)
+  else selectedIds.value.push(id)
+}
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    selectedIds.value = []
+  } else {
+    selectedIds.value = filteredHistory.value.map((h) => h.id)
+  }
+}
+
+async function handleBatchDelete() {
+  if (selectedIds.value.length === 0) return
+  const res = await uni.showModal({
+    title: '批量删除',
+    content: `确定要删除 ${selectedIds.value.length} 条记录吗？`,
+    confirmColor: '#FF4757',
   })
+  if (!res.confirm) return
+  try {
+    await deleteOptimizeBatch(selectedIds.value)
+    uni.showToast({ title: `已删除 ${selectedIds.value.length} 条`, icon: 'success' })
+    batchMode.value = false
+    selectedIds.value = []
+    fetchData()
+  } catch { /* 拦截器已 toast */ }
 }
 
 function goResult(id: string) {
@@ -341,6 +436,56 @@ function goJobDetail(id: string) {
   font-size: 32rpx;
   flex-shrink: 0;
 }
+.spinner-dot {
+  width: 28rpx;
+  height: 28rpx;
+  border: 4rpx solid #E0E0E0;
+  border-top-color: #0cb5b2;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  display: inline-block;
+  vertical-align: middle;
+}
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* 批量模式 */
+.history-actions { display: flex; align-items: center; }
+.batch-toggle {
+  font-size: 24rpx;
+  color: #0cb5b2;
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  background: #ecfefe;
+}
+.hc-checkbox {
+  font-size: 36rpx;
+  color: #0cb5b2;
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.history-card.batch-selected {
+  background: #f8fffe;
+  border: 2rpx solid #0cb5b2;
+}
+.batch-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-top: 1rpx solid #F0F0F0;
+  flex-shrink: 0;
+}
+.batch-select-all { font-size: 26rpx; color: #1A1A2E; }
+.batch-delete {
+  font-size: 26rpx;
+  color: #FF4757;
+  font-weight: 600;
+}
+.batch-delete.disabled { color: #C0C0C0; }
 
 /* ── Picker 弹层 ── */
 .picker-overlay {

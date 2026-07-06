@@ -34,10 +34,29 @@ export async function getOptimizeHistory(keyword = ''): Promise<{ list: Optimize
   return res.data
 }
 
-/** 优化详情 */
+/** 发起优化（POST，返回记录 ID 用于轮询） */
+export async function requestOptimize(resumeId: string, jobPositionId: string): Promise<{ recordId: string }> {
+  const res = await request<{ recordId: string }>({
+    url: '/v1/optimize',
+    method: 'POST',
+    data: { resumeId, jobPositionId } as unknown as Record<string, unknown>,
+  })
+  return res.data
+}
+
+/** 优化详情（含 status: generating | completed） */
 export async function getOptimizeDetail(id: string): Promise<OptimizeDetail> {
   const res = await request<OptimizeDetail>({
     url: `/v1/optimize/${id}`,
   })
   return res.data
+}
+
+/** 批量删除优化历史 */
+export async function deleteOptimizeBatch(ids: string[]): Promise<void> {
+  await request({
+    url: '/v1/optimize/batch',
+    method: 'DELETE',
+    data: { ids } as unknown as Record<string, unknown>,
+  })
 }

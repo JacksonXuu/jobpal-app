@@ -12,19 +12,16 @@
       </view>
 
       <template v-else>
-        <!-- Markdown 渲染（流式时显示 streamingText，完成后显示 displayText） -->
         <view class="md-body">
-          <rich-text v-if="isStreaming || displayText" :nodes="streamingHtml"></rich-text>
-          <text v-if="isStreaming" class="stream-cursor">|</text>
-          <text v-if="!isStreaming && !displayText && !loading" class="state-text">暂无内容</text>
+          <rich-text v-if="displayText" :nodes="html"></rich-text>
+          <text v-if="!displayText && !loading" class="state-text">暂无内容</text>
         </view>
       </template>
 
-      <view style="height: 40rpx" />
     </scroll-view>
 
     <!-- 底部操作栏（仅完成/历史模式显示） -->
-    <view v-if="!isStreaming && displayText" class="action-bar">
+    <view v-if="displayText" class="action-bar">
       <text class="action-btn" @tap="copyResult">📋 复制</text>
       <text class="action-btn" @tap="goBack">🔄 重新优化</text>
     </view>
@@ -35,26 +32,14 @@
 import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { marked } from 'marked'
-import { useSSE } from '@/composables/useSSE'
 import { getOptimizeDetail } from '@/apis/optimize'
-
-const { streamingText, isStreaming, connect } = useSSE()
 
 const loading = ref(false)
 const displayText = ref('')
 const subtitle = ref('')
-const isHistoryMode = ref(false)
 
 onLoad((options?: Record<string, string>) => {
-  if (options?.id) {
-    // 历史模式：查看详情
-    isHistoryMode.value = true
-    loadDetail(options.id)
-  } else if (options?.resumeId && options?.jobId) {
-    // 优化模式：SSE 流式
-    subtitle.value = '正在优化...'
-    startSSE(options.resumeId, options.jobId)
-  }
+  if (options?.id) loadDetail(options.id)
 })
 
 async function loadDetail(id: string) {
@@ -67,35 +52,9 @@ async function loadDetail(id: string) {
   finally { loading.value = false }
 }
 
-async function startSSE(resumeId: string, jobId: string) {
-  await connect({
-    url: '/v1/optimize',
-    body: { resumeId, jobPositionId: jobId },
-    onStart() {
-      displayText.value = ''
-    },
-    onComplete() {
-      displayText.value = streamingText.value
-      subtitle.value = '优化完成'
-    },
-    onError() {
-      if (streamingText.value) {
-        displayText.value = streamingText.value
-      }
-      subtitle.value = '优化中断'
-    },
-  })
-  // SSE 结束后同步 displayText
-  if (!displayText.value) {
-    displayText.value = streamingText.value
-  }
-}
-
-/** 流式时渲染 streamingText，完成后渲染 displayText */
-const streamingHtml = computed(() => {
-  const text = isStreaming.value ? streamingText.value : displayText.value
-  if (!text) return ''
-  return marked.parse(text) as string
+const html = computed(() => {
+  if (!displayText.value) return ''
+  return marked.parse(displayText.value) as string
 })
 
 function copyResult() {
@@ -134,7 +93,6 @@ function goBack() {
   bottom: 100rpx;
   left: 0;
   right: 0;
-  padding: 0 24rpx;
 }
 
 .state-box {
@@ -147,9 +105,10 @@ function goBack() {
 /* Markdown */
 .md-body {
   background: #fff;
-  border-radius: 16rpx;
-  padding: 32rpx 28rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
+  border-radius: 0;
+  padding: 32rpx 24rpx;
+  box-sizing: border-box;
+  width: 100%;
   line-height: 1.8;
   font-size: 28rpx;
   color: #1A1A2E;
@@ -163,16 +122,9 @@ function goBack() {
 .md-body :deep(li) { margin: 4rpx 0; }
 .md-body :deep(strong) { font-weight: 700; }
 .md-body :deep(code) { background: #F0F0F0; padding: 2rpx 8rpx; border-radius: 4rpx; font-size: 26rpx; }
-.md-body :deep(pre) { background: #F5F7FA; padding: 20rpx; border-radius: 12rpx; overflow-x: auto; margin: 12rpx 0; }
+.md-body :deep(pre) { background: #F5F7FA; padding: 20rpx; border-radius: 12rpx; margin: 12rpx 0; white-space: pre-wrap; word-break: break-all; }
 .md-body :deep(blockquote) { border-left: 6rpx solid #0cb5b2; padding-left: 20rpx; color: #666; margin: 12rpx 0; }
 .md-body :deep(a) { color: #0cb5b2; }
-
-.stream-cursor {
-  font-size: 28rpx;
-  color: #0cb5b2;
-  animation: blink 0.8s infinite;
-}
-@keyframes blink { 0%,100% { opacity: 0.2; } 50% { opacity: 1; } }
 
 /* 操作栏 */
 .action-bar {
