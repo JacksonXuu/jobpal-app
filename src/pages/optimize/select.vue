@@ -1,44 +1,21 @@
 <template>
   <view class="select-page">
-    <!-- 简历列表 -->
-    <view class="section">
-      <text class="section-title">选择简历</text>
-      <view v-if="resumes.length === 0" class="empty-tip">
-        <text>暂无简历，请先创建</text>
-      </view>
-      <view
-        v-for="r in resumes"
-        :key="r.id"
-        class="select-card"
-        :class="{ selected: selectedResumeId === r.id }"
-        @tap="selectedResumeId = r.id"
-      >
-        <text class="card-icon">📄</text>
-        <text class="card-text">{{ r.title }}</text>
-        <text v-if="selectedResumeId === r.id" class="check-mark">✓</text>
-      </view>
+    <!-- 选择简历 -->
+    <view class="picker-trigger" @tap="openPicker('resume')">
+      <text class="trigger-icon">📄</text>
+      <text class="trigger-label" :class="{ placeholder: !selectedResume }">
+        {{ selectedResume ? selectedResume.title : '点击选择简历' }}
+      </text>
+      <text class="trigger-arrow">▾</text>
     </view>
 
-    <!-- 岗位列表 -->
-    <view class="section">
-      <text class="section-title">选择心动岗位</text>
-      <view v-if="jobs.length === 0" class="empty-tip">
-        <text>暂无岗位，请先添加</text>
-      </view>
-      <view
-        v-for="j in jobs"
-        :key="j.id"
-        class="select-card"
-        :class="{ selected: selectedJobId === j.id }"
-        @tap="selectedJobId = j.id"
-      >
-        <text class="card-icon">💼</text>
-        <view class="card-info">
-          <text class="card-text">{{ j.jobName }}</text>
-          <text class="card-sub">{{ j.companyName }} · {{ j.salary }}k</text>
-        </view>
-        <text v-if="selectedJobId === j.id" class="check-mark">✓</text>
-      </view>
+    <!-- 选择岗位 -->
+    <view class="picker-trigger" @tap="openPicker('job')">
+      <text class="trigger-icon">💼</text>
+      <text class="trigger-label" :class="{ placeholder: !selectedJob }">
+        {{ selectedJob ? `${selectedJob.jobName} · ${selectedJob.companyName} · ${selectedJob.salary}k` : '点击选择心动岗位' }}
+      </text>
+      <text class="trigger-arrow">▾</text>
     </view>
 
     <!-- 立即优化 -->
@@ -51,20 +28,66 @@
       ✨ 立即优化
     </button>
 
-    <!-- 历史记录 -->
-    <view class="section">
-      <text class="section-title">优化历史</text>
-      <view v-if="history.length === 0" class="empty-tip">
-        <text>暂无优化记录</text>
+    <!-- 优化历史 -->
+    <view class="history-section">
+      <view class="history-header">
+        <text class="section-title">优化历史</text>
+        <view class="history-search">
+          <text class="hs-icon">🔍</text>
+          <input class="hs-input" v-model="historyKeyword" placeholder="搜索..." />
+        </view>
       </view>
-      <view
-        v-for="h in history"
-        :key="h.id"
-        class="history-item"
-        @tap="goResult(h.id)"
-      >
-        <text class="history-title">{{ h.resume.title }} → {{ h.jobPosition.jobName }}</text>
-        <text class="history-date">{{ formatDate(h.createdAt) }}</text>
+      <scroll-view class="history-list" scroll-y>
+        <view v-if="filteredHistory.length === 0" class="empty-tip">暂无匹配记录</view>
+        <view v-for="h in filteredHistory" :key="h.id" class="history-card">
+          <view class="hc-names">
+            <text class="hc-resume" @tap="goResumeDetail(h.resumeId)">{{ h.resume?.title }}</text>
+            <text class="hc-x">×</text>
+            <text class="hc-job" @tap="goJobDetail(h.jobPositionId)">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
+            <text class="hc-x">=</text>
+            <text class="hc-result-btn" @tap="goResult(h.id)">📋</text>
+          </view>
+        </view>
+      </scroll-view>
+    </view>
+
+    <!-- 选择器弹层 -->
+    <view v-if="pickerVisible" class="picker-overlay" @tap="closePicker">
+      <view class="picker-sheet" @tap.stop="">
+        <view class="picker-header">
+          <text class="picker-cancel" @tap="closePicker">取消</text>
+          <text class="picker-title">{{ pickerType === 'resume' ? '选择简历' : '选择岗位' }}</text>
+          <text class="picker-done" @tap="closePicker">完成</text>
+        </view>
+        <view class="picker-search">
+          <text class="search-icon">🔍</text>
+          <input
+            class="search-input"
+            v-model="pickerKeyword"
+            placeholder="搜索..."
+            @input="onPickerSearch"
+          />
+        </view>
+        <scroll-view class="picker-list" scroll-y>
+          <view v-if="filteredPickerItems.length === 0" class="picker-empty">无匹配结果</view>
+          <view
+            v-for="item in filteredPickerItems"
+            :key="item.id"
+            class="picker-item"
+            :class="{ selected: pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id }"
+            @tap="selectPickerItem(item)"
+          >
+            <text class="picker-item-icon">{{ pickerType === 'resume' ? '📄' : '💼' }}</text>
+            <view class="picker-item-info">
+              <text class="picker-item-name">{{ pickerType === 'resume' ? (item as any).title : (item as any).jobName }}</text>
+              <text v-if="pickerType === 'job'" class="picker-item-sub">{{ (item as any).companyName }} · {{ (item as any).salary }}k</text>
+            </view>
+            <text
+              v-if="pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id"
+              class="picker-check"
+            >✓</text>
+          </view>
+        </scroll-view>
       </view>
     </view>
   </view>
@@ -82,7 +105,10 @@ const selectedResumeId = ref('')
 const selectedJobId = ref('')
 const canOptimize = computed(() => selectedResumeId.value && selectedJobId.value)
 
-// ── 列表 ──
+const selectedResume = computed(() => resumes.value.find((r) => r.id === selectedResumeId.value))
+const selectedJob = computed(() => (jobs.value as JobPosition[]).find((j) => j.id === selectedJobId.value))
+
+// ── 数据 ──
 const resumes = ref<Resume[]>([])
 const jobs = ref<JobPosition[]>([])
 const history = ref<OptimizeHistoryItem[]>([])
@@ -103,6 +129,68 @@ async function fetchData() {
 onLoad(() => fetchData())
 onShow(() => fetchData())
 
+// ── Picker ──
+const pickerVisible = ref(false)
+const pickerType = ref<'resume' | 'job'>('resume')
+const pickerKeyword = ref('')
+
+interface PickerItem { id: string; title?: string; jobName?: string; companyName?: string; salary?: number }
+
+const filteredPickerItems = computed(() => {
+  if (pickerType.value === 'resume') {
+    return filterResumes(resumes.value, pickerKeyword.value)
+  }
+  return filterJobs(jobs.value, pickerKeyword.value)
+})
+
+function filterResumes(list: Resume[], kw: string): Resume[] {
+  if (!kw) return list
+  const lower = kw.toLowerCase()
+  return list.filter((r) => r.title.toLowerCase().includes(lower))
+}
+
+function filterJobs(list: JobPosition[], kw: string): JobPosition[] {
+  if (!kw) return list
+  const lower = kw.toLowerCase()
+  return list.filter((j) => j.jobName.toLowerCase().includes(lower) || j.companyName.toLowerCase().includes(lower))
+}
+
+// ── 历史搜索 ──
+const historyKeyword = ref('')
+
+const filteredHistory = computed(() => {
+  if (!historyKeyword.value) return history.value
+  const kw = historyKeyword.value.toLowerCase()
+  return history.value.filter(
+    (h) =>
+      h.resume.title.toLowerCase().includes(kw) ||
+      h.jobPosition.jobName.toLowerCase().includes(kw) ||
+      h.jobPosition.companyName.toLowerCase().includes(kw),
+  )
+})
+
+function openPicker(type: 'resume' | 'job') {
+  pickerType.value = type
+  pickerKeyword.value = ''
+  pickerVisible.value = true
+}
+
+function closePicker() {
+  pickerVisible.value = false
+}
+
+function onPickerSearch() { /* computed reacts automatically */ }
+
+function selectPickerItem(item: PickerItem) {
+  if (pickerType.value === 'resume') {
+    selectedResumeId.value = item.id
+  } else {
+    selectedJobId.value = item.id
+  }
+  closePicker()
+}
+
+// ── 操作 ──
 function startOptimize() {
   if (!canOptimize.value) return
   uni.navigateTo({
@@ -114,68 +202,49 @@ function goResult(id: string) {
   uni.navigateTo({ url: `/pages/optimize/result?id=${id}` })
 }
 
-function formatDate(dateStr: string): string {
-  if (!dateStr) return ''
-  const d = new Date(dateStr)
-  const m = String(d.getMonth() + 1).padStart(2, '0')
-  const day = String(d.getDate()).padStart(2, '0')
-  return `${m}-${day}`
+function goResumeDetail(id: string) {
+  uni.navigateTo({ url: `/pages/resume/detail?id=${id}` })
 }
+
+function goJobDetail(id: string) {
+  uni.navigateTo({ url: `/pages/job/detail?id=${id}` })
+}
+
 </script>
 
 <style scoped>
 .select-page {
   background: #F5F7FA;
-  min-height: 100vh;
-  padding: 24rpx 24rpx 80rpx;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 24rpx 24rpx 0;
 }
 
-.section { margin-bottom: 32rpx; }
-.section-title {
-  display: block;
-  font-size: 28rpx;
-  font-weight: 600;
-  color: #1A1A2E;
-  margin-bottom: 16rpx;
-  padding-left: 4rpx;
-}
-
-.empty-tip {
-  padding: 32rpx;
-  text-align: center;
-  font-size: 26rpx;
-  color: #C0C0C0;
-}
-
-/* 选择卡片 */
-.select-card {
+/* ── 下拉触发器 ── */
+.picker-trigger {
   display: flex;
   align-items: center;
   background: #fff;
   border-radius: 16rpx;
-  padding: 24rpx;
-  margin-bottom: 12rpx;
-  border: 3rpx solid transparent;
-  transition: border-color 0.2s;
+  padding: 28rpx 24rpx;
+  margin-bottom: 16rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
 }
-.select-card.selected {
-  border-color: #0cb5b2;
-  background: #f8fffe;
+.trigger-icon { font-size: 36rpx; margin-right: 16rpx; flex-shrink: 0; }
+.trigger-label {
+  flex: 1;
+  font-size: 28rpx;
+  color: #1A1A2E;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
-.card-icon { font-size: 36rpx; margin-right: 16rpx; flex-shrink: 0; }
-.card-info { flex: 1; }
-.card-text { font-size: 28rpx; color: #1A1A2E; font-weight: 500; }
-.card-sub { font-size: 22rpx; color: #8E8E93; margin-top: 4rpx; display: block; }
-.check-mark {
-  font-size: 32rpx;
-  color: #0cb5b2;
-  font-weight: 700;
-  flex-shrink: 0;
-  margin-left: 8rpx;
-}
+.trigger-label.placeholder { color: #C0C0C0; }
+.trigger-arrow { font-size: 24rpx; color: #C0C0C0; flex-shrink: 0; margin-left: 8rpx; }
 
-/* 按钮 */
+/* ── 按钮 ── */
 .optimize-btn {
   width: 100%;
   height: 96rpx;
@@ -186,26 +255,145 @@ function formatDate(dateStr: string): string {
   font-weight: 600;
   border-radius: 48rpx;
   border: none;
-  margin-bottom: 32rpx;
+  margin: 8rpx 0 32rpx;
   box-shadow: 0 8rpx 24rpx rgba(12,181,178,0.3);
 }
 .optimize-btn::after { border: none; }
 .optimize-btn.disabled {
   background: #C0C0C0;
   box-shadow: none;
-  opacity: 0.6;
+  opacity: 0.5;
 }
 
-/* 历史 */
-.history-item {
+/* ── 历史 ── */
+.history-section {
+  margin-top: 8rpx;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16rpx;
+}
+.history-search {
+  display: flex;
+  align-items: center;
+  background: #fff;
+  border-radius: 10rpx;
+  padding: 8rpx 16rpx;
+}
+.hs-icon { font-size: 24rpx; margin-right: 6rpx; }
+.hs-input { font-size: 24rpx; color: #1A1A2E; width: 160rpx; }
+.section-title {
+  font-size: 28rpx;
+  font-weight: 600;
+  color: #1A1A2E;
+}
+.history-list {
+  flex: 1;
+  min-height: 0;
+}
+.empty-tip { padding: 32rpx; text-align: center; font-size: 26rpx; color: #C0C0C0; }
+
+.history-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   background: #fff;
-  border-radius: 12rpx;
+  border-radius: 14rpx;
   padding: 20rpx 24rpx;
   margin-bottom: 10rpx;
+  box-shadow: 0 2rpx 8rpx rgba(0,0,0,0.03);
 }
-.history-title { font-size: 26rpx; color: #1A1A2E; flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.history-date { font-size: 22rpx; color: #C0C0C0; margin-left: 16rpx; flex-shrink: 0; }
+.hc-names {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 10rpx;
+  overflow: hidden;
+}
+.hc-resume {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: #0cb5b2;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hc-x { font-size: 22rpx; color: #C0C0C0; flex-shrink: 0; }
+.hc-job {
+  flex: 1;
+  min-width: 0;
+  font-size: 26rpx;
+  color: #0cb5b2;
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.hc-result-btn {
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+
+/* ── Picker 弹层 ── */
+.picker-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.4);
+  z-index: 200;
+  display: flex;
+  align-items: flex-end;
+}
+.picker-sheet {
+  width: 100%;
+  background: #fff;
+  border-radius: 24rpx 24rpx 0 0;
+  height: 60vh;
+  display: flex;
+  flex-direction: column;
+}
+.picker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  flex-shrink: 0;
+}
+.picker-cancel { font-size: 28rpx; color: #8E8E93; }
+.picker-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
+.picker-done { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+
+.picker-search {
+  display: flex;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  border-bottom: 1rpx solid #F0F0F0;
+  flex-shrink: 0;
+}
+.search-icon { font-size: 28rpx; margin-right: 12rpx; }
+.search-input { flex: 1; font-size: 28rpx; color: #1A1A2E; }
+
+.picker-list { flex: 1; }
+.picker-empty { text-align: center; padding: 60rpx 0; font-size: 26rpx; color: #C0C0C0; }
+
+.picker-item {
+  display: flex;
+  align-items: center;
+  padding: 24rpx 32rpx;
+  border-bottom: 1rpx solid #F8F8F8;
+}
+.picker-item.selected { background: #f8fffe; }
+.picker-item-icon { font-size: 32rpx; margin-right: 16rpx; flex-shrink: 0; }
+.picker-item-info { flex: 1; }
+.picker-item-name { font-size: 28rpx; color: #1A1A2E; font-weight: 500; display: block; }
+.picker-item-sub { font-size: 22rpx; color: #8E8E93; margin-top: 4rpx; display: block; }
+.picker-check { font-size: 28rpx; color: #0cb5b2; font-weight: 700; flex-shrink: 0; }
 </style>

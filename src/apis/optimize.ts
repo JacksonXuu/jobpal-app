@@ -3,6 +3,8 @@ import { request } from '@/utils/request'
 // ── 类型 ──
 export interface OptimizeHistoryItem {
   id: string
+  resumeId: string
+  jobPositionId: string
   resume: { title: string }
   jobPosition: { jobName: string; companyName: string }
   tokensUsed: number | null
