@@ -98,6 +98,10 @@ function navigateTo(title: string) {
     uni.navigateTo({ url: '/pages/interview/list' })
     return
   }
+  if (title === '简历优化') {
+    uni.navigateTo({ url: '/pages/optimize/select' })
+    return
+  }
   uni.navigateTo({
     url: `/pages/placeholder/index?title=${encodeURIComponent(title)}`,
   })

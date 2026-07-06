@@ -39,6 +39,18 @@
       }
     },
     {
+      "path": "pages/optimize/select",
+      "style": {
+        "navigationBarTitleText": "简历优化"
+      }
+    },
+    {
+      "path": "pages/optimize/result",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
       "path": "pages/resume/list",
       "style": {
         "navigationBarTitleText": "我的简历"
