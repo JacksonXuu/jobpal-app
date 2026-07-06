@@ -354,7 +354,7 @@ async function handleDelete(id: string) {
   const modalRes = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该岗位吗？此操作不可撤销。',
-    confirmColor: '#FF4757',
+    confirmColor: '#08c9b0',
   })
   if (!modalRes.confirm) return
 
@@ -386,7 +386,7 @@ function getStatusClass(status: string): string {
 
 <style scoped>
 .list-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 160rpx;
 }
@@ -409,12 +409,12 @@ function getStatusClass(status: string): string {
 .search-input {
   flex: 1;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   height: 72rpx;
 }
 .search-clear {
   font-size: 28rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
   padding: 8rpx;
 }
 
@@ -434,11 +434,11 @@ function getStatusClass(status: string): string {
   border-radius: 12rpx;
   padding: 12rpx 18rpx;
   font-size: 24rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 .filter-arrow {
   font-size: 20rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-left: 6rpx;
 }
 
@@ -450,8 +450,8 @@ function getStatusClass(status: string): string {
   padding: 160rpx 0;
 }
 .state-icon { font-size: 80rpx; margin-bottom: 24rpx; }
-.state-text { font-size: 30rpx; color: #1A1A2E; font-weight: 500; }
-.state-desc { font-size: 26rpx; color: #8E8E93; margin-top: 12rpx; }
+.state-text { font-size: 30rpx; color: var(--text-primary); font-weight: 500; }
+.state-desc { font-size: 26rpx; color: var(--text-secondary); margin-top: 12rpx; }
 
 /* ── 左滑容器 ── */
 .swipe-wrapper {
@@ -479,7 +479,7 @@ function getStatusClass(status: string): string {
   color: #fff;
   font-weight: 500;
 }
-.edit-btn { background: #0cb5b2; }
+.edit-btn { background: var(--brand-primary); }
 .delete-btn { background: #FF4757; }
 
 /* ── 卡片 ── */
@@ -501,7 +501,7 @@ function getStatusClass(status: string): string {
 .card-jobname {
   font-size: 30rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -513,7 +513,7 @@ function getStatusClass(status: string): string {
 .card-company {
   display: block;
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 12rpx;
 }
 
@@ -523,7 +523,7 @@ function getStatusClass(status: string): string {
   gap: 16rpx;
 }
 .card-salary {
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 600;
 }
 .salary-icon { font-size: 22rpx; }
@@ -538,7 +538,7 @@ function getStatusClass(status: string): string {
   margin-left: auto;
 }
 /* 状态颜色 */
-.status-gray { background: #8E8E93; }
+.status-gray { background: var(--text-secondary); }
 .status-blue { background: #4A90D9; }
 .status-yellow { background: #F5A623; }
 .status-green { background: #27AE60; }
@@ -551,12 +551,12 @@ function getStatusClass(status: string): string {
   bottom: 120rpx;
   width: 72rpx;
   height: 72rpx;
-  background: linear-gradient(135deg, #0cb5b2, #0a9e9b);
+  background: var(--brand-gradient);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.4);
+  box-shadow: 0 8rpx 24rpx  rgba(8, 201, 176, 0.4);
   z-index: 100;
 }
 .fab-icon {
@@ -592,11 +592,11 @@ function getStatusClass(status: string): string {
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
 }
-.picker-cancel { font-size: 28rpx; color: #8E8E93; }
-.picker-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
-.picker-confirm { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.picker-cancel { font-size: 28rpx; color: var(--text-secondary); }
+.picker-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+.picker-confirm { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 .picker-body { overflow-y: auto; padding: 16rpx 0; }
 .picker-option {
   display: flex;
@@ -604,8 +604,8 @@ function getStatusClass(status: string): string {
   align-items: center;
   padding: 28rpx 40rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
-.picker-option.selected { color: #0cb5b2; font-weight: 600; }
+.picker-option.selected { color: var(--brand-primary); font-weight: 600; }
 .check { font-size: 32rpx; }
 </style>

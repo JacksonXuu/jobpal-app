@@ -165,7 +165,7 @@ function onSwipeMove(e: TouchEvent, id: string) {
 
 async function handleDelete(id: string) {
   swipedId.value = ''
-  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#FF4757' })
+  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#08c9b0' })
   if (!res.confirm) return
   try {
     await deleteConversation(id)
@@ -293,7 +293,7 @@ function formatDate(dateStr: string): string {
 
 <style scoped>
 .ask-page {
-  background: #F5F7FA;
+  background: transparent;
   height: 100%;
   display: flex;
   flex-direction: column;
@@ -307,8 +307,8 @@ function formatDate(dateStr: string): string {
   align-items: center;
   padding: 20rpx 32rpx;
 }
-.list-title { font-size: 34rpx; font-weight: 700; color: #1A1A2E; }
-.new-btn { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.list-title { font-size: 34rpx; font-weight: 700; color: var(--text-primary); }
+.new-btn { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 
 .empty-box {
   flex: 1;
@@ -318,18 +318,18 @@ function formatDate(dateStr: string): string {
   padding: 80rpx 40rpx 0;
 }
 .empty-icon { font-size: 96rpx; margin-bottom: 24rpx; }
-.empty-title { font-size: 32rpx; font-weight: 600; color: #1A1A2E; margin-bottom: 12rpx; }
-.empty-desc { font-size: 26rpx; color: #8E8E93; text-align: center; margin-bottom: 40rpx; line-height: 1.6; }
+.empty-title { font-size: 32rpx; font-weight: 600; color: var(--text-primary); margin-bottom: 12rpx; }
+.empty-desc { font-size: 26rpx; color: var(--text-secondary); text-align: center; margin-bottom: 40rpx; line-height: 1.6; }
 
 .suggestion-list { width: 100%; }
-.suggestion-label { font-size: 24rpx; color: #8E8E93; margin-bottom: 16rpx; display: block; padding-left: 4rpx; }
+.suggestion-label { font-size: 24rpx; color: var(--text-secondary); margin-bottom: 16rpx; display: block; padding-left: 4rpx; }
 .suggestion-item {
   background: #fff;
   border-radius: 16rpx;
   padding: 24rpx 28rpx;
   margin-bottom: 12rpx;
   font-size: 28rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
 }
 
@@ -369,16 +369,16 @@ function formatDate(dateStr: string): string {
   display: block;
   font-size: 28rpx;
   font-weight: 500;
-  color: #1A1A2E;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
   margin-bottom: 8rpx;
 }
-.conv-date { font-size: 22rpx; color: #C0C0C0; }
+.conv-date { font-size: 22rpx; color: var(--text-secondary); }
 
 .state-box { display: flex; justify-content: center; padding: 40rpx 0; }
-.state-text { font-size: 26rpx; color: #8E8E93; }
+.state-text { font-size: 26rpx; color: var(--text-secondary); }
 
 /* FAB */
 .fab {
@@ -387,12 +387,12 @@ function formatDate(dateStr: string): string {
   bottom: 120rpx;
   width: 72rpx;
   height: 72rpx;
-  background: linear-gradient(135deg, #0cb5b2, #0a9e9b);
+  background: var(--brand-gradient);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.4);
+  box-shadow: 0 8rpx 24rpx  rgba(8, 201, 176, 0.4);
   z-index: 100;
 }
 .fab-icon { font-size: 36rpx; color: #fff; font-weight: 300; line-height: 0; margin-top: -2rpx; }
@@ -402,13 +402,13 @@ function formatDate(dateStr: string): string {
   display: flex;
   align-items: center;
   padding: 12rpx 24rpx;
-  background: #fff;
-  border-bottom: 1rpx solid #F0F0F0;
+  background: transparent;
+  border-bottom: none;
   z-index: 10;
 }
-.back-btn { font-size: 28rpx; color: #0cb5b2; flex-shrink: 0; }
-.history-btn { font-size: 28rpx; color: #0cb5b2; font-weight: 500; flex-shrink: 0; }
-.history-btn.disabled { color: #C0C0C0; }
+.back-btn { font-size: 28rpx; color: var(--brand-primary); flex-shrink: 0; }
+.history-btn { font-size: 28rpx; color: var(--brand-primary); font-weight: 500; flex-shrink: 0; }
+.history-btn.disabled { color: var(--text-secondary); }
 .msg-list {
   flex: 1;
   min-height: 0;
@@ -420,8 +420,8 @@ function formatDate(dateStr: string): string {
 }
 .suggestion-tag {
   display: inline-block;
-  background: #ecfefe;
-  color: #0cb5b2;
+  background: var(--brand-light);
+  color: var(--brand-primary);
   font-size: 24rpx;
   padding: 10rpx 20rpx;
   border-radius: 20rpx;
@@ -433,26 +433,27 @@ function formatDate(dateStr: string): string {
   align-items: flex-end;
   padding: 12rpx 16rpx 20rpx;
   background: #fff;
-  border-top: 1rpx solid #F0F0F0;
+  border-top: 1rpx solid var(--divider);
   gap: 12rpx;
 }
 .msg-input {
   flex: 1;
-  background: #F5F7FA;
+  background: transparent;
+  border: 2rpx solid var(--border-light);
   border-radius: 24rpx;
   padding: 14rpx 24rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   max-height: 160rpx;
 }
 .send-btn {
   font-size: 28rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 600;
   padding: 14rpx 8rpx;
   flex-shrink: 0;
 }
 .send-btn.disabled {
-  color: #C0C0C0;
+  color: var(--text-secondary);
 }
 </style>

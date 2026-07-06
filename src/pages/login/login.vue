@@ -139,32 +139,32 @@ async function handleSubmit() {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  background: #ecfefe;
+  background: var(--brand-gradient);
 }
 
 .header {
-  padding: 100rpx 48rpx 60rpx;
+  padding: 160rpx 48rpx 60rpx;
 }
 
 .header-title {
   display: block;
   font-size: 48rpx;
   font-weight: 700;
-  color: #1A1A2E;
+  color: #fff;
   letter-spacing: 2rpx;
 }
 
 .header-subtitle {
   display: block;
   font-size: 26rpx;
-  color: #0cb5b2;
+  color: rgba(255,255,255,0.8);
   margin-top: 16rpx;
 }
 
 .card {
-  background: #F5F7FA;
+  background: var(--bg-light);
   border-radius: 40rpx 40rpx 0 0;
-  padding: 48rpx 40rpx;
+  padding: 200rpx 40rpx 48rpx;
   flex: 1;
 }
 
@@ -201,11 +201,11 @@ async function handleSubmit() {
 .input-wrap {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: transparent;
   border-radius: 16rpx;
   padding: 0 24rpx;
   margin-bottom: 24rpx;
-  border: 2rpx solid transparent;
+  border: 2rpx solid var(--border-light);
   transition: border-color 0.3s;
 }
 
@@ -235,7 +235,7 @@ async function handleSubmit() {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: #0cb5b2;
+  background: var(--brand-gradient);
   color: #fff;
   font-size: 34rpx;
   font-weight: 600;

@@ -122,7 +122,7 @@ async function handleSubmit() {
 
 <style scoped>
 .form-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 80rpx;
 }
@@ -139,17 +139,17 @@ async function handleSubmit() {
 
 .toggle-btn {
   font-size: 24rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 500;
   padding: 4rpx 16rpx;
   border-radius: 8rpx;
-  background: #ecfefe;
+  background: var(--brand-light);
 }
 
 .section-label {
   display: block;
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 12rpx;
   padding-left: 4rpx;
 }
@@ -163,13 +163,13 @@ async function handleSubmit() {
 
 .form-divider {
   height: 1rpx;
-  background: #F0F0F0;
+  background: var(--divider);
   margin: 16rpx 0;
 }
 .form-label {
   display: block;
   font-size: 26rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 12rpx;
 }
 .required { color: #FF4757; }
@@ -178,8 +178,8 @@ async function handleSubmit() {
   width: 100%;
   height: 72rpx;
   font-size: 30rpx;
-  color: #1A1A2E;
-  background: #F5F7FA;
+  color: var(--text-primary);
+  background: transparent;
   border-radius: 12rpx;
   padding: 0 16rpx;
   box-sizing: border-box;
@@ -189,8 +189,8 @@ async function handleSubmit() {
   width: 100%;
   height: 120rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
-  background: #F5F7FA;
+  color: var(--text-primary);
+  background: transparent;
   border-radius: 12rpx;
   padding: 16rpx;
   box-sizing: border-box;
@@ -201,8 +201,8 @@ async function handleSubmit() {
   width: 100%;
   height: 600rpx;
   font-size: 26rpx;
-  color: #1A1A2E;
-  background: #F5F7FA;
+  color: var(--text-primary);
+  background: transparent;
   border-radius: 12rpx;
   padding: 16rpx;
   box-sizing: border-box;
@@ -215,19 +215,19 @@ async function handleSubmit() {
   padding: 16rpx;
   line-height: 1.8;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   overflow-y: auto;
 }
 .preview-empty {
   font-size: 26rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
 }
 
 .char-count {
   display: block;
   text-align: right;
   font-size: 22rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
   margin-top: 8rpx;
   padding-right: 4rpx;
 }
@@ -241,14 +241,14 @@ async function handleSubmit() {
 .preview-box :deep(strong) { font-weight: 700; }
 .preview-box :deep(em) { font-style: italic; }
 .preview-box :deep(code) {
-  background: #F0F0F0;
+  background: var(--divider);
   padding: 2rpx 8rpx;
   border-radius: 4rpx;
   font-family: 'Courier New', monospace;
   font-size: 26rpx;
 }
 .preview-box :deep(pre) {
-  background: #F5F7FA;
+  background: transparent;
   padding: 20rpx;
   border-radius: 12rpx;
   overflow-x: auto;
@@ -256,19 +256,19 @@ async function handleSubmit() {
 }
 .preview-box :deep(pre code) { background: none; padding: 0; }
 .preview-box :deep(blockquote) {
-  border-left: 6rpx solid #0cb5b2;
+  border-left: 6rpx solid var(--brand-primary);
   padding-left: 20rpx;
   color: #666;
   margin: 12rpx 0;
 }
 .preview-box :deep(hr) { border: none; border-top: 1rpx solid #E0E0E0; margin: 20rpx 0; }
-.preview-box :deep(a) { color: #0cb5b2; }
+.preview-box :deep(a) { color: var(--brand-primary); }
 
 .submit-btn {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: #0cb5b2;
+  background: var(--brand-primary);
   color: #fff;
   font-size: 32rpx;
   font-weight: 600;

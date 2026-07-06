@@ -110,24 +110,26 @@ function navigateTo(title: string) {
 
 <style scoped>
 .home-page {
-  background: #F5F7FA;
-  padding: 32rpx;
+  background: transparent;
+  padding: 24rpx;
   padding-bottom: 120rpx;
 }
 
-/* ===== 第一栏：问候区 ===== */
+/* ===== 问候区 ===== */
 .greeting-card {
-  background: linear-gradient(135deg, #0cb5b2 0%, #0a9e9b 100%);
-  border-radius: 20rpx;
+  background: var(--brand-gradient);
+  border-radius: 24rpx;
   padding: 40rpx 32rpx;
-  margin-bottom: 36rpx;
+  margin-bottom: 28rpx;
+  box-shadow: var(--brand-shadow);
 }
 
 .greeting-text {
   display: block;
-  font-size: 40rpx;
+  font-size: 38rpx;
   font-weight: 700;
   color: #fff;
+  letter-spacing: 1rpx;
 }
 
 .greeting-sub {
@@ -137,31 +139,47 @@ function navigateTo(title: string) {
   margin-top: 8rpx;
 }
 
+.greeting-text {
+  display: block;
+  font-size: 38rpx;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 1rpx;
+}
+
+.greeting-sub {
+  display: block;
+  font-size: 26rpx;
+  color: rgba(255, 255, 255, 0.7);
+  margin-top: 8rpx;
+}
+
 /* ===== 区域标题 ===== */
 .section-header {
   margin-bottom: 16rpx;
 }
 
 .section-title {
-  font-size: 30rpx;
+  font-size: 28rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 
-/* ===== 第二栏：资产卡片 ===== */
+/* ===== 资产卡片 ===== */
 .asset-cards {
   display: flex;
-  gap: 14rpx;
-  margin-bottom: 36rpx;
+  gap: 16rpx;
+  margin-bottom: 32rpx;
 }
 
 .asset-card {
   flex: 1;
   background: #fff;
-  border-radius: 16rpx;
-  padding: 28rpx 10rpx;
+  border-radius: 24rpx;
+  padding: 28rpx 12rpx;
   text-align: center;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+  box-shadow: 0 2rpx 12rpx rgba(8, 201, 176, 0.08);
+  transition: transform 0.15s;
 }
 
 .asset-card:active {
@@ -170,37 +188,37 @@ function navigateTo(title: string) {
 
 .asset-icon {
   display: block;
-  font-size: 44rpx;
-  margin-bottom: 10rpx;
+  font-size: 36rpx;
+  margin-bottom: 8rpx;
 }
 
 .asset-count {
   display: block;
-  font-size: 36rpx;
+  font-size: 44rpx;
   font-weight: 700;
-  color: #0cb5b2;
+  color: #22c9b3;
   margin-bottom: 4rpx;
 }
 
 .asset-label {
   display: block;
   font-size: 22rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
 }
 
-/* ===== 第三栏：功能操作 ===== */
+/* ===== 功能操作 ===== */
 .feature-card {
   background: #fff;
-  border-radius: 16rpx;
-  box-shadow: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
+  border-radius: 24rpx;
+  box-shadow: 0 2rpx 12rpx rgba(8, 201, 176, 0.08);
   overflow: hidden;
 }
 
 .feature-item {
   display: flex;
   align-items: center;
-  padding: 28rpx 24rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  padding: 28rpx 28rpx;
+  border-bottom: 1rpx solid var(--divider);
 }
 
 .feature-item--last {
@@ -208,11 +226,11 @@ function navigateTo(title: string) {
 }
 
 .feature-item:active {
-  background: #F8F8F8;
+  background: #f0fcfb;
 }
 
 .feature-icon {
-  font-size: 36rpx;
+  font-size: 34rpx;
   margin-right: 20rpx;
 }
 
@@ -220,11 +238,11 @@ function navigateTo(title: string) {
   flex: 1;
   font-size: 28rpx;
   font-weight: 500;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 
 .feature-arrow {
-  font-size: 36rpx;
-  color: #C0C0C0;
+  font-size: 32rpx;
+  color: var(--text-secondary);
 }
 </style>

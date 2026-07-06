@@ -268,7 +268,7 @@ async function handleSubmit() {
 
 <style scoped>
 .form-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 80rpx;
 }
@@ -280,7 +280,7 @@ async function handleSubmit() {
 .section-label {
   display: block;
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 12rpx;
   padding-left: 4rpx;
 }
@@ -295,7 +295,7 @@ async function handleSubmit() {
 .form-label {
   display: block;
   font-size: 26rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 12rpx;
 }
 .required { color: #FF4757; }
@@ -303,8 +303,8 @@ async function handleSubmit() {
   width: 100%;
   height: 72rpx;
   font-size: 30rpx;
-  color: #1A1A2E;
-  background: #F5F7FA;
+  color: var(--text-primary);
+  background: transparent;
   border-radius: 12rpx;
   padding: 0 16rpx;
   box-sizing: border-box;
@@ -313,8 +313,8 @@ async function handleSubmit() {
   width: 100%;
   min-height: 160rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
-  background: #F5F7FA;
+  color: var(--text-primary);
+  background: transparent;
   border-radius: 12rpx;
   padding: 16rpx;
   box-sizing: border-box;
@@ -325,16 +325,16 @@ async function handleSubmit() {
   justify-content: space-between;
   align-items: center;
   height: 72rpx;
-  background: #F5F7FA;
+  background: transparent;
   border-radius: 12rpx;
   padding: 0 16rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
-.form-picker .placeholder { color: #C0C0C0; }
+.form-picker .placeholder { color: var(--text-secondary); }
 .picker-arrow {
   font-size: 36rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
 }
 
 /* ── 星级 ── */
@@ -354,14 +354,14 @@ async function handleSubmit() {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: #0cb5b2;
+  background: var(--brand-primary);
   color: #fff;
   font-size: 32rpx;
   font-weight: 600;
   border-radius: 48rpx;
   border: none;
   margin-top: 32rpx;
-  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.3);
+  box-shadow: var(--brand-shadow);
 }
 .submit-btn::after { border: none; }
 .submit-btn[loading] { opacity: 0.7; }
@@ -391,11 +391,11 @@ async function handleSubmit() {
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
 }
-.picker-cancel { font-size: 28rpx; color: #8E8E93; }
-.picker-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
-.picker-confirm { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.picker-cancel { font-size: 28rpx; color: var(--text-secondary); }
+.picker-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+.picker-confirm { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 .picker-body { overflow-y: auto; padding: 16rpx 0; }
 .picker-option {
   display: flex;
@@ -403,8 +403,8 @@ async function handleSubmit() {
   align-items: center;
   padding: 28rpx 40rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
-.picker-option.selected { color: #0cb5b2; font-weight: 600; }
+.picker-option.selected { color: var(--brand-primary); font-weight: 600; }
 .check { font-size: 32rpx; }
 </style>

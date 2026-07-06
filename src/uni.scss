@@ -1,24 +1,27 @@
-/* 全局样式变量 */
+/* 全局样式变量 — 求职助手产品设计风格 */
 
-/* 主题色 */
-$primary-bg: #ecfefe;
-$primary-color: #0cb5b2;
+/* 品牌色 */
+$primary-color: #08c9b0;
+$primary-light: #e6f9f7;
+$secondary-color: #007299;
+$brand-gradient: linear-gradient(135deg, #08c9b0, #007299);
 
 /* 背景 */
-$bg-color: #F5F7FA;
+$bg-color: #f0fcfb;
+$bg-gradient: linear-gradient(180deg, #f5fdfc 0%, #e8f6fc 100%);
 $card-bg: #FFFFFF;
 
 /* 文字 */
-$text-primary: #1A1A2E;
-$text-secondary: #8E8E93;
+$text-primary: #1e293b;
+$text-secondary: #94a3b8;
 $text-white: #FFFFFF;
 
 /* 圆角 */
 $radius-sm: 8rpx;
 $radius-md: 16rpx;
-$radius-lg: 20rpx;
-$radius-xl: 40rpx;
+$radius-lg: 24rpx;
+$radius-xl: 48rpx;
 
 /* 阴影 */
-$shadow-card: 0 4rpx 20rpx rgba(0, 0, 0, 0.04);
-$shadow-btn: 0 8rpx 24rpx rgba(12, 181, 178, 0.3);
+$shadow-card: 0 2px 12px rgba(8, 201, 176, 0.08);
+$shadow-btn: 0 8rpx 24rpx rgba(8, 201, 176, 0.3);

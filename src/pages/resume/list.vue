@@ -154,7 +154,7 @@ async function handleDelete(id: string) {
   const res = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该简历吗？',
-    confirmColor: '#FF4757',
+    confirmColor: '#08c9b0',
   })
   if (!res.confirm) return
   try {
@@ -179,7 +179,7 @@ function formatDateTime(dateStr: string): string {
 
 <style scoped>
 .list-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 160rpx;
 }
@@ -198,8 +198,8 @@ function formatDateTime(dateStr: string): string {
   z-index: 10;
 }
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
-.search-input { flex: 1; font-size: 28rpx; color: #1A1A2E; height: 72rpx; }
-.search-clear { font-size: 28rpx; color: #C0C0C0; padding: 8rpx; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--text-primary); height: 72rpx; }
+.search-clear { font-size: 28rpx; color: var(--text-secondary); padding: 8rpx; }
 
 /* ── 状态 ── */
 .state-box {
@@ -209,8 +209,8 @@ function formatDateTime(dateStr: string): string {
   padding: 160rpx 0;
 }
 .state-icon { font-size: 80rpx; margin-bottom: 24rpx; }
-.state-text { font-size: 30rpx; color: #1A1A2E; font-weight: 500; }
-.state-desc { font-size: 26rpx; color: #8E8E93; margin-top: 12rpx; }
+.state-text { font-size: 30rpx; color: var(--text-primary); font-weight: 500; }
+.state-desc { font-size: 26rpx; color: var(--text-secondary); margin-top: 12rpx; }
 
 /* ── 左滑 ── */
 .swipe-wrapper {
@@ -236,7 +236,7 @@ function formatDateTime(dateStr: string): string {
   color: #fff;
   font-weight: 500;
 }
-.edit-btn { background: #0cb5b2; }
+.edit-btn { background: var(--brand-primary); }
 .delete-btn { background: #FF4757; }
 
 /* ── 卡片 ── */
@@ -262,7 +262,7 @@ function formatDateTime(dateStr: string): string {
   flex: 1;
   font-size: 30rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -270,7 +270,7 @@ function formatDateTime(dateStr: string): string {
 .card-desc {
   display: block;
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 10rpx;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -279,7 +279,7 @@ function formatDateTime(dateStr: string): string {
 .card-date {
   display: block;
   font-size: 22rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
 }
 
 /* ── FAB ── */
@@ -289,12 +289,12 @@ function formatDateTime(dateStr: string): string {
   bottom: 120rpx;
   width: 72rpx;
   height: 72rpx;
-  background: linear-gradient(135deg, #0cb5b2, #0a9e9b);
+  background: var(--brand-gradient);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.4);
+  box-shadow: 0 8rpx 24rpx  rgba(8, 201, 176, 0.4);
   z-index: 100;
 }
 .fab-icon { font-size: 36rpx; color: #fff; font-weight: 300; line-height: 0; margin-top: -2rpx; }

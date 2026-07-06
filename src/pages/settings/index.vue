@@ -21,7 +21,7 @@ async function handleDeleteAccount() {
     title: '注销账号',
     content: '注销后所有数据将被永久删除且不可恢复。\n\n确定要注销账号吗？',
     confirmText: '确认注销',
-    confirmColor: '#FF4757',
+    confirmColor: '#08c9b0',
   })
   if (!res.confirm) return
 
@@ -36,7 +36,7 @@ async function handleDeleteAccount() {
 
 <style scoped>
 .settings-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx;
 }
@@ -53,7 +53,7 @@ async function handleDeleteAccount() {
 }
 .menu-text {
   font-size: 30rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 .menu-text.danger {
   color: #FF4757;
@@ -61,11 +61,11 @@ async function handleDeleteAccount() {
 .menu-desc {
   flex: 1;
   font-size: 24rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
   margin-left: 20rpx;
 }
 .arrow {
   font-size: 36rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
 }
 </style>

@@ -71,7 +71,7 @@ function formatDateTime(dateStr: string): string {
 
 <style scoped>
 .detail-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 60rpx;
 }
@@ -82,14 +82,15 @@ function formatDateTime(dateStr: string): string {
   align-items: center;
   padding: 200rpx 0;
 }
-.state-text { font-size: 30rpx; color: #8E8E93; }
+.state-text { font-size: 30rpx; color: var(--text-secondary); }
 
 /* ── 头部 ── */
 .header-card {
-  background: linear-gradient(135deg, #0cb5b2, #0a9e9b);
-  border-radius: 20rpx;
+  background: var(--brand-gradient);
+  border-radius: 24rpx;
   padding: 36rpx 32rpx;
   margin-bottom: 24rpx;
+  box-shadow: var(--brand-shadow);
 }
 .header-title {
   display: block;
@@ -118,7 +119,7 @@ function formatDateTime(dateStr: string): string {
   box-shadow: 0 4rpx 20rpx rgba(0,0,0,0.04);
   line-height: 1.8;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   word-break: break-all;
 }
 /* 富文本内部样式 */
@@ -131,14 +132,14 @@ function formatDateTime(dateStr: string): string {
 .content-card :deep(strong) { font-weight: 700; }
 .content-card :deep(em) { font-style: italic; }
 .content-card :deep(code) {
-  background: #F0F0F0;
+  background: var(--divider);
   padding: 2rpx 8rpx;
   border-radius: 4rpx;
   font-family: 'Courier New', monospace;
   font-size: 26rpx;
 }
 .content-card :deep(pre) {
-  background: #F5F7FA;
+  background: transparent;
   padding: 20rpx;
   border-radius: 12rpx;
   overflow-x: auto;
@@ -149,7 +150,7 @@ function formatDateTime(dateStr: string): string {
   padding: 0;
 }
 .content-card :deep(blockquote) {
-  border-left: 6rpx solid #0cb5b2;
+  border-left: 6rpx solid var(--brand-primary);
   padding-left: 20rpx;
   color: #666;
   margin: 12rpx 0;
@@ -159,5 +160,5 @@ function formatDateTime(dateStr: string): string {
   border-top: 1rpx solid #E0E0E0;
   margin: 24rpx 0;
 }
-.content-card :deep(a) { color: #0cb5b2; }
+.content-card :deep(a) { color: var(--brand-primary); }
 </style>

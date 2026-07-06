@@ -74,7 +74,7 @@ function openLink(url: string) {
 
 <style scoped>
 .about-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 40rpx 24rpx 60rpx;
 }
@@ -86,8 +86,8 @@ function openLink(url: string) {
   padding: 48rpx 0;
 }
 .logo { font-size: 96rpx; margin-bottom: 16rpx; }
-.app-name { font-size: 36rpx; font-weight: 700; color: #1A1A2E; }
-.version { font-size: 24rpx; color: #8E8E93; margin-top: 8rpx; }
+.app-name { font-size: 36rpx; font-weight: 700; color: var(--text-primary); }
+.version { font-size: 24rpx; color: var(--text-secondary); margin-top: 8rpx; }
 
 .card {
   background: #fff;
@@ -100,7 +100,7 @@ function openLink(url: string) {
   display: block;
   font-size: 28rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   margin-bottom: 16rpx;
 }
 .card-text {
@@ -117,9 +117,9 @@ function openLink(url: string) {
 }
 .info-row:last-child { border-bottom: none; }
 .info-icon { font-size: 28rpx; flex-shrink: 0; margin-right: 8rpx; width: 44rpx; text-align: center; }
-.info-label { font-size: 26rpx; color: #8E8E93; flex-shrink: 0; margin-right: 20rpx; width: 80rpx; }
-.info-value { font-size: 26rpx; color: #1A1A2E; }
-.info-value.link { color: #0cb5b2; }
+.info-label { font-size: 26rpx; color: var(--text-secondary); flex-shrink: 0; margin-right: 20rpx; width: 80rpx; }
+.info-value { font-size: 26rpx; color: var(--text-primary); }
+.info-value.link { color: var(--brand-primary); }
 
 .tech-stack {
   display: flex;
@@ -128,8 +128,8 @@ function openLink(url: string) {
 }
 .tech-tag {
   font-size: 24rpx;
-  color: #0cb5b2;
-  background: #ecfefe;
+  color: var(--brand-primary);
+  background: var(--brand-light);
   padding: 8rpx 18rpx;
   border-radius: 8rpx;
 }
@@ -138,7 +138,7 @@ function openLink(url: string) {
   display: block;
   text-align: center;
   font-size: 22rpx;
-  color: #C0C0C0;
+  color: var(--text-secondary);
   padding: 32rpx 0;
 }
 </style>

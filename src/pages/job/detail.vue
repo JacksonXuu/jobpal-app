@@ -100,7 +100,7 @@ function formatDateTime(dateStr: string): string {
 
 <style scoped>
 .detail-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 60rpx;
 }
@@ -112,15 +112,16 @@ function formatDateTime(dateStr: string): string {
   align-items: center;
   padding: 200rpx 0;
 }
-.state-text { font-size: 30rpx; color: #8E8E93; }
-.state-desc { font-size: 26rpx; color: #C0C0C0; margin-top: 12rpx; }
+.state-text { font-size: 30rpx; color: var(--text-secondary); }
+.state-desc { font-size: 26rpx; color: var(--text-secondary); margin-top: 12rpx; }
 
 /* ── 顶部信息卡片 ── */
 .info-card {
-  background: linear-gradient(135deg, #0cb5b2 0%, #0a9e9b 100%);
-  border-radius: 20rpx;
+  background: var(--brand-gradient);
+  border-radius: 24rpx;
   padding: 36rpx 32rpx;
   margin-bottom: 24rpx;
+  box-shadow: var(--brand-shadow);
 }
 .info-jobname {
   display: block;
@@ -172,7 +173,7 @@ function formatDateTime(dateStr: string): string {
   display: block;
   font-size: 28rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   margin-bottom: 16rpx;
 }
 .section-text {

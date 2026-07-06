@@ -252,7 +252,7 @@ function goDetail(id: string) {
 
 <style scoped>
 .list-page {
-  background: #F5F7FA;
+  background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 120rpx;
 }
@@ -271,8 +271,8 @@ function goDetail(id: string) {
   z-index: 10;
 }
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
-.search-input { flex: 1; font-size: 28rpx; color: #1A1A2E; height: 72rpx; }
-.search-clear { font-size: 28rpx; color: #C0C0C0; padding: 8rpx; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--text-primary); height: 72rpx; }
+.search-clear { font-size: 28rpx; color: var(--text-secondary); padding: 8rpx; }
 
 /* ── 筛选 ── */
 .filter-bar {
@@ -287,9 +287,9 @@ function goDetail(id: string) {
   border-radius: 12rpx;
   padding: 12rpx 18rpx;
   font-size: 24rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
-.filter-arrow { font-size: 20rpx; color: #8E8E93; margin-left: 6rpx; }
+.filter-arrow { font-size: 20rpx; color: var(--text-secondary); margin-left: 6rpx; }
 
 /* ── 状态 ── */
 .state-box {
@@ -299,8 +299,8 @@ function goDetail(id: string) {
   padding: 160rpx 0;
 }
 .state-icon { font-size: 80rpx; margin-bottom: 24rpx; }
-.state-text { font-size: 30rpx; color: #1A1A2E; font-weight: 500; }
-.state-desc { font-size: 26rpx; color: #8E8E93; margin-top: 12rpx; }
+.state-text { font-size: 30rpx; color: var(--text-primary); font-weight: 500; }
+.state-desc { font-size: 26rpx; color: var(--text-secondary); margin-top: 12rpx; }
 
 /* ── 状态分组 ── */
 .status-group { margin-bottom: 32rpx; }
@@ -314,12 +314,12 @@ function goDetail(id: string) {
 .group-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 .group-count {
   font-size: 22rpx;
   color: #fff;
-  background: #0cb5b2;
+  background: var(--brand-primary);
   padding: 2rpx 14rpx;
   border-radius: 20rpx;
 }
@@ -343,7 +343,7 @@ function goDetail(id: string) {
 .card-jobname {
   font-size: 30rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -354,14 +354,14 @@ function goDetail(id: string) {
 .card-company {
   display: block;
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
   margin-bottom: 10rpx;
 }
 .card-bottom {
   display: flex;
   align-items: center;
 }
-.card-salary { color: #0cb5b2; font-weight: 600; }
+.card-salary { color: var(--brand-primary); font-weight: 600; }
 .salary-icon { font-size: 22rpx; }
 .salary-num { font-size: 32rpx; margin: 0 5rpx; }
 .salary-unit { font-size: 22rpx; }
@@ -396,7 +396,7 @@ function goDetail(id: string) {
   color: #666;
   margin-top: 12rpx;
   padding-top: 10rpx;
-  border-top: 1rpx solid #F0F0F0;
+  border-top: 1rpx solid var(--divider);
   line-height: 1.5;
 }
 
@@ -422,11 +422,11 @@ function goDetail(id: string) {
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
 }
-.picker-cancel { font-size: 28rpx; color: #8E8E93; }
-.picker-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
-.picker-confirm { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.picker-cancel { font-size: 28rpx; color: var(--text-secondary); }
+.picker-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+.picker-confirm { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 .picker-body { overflow-y: auto; padding: 16rpx 0; }
 .picker-option {
   display: flex;
@@ -434,9 +434,9 @@ function goDetail(id: string) {
   align-items: center;
   padding: 28rpx 40rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
-.picker-option.selected { color: #0cb5b2; font-weight: 600; }
+.picker-option.selected { color: var(--brand-primary); font-weight: 600; }
 .check { font-size: 32rpx; }
 
 /* ── 备注弹窗 ── */
@@ -451,17 +451,17 @@ function goDetail(id: string) {
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
 }
-.remark-cancel { font-size: 28rpx; color: #8E8E93; }
-.remark-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
-.remark-confirm { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.remark-cancel { font-size: 28rpx; color: var(--text-secondary); }
+.remark-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+.remark-confirm { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 .remark-textarea {
   width: 100%;
   height: 260rpx;
   padding: 24rpx 32rpx;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   line-height: 1.6;
   box-sizing: border-box;
 }

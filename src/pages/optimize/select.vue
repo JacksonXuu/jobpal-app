@@ -281,7 +281,7 @@ async function handleBatchDelete() {
   const res = await uni.showModal({
     title: '批量删除',
     content: `确定要删除 ${selectedIds.value.length} 条记录吗？`,
-    confirmColor: '#FF4757',
+    confirmColor: '#08c9b0',
   })
   if (!res.confirm) return
   try {
@@ -309,7 +309,7 @@ function goJobDetail(id: string) {
 
 <style scoped>
 .select-page {
-  background: #F5F7FA;
+  background: transparent;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -331,20 +331,20 @@ function goJobDetail(id: string) {
 .trigger-label {
   flex: 1;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.trigger-label.placeholder { color: #C0C0C0; }
-.trigger-arrow { font-size: 24rpx; color: #C0C0C0; flex-shrink: 0; margin-left: 8rpx; }
+.trigger-label.placeholder { color: var(--text-secondary); }
+.trigger-arrow { font-size: 24rpx; color: var(--text-secondary); flex-shrink: 0; margin-left: 8rpx; }
 
 /* ── 按钮 ── */
 .optimize-btn {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: #0cb5b2;
+  background: var(--brand-gradient);
   color: #fff;
   font-size: 32rpx;
   font-weight: 600;
@@ -355,7 +355,7 @@ function goJobDetail(id: string) {
 }
 .optimize-btn::after { border: none; }
 .optimize-btn.disabled {
-  background: #C0C0C0;
+  background: var(--text-secondary);
   box-shadow: none;
   opacity: 0.5;
 }
@@ -382,17 +382,17 @@ function goJobDetail(id: string) {
   padding: 8rpx 16rpx;
 }
 .hs-icon { font-size: 24rpx; margin-right: 6rpx; }
-.hs-input { font-size: 24rpx; color: #1A1A2E; width: 160rpx; }
+.hs-input { font-size: 24rpx; color: var(--text-primary); width: 160rpx; }
 .section-title {
   font-size: 28rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
 }
 .history-list {
   flex: 1;
   min-height: 0;
 }
-.empty-tip { padding: 32rpx; text-align: center; font-size: 26rpx; color: #C0C0C0; }
+.empty-tip { padding: 32rpx; text-align: center; font-size: 26rpx; color: var(--text-secondary); }
 
 .history-card {
   display: flex;
@@ -415,18 +415,18 @@ function goJobDetail(id: string) {
   flex: 1;
   min-width: 0;
   font-size: 26rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.hc-x { font-size: 22rpx; color: #C0C0C0; flex-shrink: 0; }
+.hc-x { font-size: 22rpx; color: var(--text-secondary); flex-shrink: 0; }
 .hc-job {
   flex: 1;
   min-width: 0;
   font-size: 26rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -440,7 +440,7 @@ function goJobDetail(id: string) {
   width: 28rpx;
   height: 28rpx;
   border: 4rpx solid #E0E0E0;
-  border-top-color: #0cb5b2;
+  border-top-color: var(--brand-primary);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   display: inline-block;
@@ -454,21 +454,21 @@ function goJobDetail(id: string) {
 .history-actions { display: flex; align-items: center; }
 .batch-toggle {
   font-size: 24rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 500;
   padding: 4rpx 16rpx;
   border-radius: 8rpx;
-  background: #ecfefe;
+  background: var(--brand-light);
 }
 .hc-checkbox {
   font-size: 36rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   margin-right: 12rpx;
   flex-shrink: 0;
 }
 .history-card.batch-selected {
   background: #f8fffe;
-  border: 2rpx solid #0cb5b2;
+  border: 2rpx solid var(--brand-primary);
 }
 .batch-bar {
   display: flex;
@@ -476,16 +476,16 @@ function goJobDetail(id: string) {
   align-items: center;
   padding: 16rpx 24rpx;
   background: #fff;
-  border-top: 1rpx solid #F0F0F0;
+  border-top: 1rpx solid var(--divider);
   flex-shrink: 0;
 }
-.batch-select-all { font-size: 26rpx; color: #1A1A2E; }
+.batch-select-all { font-size: 26rpx; color: var(--text-primary); }
 .batch-delete {
   font-size: 26rpx;
   color: #FF4757;
   font-weight: 600;
 }
-.batch-delete.disabled { color: #C0C0C0; }
+.batch-delete.disabled { color: var(--text-secondary); }
 
 /* ── Picker 弹层 ── */
 .picker-overlay {
@@ -509,25 +509,25 @@ function goJobDetail(id: string) {
   justify-content: space-between;
   align-items: center;
   padding: 24rpx 32rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
   flex-shrink: 0;
 }
-.picker-cancel { font-size: 28rpx; color: #8E8E93; }
-.picker-title { font-size: 30rpx; font-weight: 600; color: #1A1A2E; }
-.picker-done { font-size: 28rpx; color: #0cb5b2; font-weight: 600; }
+.picker-cancel { font-size: 28rpx; color: var(--text-secondary); }
+.picker-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); }
+.picker-done { font-size: 28rpx; color: var(--brand-primary); font-weight: 600; }
 
 .picker-search {
   display: flex;
   align-items: center;
   padding: 16rpx 24rpx;
-  border-bottom: 1rpx solid #F0F0F0;
+  border-bottom: 1rpx solid var(--divider);
   flex-shrink: 0;
 }
 .search-icon { font-size: 28rpx; margin-right: 12rpx; }
-.search-input { flex: 1; font-size: 28rpx; color: #1A1A2E; }
+.search-input { flex: 1; font-size: 28rpx; color: var(--text-primary); }
 
 .picker-list { flex: 1; }
-.picker-empty { text-align: center; padding: 60rpx 0; font-size: 26rpx; color: #C0C0C0; }
+.picker-empty { text-align: center; padding: 60rpx 0; font-size: 26rpx; color: var(--text-secondary); }
 
 .picker-item {
   display: flex;
@@ -538,7 +538,7 @@ function goJobDetail(id: string) {
 .picker-item.selected { background: #f8fffe; }
 .picker-item-icon { font-size: 32rpx; margin-right: 16rpx; flex-shrink: 0; }
 .picker-item-info { flex: 1; }
-.picker-item-name { font-size: 28rpx; color: #1A1A2E; font-weight: 500; display: block; }
-.picker-item-sub { font-size: 22rpx; color: #8E8E93; margin-top: 4rpx; display: block; }
-.picker-check { font-size: 28rpx; color: #0cb5b2; font-weight: 700; flex-shrink: 0; }
+.picker-item-name { font-size: 28rpx; color: var(--text-primary); font-weight: 500; display: block; }
+.picker-item-sub { font-size: 22rpx; color: var(--text-secondary); margin-top: 4rpx; display: block; }
+.picker-check { font-size: 28rpx; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
 </style>

@@ -28,7 +28,7 @@ onLoad((options?: Record<string, string>) => {
   align-items: center;
   justify-content: center;
   padding: 32rpx;
-  background: #F5F7FA;
+  background: transparent;
 }
 
 .placeholder-icon {
@@ -39,12 +39,12 @@ onLoad((options?: Record<string, string>) => {
 .placeholder-title {
   font-size: 34rpx;
   font-weight: 600;
-  color: #1A1A2E;
+  color: var(--text-primary);
   margin-bottom: 12rpx;
 }
 
 .placeholder-desc {
   font-size: 26rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
 }
 </style>

@@ -71,7 +71,7 @@ function goBack() {
 
 <style scoped>
 .result-page {
-  background: #F5F7FA;
+  background: transparent;
   height: 100vh;
   display: flex;
   flex-direction: column;
@@ -84,7 +84,7 @@ function goBack() {
 }
 .info-text {
   font-size: 24rpx;
-  color: #8E8E93;
+  color: var(--text-secondary);
 }
 
 .content-area {
@@ -100,7 +100,7 @@ function goBack() {
   justify-content: center;
   padding: 200rpx 0;
 }
-.state-text { font-size: 30rpx; color: #8E8E93; }
+.state-text { font-size: 30rpx; color: var(--text-secondary); }
 
 /* Markdown */
 .md-body {
@@ -111,7 +111,7 @@ function goBack() {
   width: 100%;
   line-height: 1.8;
   font-size: 28rpx;
-  color: #1A1A2E;
+  color: var(--text-primary);
   word-break: break-all;
 }
 .md-body :deep(h1) { font-size: 40rpx; font-weight: 700; margin: 24rpx 0 16rpx; }
@@ -121,10 +121,10 @@ function goBack() {
 .md-body :deep(ul), .md-body :deep(ol) { padding-left: 40rpx; margin: 8rpx 0; }
 .md-body :deep(li) { margin: 4rpx 0; }
 .md-body :deep(strong) { font-weight: 700; }
-.md-body :deep(code) { background: #F0F0F0; padding: 2rpx 8rpx; border-radius: 4rpx; font-size: 26rpx; }
-.md-body :deep(pre) { background: #F5F7FA; padding: 20rpx; border-radius: 12rpx; margin: 12rpx 0; white-space: pre-wrap; word-break: break-all; }
-.md-body :deep(blockquote) { border-left: 6rpx solid #0cb5b2; padding-left: 20rpx; color: #666; margin: 12rpx 0; }
-.md-body :deep(a) { color: #0cb5b2; }
+.md-body :deep(code) { background: var(--divider); padding: 2rpx 8rpx; border-radius: 4rpx; font-size: 26rpx; }
+.md-body :deep(pre) { background: transparent; padding: 20rpx; border-radius: 12rpx; margin: 12rpx 0; white-space: pre-wrap; word-break: break-all; }
+.md-body :deep(blockquote) { border-left: 6rpx solid var(--brand-primary); padding-left: 20rpx; color: #666; margin: 12rpx 0; }
+.md-body :deep(a) { color: var(--brand-primary); }
 
 /* 操作栏 */
 .action-bar {
@@ -136,16 +136,16 @@ function goBack() {
   padding: 16rpx 32rpx 24rpx;
   gap: 24rpx;
   background: #fff;
-  border-top: 1rpx solid #F0F0F0;
+  border-top: 1rpx solid var(--divider);
 }
 .action-btn {
   flex: 1;
   text-align: center;
   font-size: 28rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 600;
   padding: 16rpx 0;
   border-radius: 12rpx;
-  background: #ecfefe;
+  background: var(--brand-light);
 }
 </style>

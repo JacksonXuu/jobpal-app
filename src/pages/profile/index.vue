@@ -41,6 +41,7 @@ async function handleLogout() {
   const res = await uni.showModal({
     title: '退出登录',
     content: '确定要退出登录吗？',
+    confirmColor: '#08c9b0',
   })
   if (!res.confirm) return
   try { await logoutApi() } catch { /* ignore */ }
@@ -51,7 +52,7 @@ async function handleLogout() {
 
 <style scoped>
 .profile-page {
-  background: #F5F7FA;
+  background: transparent;
   padding: 32rpx;
   padding-bottom: 100rpx;
 }
@@ -59,16 +60,16 @@ async function handleLogout() {
 .user-card {
   display: flex;
   align-items: center;
-  background: #0cb5b2;
-  border-radius: 20rpx;
+  background: var(--brand-gradient);
+  border-radius: 24rpx;
   padding: 40rpx 32rpx;
   margin-bottom: 32rpx;
+  box-shadow: var(--brand-shadow);
 }
 
 .avatar {
   width: 80rpx;
   height: 80rpx;
-  background: rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -95,8 +96,8 @@ async function handleLogout() {
   align-items: center;
   padding: 32rpx;
   font-size: 30rpx;
-  color: #1A1A2E;
-  border-bottom: 1rpx solid #F0F0F0;
+  color: var(--text-primary);
+  border-bottom: 1rpx solid var(--divider);
 }
 
 .menu-item:last-child {
@@ -104,7 +105,7 @@ async function handleLogout() {
 }
 
 .arrow {
-  color: #C0C0C0;
+  color: var(--text-secondary);
   font-size: 36rpx;
 }
 

@@ -100,10 +100,10 @@
     }
   ],
   "tabBar": {
-    "color": "#8E8E93",
-    "selectedColor": "#0cb5b2",
+    "color": "#94a3b8",
+    "selectedColor": "#08c9b0",
     "backgroundColor": "#FFFFFF",
-    "borderStyle": "black",
+    "borderStyle": "white",
     "list": [
       {
         "pagePath": "pages/home",
@@ -128,7 +128,7 @@
   "globalStyle": {
     "navigationBarTextStyle": "black",
     "navigationBarTitleText": "求职助手",
-    "navigationBarBackgroundColor": "#F8F8F8",
-    "backgroundColor": "#F5F7FA"
+    "navigationBarBackgroundColor": "#f5fdfc",
+    "backgroundColor": "#e8f6fc"
   }
 }
