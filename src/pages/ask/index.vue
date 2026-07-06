@@ -64,8 +64,9 @@
     <template v-else>
       <!-- 顶部栏 -->
       <view class="chat-header">
-        <text class="chat-title">{{ chatTitle }}</text>
         <text class="history-btn" @tap="view = 'list'">历史</text>
+        <view style="flex:1" />
+        <text class="history-btn" :class="{ disabled: !conversationId && messages.length === 0 }" @tap="startNewChat">新对话</text>
       </view>
 
       <!-- 消息列表 -->
@@ -192,6 +193,7 @@ const chatTitle = ref('新对话')
 let conversationId: string | null = null
 
 async function startNewChat() {
+  if (!conversationId && messages.value.length === 0) return // 已在空对话中
   conversationId = null
   messages.value = []
   streamingText.value = ''
@@ -406,17 +408,7 @@ function formatDate(dateStr: string): string {
 }
 .back-btn { font-size: 28rpx; color: #0cb5b2; flex-shrink: 0; }
 .history-btn { font-size: 28rpx; color: #0cb5b2; font-weight: 500; flex-shrink: 0; }
-.chat-title {
-  flex: 1;
-  text-align: center;
-  font-size: 30rpx;
-  font-weight: 600;
-  color: #1A1A2E;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
+.history-btn.disabled { color: #C0C0C0; }
 .msg-list {
   flex: 1;
   min-height: 0;

@@ -1,20 +1,26 @@
 <template>
   <view class="chat-bubble" :class="role === 'user' ? 'bubble-user-wrap' : 'bubble-ai-wrap'">
     <!-- AI 气泡 -->
-    <view v-if="role === 'assistant'" class="bubble-ai">
-      <rich-text v-if="content || isStreaming" :nodes="html"></rich-text>
-      <view v-else class="typing-dots">
-        <text class="dot">●</text>
-        <text class="dot">●</text>
-        <text class="dot">●</text>
+    <template v-if="role === 'assistant'">
+      <view class="avatar avatar-ai">🤖</view>
+      <view class="bubble-ai">
+        <rich-text v-if="content || isStreaming" :nodes="html"></rich-text>
+        <view v-else class="typing-dots">
+          <text class="dot">●</text>
+          <text class="dot">●</text>
+          <text class="dot">●</text>
+        </view>
+        <text v-if="isStreaming && content" class="cursor">|</text>
       </view>
-      <text v-if="isStreaming && content" class="cursor">|</text>
-    </view>
+    </template>
 
     <!-- 用户气泡 -->
-    <view v-else class="bubble-user">
-      <text>{{ content }}</text>
-    </view>
+    <template v-else>
+      <view class="bubble-user">
+        <text>{{ content }}</text>
+      </view>
+      <view class="avatar avatar-user">👤</view>
+    </template>
   </view>
 </template>
 
@@ -36,8 +42,30 @@ const html = computed(() => {
 
 <style scoped>
 .chat-bubble {
+  display: flex;
+  align-items: flex-start;
   margin-bottom: 32rpx;
   padding: 0 24rpx;
+}
+
+/* 头像 */
+.avatar {
+  width: 64rpx;
+  height: 64rpx;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32rpx;
+  flex-shrink: 0;
+}
+.avatar-ai {
+  background: #ecfefe;
+  margin-right: 12rpx;
+}
+.avatar-user {
+  background: #E8F5E9;
+  margin-left: 12rpx;
 }
 
 /* AI 气泡 */
