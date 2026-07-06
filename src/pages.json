@@ -15,6 +15,24 @@
       }
     },
     {
+      "path": "pages/job/list",
+      "style": {
+        "navigationBarTitleText": "心动岗位"
+      }
+    },
+    {
+      "path": "pages/job/detail",
+      "style": {
+        "navigationBarTitleText": "岗位详情"
+      }
+    },
+    {
+      "path": "pages/job/form",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
       "path": "pages/ask/index",
       "style": {
         "navigationBarTitleText": "问一问"

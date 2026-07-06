@@ -63,8 +63,13 @@ const featureItems = ref([
   { icon: '💬', title: '模拟面试' },
 ])
 
-/** 跳转到占位页面，传递标题参数 */
+/** 跳转到目标页面 */
 function navigateTo(title: string) {
+  // 心动岗位跳转到真实列表页
+  if (title === '心动岗位') {
+    uni.navigateTo({ url: '/pages/job/list' })
+    return
+  }
   uni.navigateTo({
     url: `/pages/placeholder/index?title=${encodeURIComponent(title)}`,
   })
