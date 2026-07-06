@@ -30,6 +30,7 @@ export interface JobPosition {
   rating: number
   sourcePlatform: string
   status: string
+  remark?: string
   createdAt: string
   updatedAt: string
 }
@@ -156,4 +157,73 @@ export async function deleteJob(id: string): Promise<void> {
     url: `/v1/jobs/${id}`,
     method: 'DELETE',
   })
+}
+
+// ── 面试记录 ──
+
+/** 面试状态（仅5种） */
+export const INTERVIEW_STATUS_OPTIONS = [
+  '待面试', '面试中', '面试结果待反馈', '面试通过', '面试失败',
+] as const
+
+/** 面试列表查询参数 */
+export interface QueryInterviewParams {
+  keyword?: string
+  status?: string
+  sortBy?: string
+  sortOrder?: string
+}
+
+/**
+ * 面试列表（基于 /v1/jobs，客户端筛选面试状态）
+ */
+export async function getInterviewList(query: QueryInterviewParams = {}): Promise<JobListResult> {
+  const res = await request<JobListResult>({ url: '/v1/jobs' })
+  let { list } = res.data
+
+  // 过滤：仅保留 5 种面试状态
+  list = list.filter((item) =>
+    (INTERVIEW_STATUS_OPTIONS as readonly string[]).includes(item.status),
+  )
+
+  // 客户端搜索
+  if (query.keyword) {
+    const kw = query.keyword.toLowerCase()
+    list = list.filter(
+      (item) =>
+        item.jobName.toLowerCase().includes(kw) ||
+        item.companyName.toLowerCase().includes(kw),
+    )
+  }
+
+  // 客户端状态筛选
+  if (query.status) {
+    list = list.filter((item) => item.status === query.status)
+  }
+
+  // 客户端排序
+  const sortBy = query.sortBy || 'updatedAt'
+  const sortOrder = query.sortOrder || 'desc'
+  list.sort((a, b) => {
+    const aVal = sortBy === 'salary' ? a.salary : sortBy === 'rating' ? a.rating : a.updatedAt
+    const bVal = sortBy === 'salary' ? b.salary : sortBy === 'rating' ? b.rating : b.updatedAt
+    if (aVal < bVal) return sortOrder === 'desc' ? 1 : -1
+    if (aVal > bVal) return sortOrder === 'desc' ? -1 : 1
+    return 0
+  })
+
+  return { list, total: list.length }
+}
+
+/**
+ * 更新备注
+ * PUT /v1/jobs/:id { remark }
+ */
+export async function updateRemark(id: string, remark: string): Promise<JobPosition> {
+  const res = await request<JobPosition>({
+    url: `/v1/jobs/${id}`,
+    method: 'PUT',
+    data: { remark } as unknown as Record<string, unknown>,
+  })
+  return res.data
 }

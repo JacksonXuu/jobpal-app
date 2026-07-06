@@ -45,7 +45,9 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
+import { request } from '@/utils/request'
 
 const authStore = useAuthStore()
 
@@ -63,6 +65,25 @@ const featureItems = ref([
   { icon: '💬', title: '模拟面试' },
 ])
 
+/** 首页统计数据 */
+interface HomeStats {
+  resumeCount: number
+  jobCount: number
+  interviewCount: number
+}
+
+async function fetchStats() {
+  try {
+    const res = await request<HomeStats>({ url: '/v1/home/stats' })
+    assetCards.value[0].count = res.data.resumeCount
+    assetCards.value[1].count = res.data.jobCount
+    assetCards.value[2].count = res.data.interviewCount
+  } catch { /* 拦截器已 toast */ }
+}
+
+onLoad(() => fetchStats())
+onShow(() => fetchStats())
+
 /** 跳转到目标页面 */
 function navigateTo(title: string) {
   if (title === '我的简历') {
@@ -71,6 +92,10 @@ function navigateTo(title: string) {
   }
   if (title === '心动岗位') {
     uni.navigateTo({ url: '/pages/job/list' })
+    return
+  }
+  if (title === '面试记录') {
+    uni.navigateTo({ url: '/pages/interview/list' })
     return
   }
   uni.navigateTo({

@@ -33,6 +33,12 @@
       }
     },
     {
+      "path": "pages/interview/list",
+      "style": {
+        "navigationBarTitleText": "面试记录"
+      }
+    },
+    {
       "path": "pages/resume/list",
       "style": {
         "navigationBarTitleText": "我的简历"
