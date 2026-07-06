@@ -21,16 +21,6 @@
         <text class="info-label">姓名</text>
         <text class="info-value">徐渝松</text>
       </view>
-      <view class="info-row">
-        <text class="info-icon">📧</text>
-        <text class="info-label">邮箱</text>
-        <text class="info-value link" @tap="copyText('1939377507@qq.com')">1939377507@qq.com</text>
-      </view>
-      <view class="info-row">
-        <text class="info-icon">💬</text>
-        <text class="info-label">微信</text>
-        <text class="info-value link" @tap="copyText('xuys_l')">xuys_l</text>
-      </view>
     </view>
 
     <!-- 开源 -->
@@ -69,13 +59,6 @@
 </template>
 
 <script setup lang="ts">
-function copyText(text: string) {
-  uni.setClipboardData({
-    data: text,
-    success: () => uni.showToast({ title: '已复制', icon: 'success' }),
-  })
-}
-
 function openLink(url: string) {
   // #ifdef H5
   window.open(url, '_blank')
