@@ -12,10 +12,15 @@ onLaunch(() => {
 <style lang="scss">
 @import '@/uni.scss';
 
+html, body, uni-page, uni-page-body {
+  height: 100%;
+  margin: 0;
+}
+
 page {
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  height: 100%;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
   color: $text-primary;

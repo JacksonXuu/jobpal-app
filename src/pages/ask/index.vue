@@ -3,8 +3,8 @@
     <!-- ====== 列表视图 ====== -->
     <template v-if="view === 'list'">
       <view class="list-header">
-        <text class="list-title">💬 问一问</text>
-        <text class="new-btn" @tap="startNewChat">新对话</text>
+        <text class="list-title">💬 历史对话</text>
+        <text class="back-btn" @tap="view = 'chat'">← 返回</text>
       </view>
 
       <!-- 空状态 -->
@@ -64,9 +64,8 @@
     <template v-else>
       <!-- 顶部栏 -->
       <view class="chat-header">
-        <text class="back-btn" @tap="goBack">← 返回</text>
         <text class="chat-title">{{ chatTitle }}</text>
-        <view style="width: 80rpx" />
+        <text class="history-btn" @tap="view = 'list'">历史</text>
       </view>
 
       <!-- 消息列表 -->
@@ -128,7 +127,7 @@ import { useSSE } from '@/composables/useSSE'
 import ChatBubble from '@/components/ChatBubble.vue'
 
 // ── 视图切换 ──
-const view = ref<'list' | 'chat'>('list')
+const view = ref<'list' | 'chat'>('chat')
 
 // ── 对话列表 ──
 const conversations = ref<Conversation[]>([])
@@ -145,6 +144,7 @@ async function fetchConversations() {
 
 onLoad(() => {
   fetchConversations()
+  fetchSuggestions()
 })
 
 // ── 左滑删除 ──
@@ -292,7 +292,7 @@ function formatDate(dateStr: string): string {
 <style scoped>
 .ask-page {
   background: #F5F7FA;
-  height: 100vh;
+  height: 100%;
   display: flex;
   flex-direction: column;
   overflow: hidden;
@@ -397,10 +397,6 @@ function formatDate(dateStr: string): string {
 
 /* ── 聊天视图 ── */
 .chat-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: center;
   padding: 12rpx 24rpx;
@@ -409,6 +405,7 @@ function formatDate(dateStr: string): string {
   z-index: 10;
 }
 .back-btn { font-size: 28rpx; color: #0cb5b2; flex-shrink: 0; }
+.history-btn { font-size: 28rpx; color: #0cb5b2; font-weight: 500; flex-shrink: 0; }
 .chat-title {
   flex: 1;
   text-align: center;
@@ -421,11 +418,8 @@ function formatDate(dateStr: string): string {
 }
 
 .msg-list {
-  position: fixed;
-  top: 80rpx;
-  bottom: 90rpx;
-  left: 0;
-  right: 0;
+  flex: 1;
+  min-height: 0;
   padding-top: 16rpx;
 }
 
@@ -443,10 +437,6 @@ function formatDate(dateStr: string): string {
 }
 
 .input-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
   display: flex;
   align-items: flex-end;
   padding: 12rpx 16rpx 20rpx;
