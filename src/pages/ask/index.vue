@@ -397,12 +397,16 @@ function formatDate(dateStr: string): string {
 
 /* ── 聊天视图 ── */
 .chat-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: center;
   padding: 12rpx 24rpx;
   background: #fff;
   border-bottom: 1rpx solid #F0F0F0;
-  flex-shrink: 0;
+  z-index: 10;
 }
 .back-btn { font-size: 28rpx; color: #0cb5b2; flex-shrink: 0; }
 .chat-title {
@@ -417,7 +421,11 @@ function formatDate(dateStr: string): string {
 }
 
 .msg-list {
-  flex: 1;
+  position: fixed;
+  top: 80rpx;
+  bottom: 90rpx;
+  left: 0;
+  right: 0;
   padding-top: 16rpx;
 }
 
@@ -435,13 +443,16 @@ function formatDate(dateStr: string): string {
 }
 
 .input-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   display: flex;
   align-items: flex-end;
   padding: 12rpx 16rpx 20rpx;
   background: #fff;
   border-top: 1rpx solid #F0F0F0;
   gap: 12rpx;
-  flex-shrink: 0;
 }
 .msg-input {
   flex: 1;
