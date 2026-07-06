@@ -17,11 +17,15 @@
         <text class="arrow">›</text>
       </view>
     </view>
+
+    <!-- 退出登录 -->
+    <button class="logout-btn" @tap="handleLogout">退出登录</button>
   </view>
 </template>
 
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
+import { logoutApi } from '@/apis/auth'
 
 const authStore = useAuthStore()
 
@@ -31,6 +35,17 @@ function showAbout() {
 
 function goSettings() {
   uni.navigateTo({ url: '/pages/settings/index' })
+}
+
+async function handleLogout() {
+  const res = await uni.showModal({
+    title: '退出登录',
+    content: '确定要退出登录吗？',
+  })
+  if (!res.confirm) return
+  try { await logoutApi() } catch { /* ignore */ }
+  authStore.logout()
+  uni.reLaunch({ url: '/pages/login/login' })
 }
 </script>
 
