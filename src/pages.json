@@ -15,6 +15,18 @@
       }
     },
     {
+      "path": "pages/ask/index",
+      "style": {
+        "navigationBarTitleText": "问一问"
+      }
+    },
+    {
+      "path": "pages/placeholder/index",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
       "path": "pages/profile/index",
       "style": {
         "navigationBarTitleText": "我的"
@@ -32,6 +44,12 @@
         "text": "主页",
         "iconPath": "static/tab/home.png",
         "selectedIconPath": "static/tab/home-active.png"
+      },
+      {
+        "pagePath": "pages/ask/index",
+        "text": "问一问",
+        "iconPath": "static/tab/ask.png",
+        "selectedIconPath": "static/tab/ask-active.png"
       },
       {
         "pagePath": "pages/profile/index",

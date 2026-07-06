@@ -15,6 +15,7 @@ onLaunch(() => {
 page {
   display: flex;
   flex-direction: column;
+  min-height: 100vh;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial,
     sans-serif;
   color: $text-primary;

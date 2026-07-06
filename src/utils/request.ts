@@ -23,7 +23,7 @@ interface ApiResponse<T = unknown> {
 }
 
 /** 开发环境 Base URL */
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = 'http://47.107.30.30:3000'
 
 /**
  * 通用请求方法
