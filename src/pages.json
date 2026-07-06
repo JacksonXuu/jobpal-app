@@ -33,6 +33,24 @@
       }
     },
     {
+      "path": "pages/resume/list",
+      "style": {
+        "navigationBarTitleText": "我的简历"
+      }
+    },
+    {
+      "path": "pages/resume/detail",
+      "style": {
+        "navigationBarTitleText": "简历详情"
+      }
+    },
+    {
+      "path": "pages/resume/form",
+      "style": {
+        "navigationBarTitleText": ""
+      }
+    },
+    {
       "path": "pages/ask/index",
       "style": {
         "navigationBarTitleText": "问一问"

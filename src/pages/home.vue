@@ -65,7 +65,10 @@ const featureItems = ref([
 
 /** 跳转到目标页面 */
 function navigateTo(title: string) {
-  // 心动岗位跳转到真实列表页
+  if (title === '我的简历') {
+    uni.navigateTo({ url: '/pages/resume/list' })
+    return
+  }
   if (title === '心动岗位') {
     uni.navigateTo({ url: '/pages/job/list' })
     return
