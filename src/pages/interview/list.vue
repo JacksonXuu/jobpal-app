@@ -39,27 +39,38 @@
           <text class="group-count">{{ group.items.length }}</text>
         </view>
         <view
-          v-for="item in group.items"
+          v-for="(item, index) in group.items"
           :key="item.id"
-          class="interview-card"
-          @tap="goDetail(item.id)"
+          class="swipe-wrapper"
         >
-          <view class="card-top">
-            <text class="card-jobname">{{ item.jobName }}</text>
-            <view class="card-rating">
-              <text v-for="n in 5" :key="n" class="star">{{ n <= item.rating ? '⭐' : '☆' }}</text>
+          <view class="swipe-actions">
+            <view class="swipe-btn remark-swipe-btn" @tap.stop="openRemark(item)">备注</view>
+          </view>
+          <view
+            class="interview-card"
+            :class="{ 'swiped': swipedId === item.id }"
+            :style="{ transform: swipedId === item.id ? 'translateX(-80rpx)' : 'translateX(0)' }"
+            @touchstart="onTouchStart($event, item.id, index)"
+            @touchmove="onTouchMove($event, item.id, index)"
+            @touchend="onTouchEnd($event, item.id)"
+            @tap="goDetail(item.id)"
+          >
+            <view class="card-top">
+              <text class="card-jobname">{{ item.jobName }}</text>
+              <view class="card-rating">
+                <text v-for="n in 5" :key="n" class="star">{{ n <= item.rating ? '⭐' : '☆' }}</text>
+              </view>
             </view>
+            <text class="card-company">{{ item.companyName }}</text>
+            <view class="card-bottom">
+              <text class="card-salary">
+                <text class="salary-icon">💰</text>
+                <text class="salary-num">{{ item.salary }}</text>
+                <text class="salary-unit">k</text>
+              </text>
+            </view>
+            <text v-if="item.remark" class="card-remark">📝 {{ item.remark }}</text>
           </view>
-          <text class="card-company">{{ item.companyName }}</text>
-          <view class="card-bottom">
-            <text class="card-salary">
-              <text class="salary-icon">💰</text>
-              <text class="salary-num">{{ item.salary }}</text>
-              <text class="salary-unit">k</text>
-            </text>
-            <text class="remark-btn" @tap.stop="openRemark(item)">备注</text>
-          </view>
-          <text v-if="item.remark" class="card-remark">📝 {{ item.remark }}</text>
         </view>
       </view>
     </view>
@@ -211,6 +222,29 @@ async function saveRemark() {
 }
 
 // ── 导航 ──
+// ── 左滑 ──
+const swipedId = ref('')
+let touchStartX = 0
+let touchStartY = 0
+const SWIPE_THRESHOLD = 60
+
+function onTouchStart(e: TouchEvent, _id: string, _index: number) {
+  touchStartX = e.touches[0].clientX
+  touchStartY = e.touches[0].clientY
+}
+
+function onTouchMove(e: TouchEvent, id: string, _index: number) {
+  const dx = e.touches[0].clientX - touchStartX
+  const dy = e.touches[0].clientY - touchStartY
+  if (Math.abs(dx) > Math.abs(dy) && dx < -SWIPE_THRESHOLD) {
+    swipedId.value = id
+  } else if (dx > SWIPE_THRESHOLD) {
+    swipedId.value = ''
+  }
+}
+
+function onTouchEnd(_e: TouchEvent, _id: string) {}
+
 function goDetail(id: string) {
   uni.navigateTo({ url: `/pages/job/detail?id=${id}` })
 }
@@ -292,10 +326,12 @@ function goDetail(id: string) {
 
 /* ── 卡片 ── */
 .interview-card {
+  position: relative;
   background: #fff;
   border-radius: 16rpx;
   padding: 24rpx;
-  margin-bottom: 16rpx;
+  transition: transform 0.2s ease;
+  z-index: 1;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
 }
 .card-top {
@@ -330,15 +366,29 @@ function goDetail(id: string) {
 .salary-num { font-size: 32rpx; margin: 0 5rpx; }
 .salary-unit { font-size: 22rpx; }
 
-.remark-btn {
-  margin-left: auto;
-  font-size: 22rpx;
-  color: #0cb5b2;
-  background: #ecfefe;
-  padding: 6rpx 18rpx;
-  border-radius: 8rpx;
+/* ── 左滑 ── */
+.swipe-wrapper {
+  position: relative;
+  margin-bottom: 16rpx;
+  overflow: hidden;
+  border-radius: 16rpx;
+}
+.swipe-actions {
+  position: absolute;
+  right: 0; top: 0; bottom: 0;
+  display: flex;
+  width: 80rpx;
+}
+.swipe-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26rpx;
+  color: #fff;
   font-weight: 500;
 }
+.remark-swipe-btn { background: #4A90D9; }
 
 .card-remark {
   display: block;
