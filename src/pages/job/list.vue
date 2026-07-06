@@ -549,8 +549,8 @@ function getStatusClass(status: string): string {
   position: fixed;
   right: 40rpx;
   bottom: 120rpx;
-  width: 100rpx;
-  height: 100rpx;
+  width: 72rpx;
+  height: 72rpx;
   background: linear-gradient(135deg, #0cb5b2, #0a9e9b);
   border-radius: 50%;
   display: flex;
@@ -560,10 +560,11 @@ function getStatusClass(status: string): string {
   z-index: 100;
 }
 .fab-icon {
-  font-size: 48rpx;
+  font-size: 36rpx;
   color: #fff;
   font-weight: 300;
-  line-height: 1;
+  line-height: 0;
+  margin-top: -2rpx;
 }
 
 /* ── Picker 弹层 ── */
