@@ -11,7 +11,7 @@
     {
       "path": "pages/home",
       "style": {
-        "navigationBarTitleText": "主页"
+        "navigationBarTitleText": "首页"
       }
     },
     {
@@ -107,7 +107,7 @@
     "list": [
       {
         "pagePath": "pages/home",
-        "text": "主页",
+        "text": "首页",
         "iconPath": "static/tab/home.png",
         "selectedIconPath": "static/tab/home-active.png"
       },

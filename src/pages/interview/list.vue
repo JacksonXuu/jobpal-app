@@ -2,7 +2,7 @@
   <view class="list-page">
     <!-- 搜索栏 -->
     <view class="search-bar">
-      <text class="search-icon">🔍</text>
+      <text class="iconfont icon-sousuotubiao search-icon" />
       <input
         class="search-input"
         v-model="keyword"
@@ -26,7 +26,7 @@
     </view>
 
     <view v-else-if="list.length === 0" class="state-box">
-      <text class="state-icon">📋</text>
+      <text class="iconfont icon-lianxi2hebing_jilu state-icon" />
       <text class="state-text">暂无面试记录</text>
       <text class="state-desc">将心动岗位状态改为面试流程即可在此查看</text>
     </view>
@@ -56,20 +56,18 @@
             @tap="goDetail(item.id)"
           >
             <view class="card-top">
-              <text class="card-jobname">{{ item.jobName }}</text>
-              <view class="card-rating">
-                <text v-for="n in 5" :key="n" class="star">{{ n <= item.rating ? '⭐' : '☆' }}</text>
+              <text class="card-jobname">{{ item.companyName }}<text class="card-jobname-sub">（{{ item.jobName }}）</text></text>
+              <view class="card-rating" @tap.stop="">
+                <UniRate :value="item.rating" :max="5" readonly :size="16" />
               </view>
             </view>
-            <text class="card-company">{{ item.companyName }}</text>
             <view class="card-bottom">
               <text class="card-salary">
-                <text class="salary-icon">💰</text>
                 <text class="salary-num">{{ item.salary }}</text>
                 <text class="salary-unit">k</text>
               </text>
             </view>
-            <text v-if="item.remark" class="card-remark">📝 {{ item.remark }}</text>
+            <text v-if="item.remark" class="card-remark"><text class="iconfont icon-lianxi2hebing_jilu remark-icon" />{{ item.remark }}</text>
           </view>
         </view>
       </view>
@@ -120,6 +118,7 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
+import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
 import {
   getInterviewList,
   updateRemark,
@@ -327,12 +326,14 @@ function goDetail(id: string) {
 /* ── 卡片 ── */
 .interview-card {
   position: relative;
+  width: 100%;
   background: #fff;
   border-radius: 16rpx;
-  padding: 24rpx;
+  padding: 32rpx 24rpx;
   transition: transform 0.2s ease;
   z-index: 1;
-  box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .card-top {
   display: flex;
@@ -349,14 +350,12 @@ function goDetail(id: string) {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
-.card-rating { flex-shrink: 0; margin-left: 8rpx; }
-.star { font-size: 22rpx; }
-.card-company {
-  display: block;
+.card-jobname-sub {
   font-size: 24rpx;
+  font-weight: 400;
   color: var(--text-secondary);
-  margin-bottom: 10rpx;
 }
+.card-rating { flex-shrink: 0; margin-left: 8rpx; }
 .card-bottom {
   display: flex;
   align-items: center;
@@ -370,14 +369,15 @@ function goDetail(id: string) {
 .swipe-wrapper {
   position: relative;
   margin-bottom: 16rpx;
-  overflow: hidden;
   border-radius: 16rpx;
 }
 .swipe-actions {
   position: absolute;
-  right: 0; top: 0; bottom: 0;
+  right: 1rpx; top: 0; bottom: 0;
   display: flex;
   width: 80rpx;
+  border-radius: 0 16rpx 16rpx 0;
+  overflow: hidden;
 }
 .swipe-btn {
   flex: 1;
@@ -385,10 +385,9 @@ function goDetail(id: string) {
   align-items: center;
   justify-content: center;
   font-size: 26rpx;
-  color: #fff;
   font-weight: 500;
 }
-.remark-swipe-btn { background: #4A90D9; }
+.remark-swipe-btn { color: #4A90D9; }
 
 .card-remark {
   display: block;
@@ -398,6 +397,12 @@ function goDetail(id: string) {
   padding-top: 10rpx;
   border-top: 1rpx solid var(--divider);
   line-height: 1.5;
+  max-height: calc(24rpx * 1.5 * 10);
+  overflow-y: auto;
+}
+.remark-icon {
+  font-size: 24rpx;
+  margin-right: 6rpx;
 }
 
 /* ── Picker 弹层 ── */

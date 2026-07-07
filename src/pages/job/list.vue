@@ -2,7 +2,7 @@
   <view class="list-page">
     <!-- 搜索栏 -->
     <view class="search-bar">
-      <text class="search-icon">🔍</text>
+      <text class="iconfont icon-sousuotubiao search-icon" />
       <input
         class="search-input"
         v-model="keyword"
@@ -34,7 +34,7 @@
     </view>
 
     <view v-else-if="list.length === 0" class="state-box">
-      <text class="state-icon">📋</text>
+      <text class="iconfont icon-a-gangwei state-icon" />
       <text class="state-text">暂无心动岗位</text>
       <text class="state-desc">点击右下角 + 添加</text>
     </view>
@@ -64,15 +64,14 @@
           @tap="goDetail(item.id)"
         >
           <view class="card-top">
-            <text class="card-jobname">{{ item.jobName }}</text>
-            <view class="card-rating">
-              <text v-for="n in 5" :key="n" class="star">{{ n <= item.rating ? '⭐' : '☆' }}</text>
+            <text class="card-jobname">{{ item.companyName }}<text class="card-jobname-sub">（{{ item.jobName }}）</text></text>
+            <view class="card-rating" @tap.stop="">
+              <UniRate :value="item.rating" :max="5" readonly :size="16" />
             </view>
           </view>
-          <text class="card-company">{{ item.companyName }}</text>
           <view class="card-bottom">
-            <text class="card-salary"><text class="salary-icon">💰</text><text class="salary-num">{{ item.salary }}</text><text class="salary-unit">k</text></text>
-            <text class="card-status" :class="getStatusClass(item.status)" @tap.stop="openStatusPicker(item)">{{ item.status }}</text>
+            <text class="card-salary"><text class="salary-num">{{ item.salary }}</text><text class="salary-unit">k</text></text>
+            <view class="card-status" @tap.stop="openStatusPicker(item)"><UniTag :text="item.status" :type="getTagType(item.status)" size="mini" /></view>
           </view>
         </view>
       </view>
@@ -80,7 +79,7 @@
 
     <!-- FAB -->
     <view class="fab" @tap="goForm()">
-      <text class="fab-icon">+</text>
+      <text class="iconfont icon-add fab-icon" />
     </view>
 
     <!-- 筛选 Picker 弹层 -->
@@ -134,6 +133,8 @@
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
+import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
+import UniTag from '@dcloudio/uni-ui/lib/uni-tag/uni-tag.vue'
 import {
   getJobList,
   deleteJob,
@@ -368,19 +369,19 @@ async function handleDelete(id: string) {
 }
 
 // ── 工具 ──
-/** 根据状态返回对应样式类名 */
-function getStatusClass(status: string): string {
+/** 将状态映射为 UniTag type */
+function getTagType(status: string): string {
   const map: Record<string, string> = {
-    '待投递': 'status-gray',
-    '已投递': 'status-blue',
-    '待面试': 'status-yellow',
-    '面试中': 'status-yellow',
-    '面试结果待反馈': 'status-yellow',
-    '面试通过': 'status-green',
-    '面试失败': 'status-red',
-    '已归档': 'status-gray',
+    '待投递': 'default',
+    '已投递': 'primary',
+    '待面试': 'warning',
+    '面试中': 'warning',
+    '面试结果待反馈': 'warning',
+    '面试通过': 'success',
+    '面试失败': 'error',
+    '已归档': 'default',
   }
-  return map[status] || ''
+  return map[status] || 'default'
 }
 </script>
 
@@ -457,17 +458,18 @@ function getStatusClass(status: string): string {
 .swipe-wrapper {
   position: relative;
   margin-bottom: 16rpx;
-  overflow: hidden;
   border-radius: 16rpx;
 }
 
 .swipe-actions {
   position: absolute;
-  right: 0;
+  right: 1rpx;
   top: 0;
   bottom: 0;
   display: flex;
   width: 160rpx;
+  border-radius: 0 16rpx 16rpx 0;
+  overflow: hidden;
 }
 
 .swipe-btn {
@@ -476,18 +478,30 @@ function getStatusClass(status: string): string {
   align-items: center;
   justify-content: center;
   font-size: 26rpx;
-  color: #fff;
   font-weight: 500;
 }
-.edit-btn { background: var(--brand-primary); }
-.delete-btn { background: #FF4757; }
+.edit-btn { color: var(--brand-primary); }
+.delete-btn { color: #FF4757; position: relative; }
+.delete-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rpx;
+  height: 28rpx;
+  background: var(--divider);
+}
 
 /* ── 卡片 ── */
 .job-card {
   position: relative;
+  width: 100%;
   background: #fff;
   border-radius: 16rpx;
-  padding: 24rpx;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 32rpx 24rpx;
   transition: transform 0.2s ease;
   z-index: 1;
 }
@@ -507,8 +521,12 @@ function getStatusClass(status: string): string {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.card-jobname-sub {
+  font-size: 24rpx;
+  font-weight: 400;
+  color: var(--text-secondary);
+}
 .card-rating { flex-shrink: 0; margin-left: 8rpx; }
-.star { font-size: 22rpx; }
 
 .card-company {
   display: block;
@@ -527,22 +545,11 @@ function getStatusClass(status: string): string {
   font-weight: 600;
 }
 .salary-icon { font-size: 22rpx; }
-.salary-num { font-size: 32rpx; margin: 0 5rpx; }
+.salary-num { font-size: 36rpx; margin: 0 5rpx; font-weight: 700; }
 .salary-unit { font-size: 22rpx; }
 .card-status {
-  font-size: 22rpx;
-  color: #fff;
-  padding: 4rpx 14rpx;
-  border-radius: 8rpx;
-  white-space: nowrap;
   margin-left: auto;
 }
-/* 状态颜色 */
-.status-gray { background: var(--text-secondary); }
-.status-blue { background: #4A90D9; }
-.status-yellow { background: #F5A623; }
-.status-green { background: #27AE60; }
-.status-red { background: #FF4757; }
 
 /* ── FAB ── */
 .fab {
@@ -560,11 +567,9 @@ function getStatusClass(status: string): string {
   z-index: 100;
 }
 .fab-icon {
-  font-size: 36rpx;
+  font-size: 32rpx;
   color: #fff;
-  font-weight: 300;
-  line-height: 0;
-  margin-top: -2rpx;
+  font-weight: 400;
 }
 
 /* ── Picker 弹层 ── */

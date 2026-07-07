@@ -19,7 +19,7 @@
       <view class="bubble-user">
         <text>{{ content }}</text>
       </view>
-      <view class="iconfont icon-yonghu avatar avatar-user avatar-user-icon" />
+      <view class="avatar avatar-user"><image src="/static/img/avatar.png" mode="aspectFill" class="avatar-img" /></view>
     </template>
   </view>
 </template>
@@ -70,9 +70,10 @@ const html = computed(() => {
   background: #E8F5E9;
   margin-left: 12rpx;
 }
-.avatar-user-icon {
-  font-size: 44rpx !important;
-  color: #5e6673;
+.avatar-img {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
 }
 
 /* AI 气泡 */

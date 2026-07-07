@@ -17,10 +17,8 @@
         <text class="info-jobname">{{ job.jobName }}</text>
         <text class="info-company">{{ job.companyName }}</text>
         <view class="info-meta">
-          <text class="meta-item">💰 {{ job.salary }}k</text>
-          <text class="meta-item">
-            <text v-for="n in 5" :key="n" class="star">{{ n <= job.rating ? '⭐' : '☆' }}</text>
-          </text>
+          <text class="meta-item">{{ job.salary }}k</text>
+          <view class="meta-item"><UniRate :value="job.rating" :max="5" readonly :size="14" /></view>
         </view>
         <view class="info-meta">
           <text class="tag">来源：{{ job.sourcePlatform }}</text>
@@ -31,19 +29,19 @@
 
       <!-- 岗位要求 -->
       <view v-if="job.requirements" class="section-card">
-        <text class="section-title">📋 岗位要求</text>
+        <text class="section-title">岗位要求</text>
         <text class="section-text">{{ job.requirements }}</text>
       </view>
 
       <!-- 岗位职责 -->
       <view v-if="job.responsibilities" class="section-card">
-        <text class="section-title">📝 岗位职责</text>
+        <text class="section-title">岗位职责</text>
         <text class="section-text">{{ job.responsibilities }}</text>
       </view>
 
       <!-- 心动原因 -->
       <view v-if="job.attractiveness" class="section-card">
-        <text class="section-title">❤️ 心动原因</text>
+        <text class="section-title">心动原因</text>
         <text class="section-text">{{ job.attractiveness }}</text>
       </view>
 
@@ -58,6 +56,7 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
 import { getJobDetail, type JobPosition } from '@/apis/job'
 
 const job = ref<JobPosition | null>(null)
@@ -146,7 +145,6 @@ function formatDateTime(dateStr: string): string {
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.9);
 }
-.star { font-size: 20rpx; }
 .tag {
   font-size: 22rpx;
   color: rgba(255, 255, 255, 0.8);

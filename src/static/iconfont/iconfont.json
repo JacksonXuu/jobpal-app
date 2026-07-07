@@ -6,11 +6,53 @@
   "description": "AI求职助手jobpal",
   "glyphs": [
     {
-      "icon_id": "26876079",
-      "name": "薪资管理",
-      "font_class": "xinziguanli",
-      "unicode": "ea4a",
-      "unicode_decimal": 59978
+      "icon_id": "4514265",
+      "name": "备注",
+      "font_class": "beizhu",
+      "unicode": "e7d1",
+      "unicode_decimal": 59345
+    },
+    {
+      "icon_id": "4922615",
+      "name": "备注",
+      "font_class": "remark",
+      "unicode": "e676",
+      "unicode_decimal": 58998
+    },
+    {
+      "icon_id": "25964407",
+      "name": "编辑",
+      "font_class": "bianji",
+      "unicode": "e65d",
+      "unicode_decimal": 58973
+    },
+    {
+      "icon_id": "26324386",
+      "name": "应用开发者",
+      "font_class": "yingyongkaifazhe",
+      "unicode": "e762",
+      "unicode_decimal": 59234
+    },
+    {
+      "icon_id": "37511228",
+      "name": "设置01-F",
+      "font_class": "shezhi01-F",
+      "unicode": "e618",
+      "unicode_decimal": 58904
+    },
+    {
+      "icon_id": "8094210",
+      "name": "删除",
+      "font_class": "shanchu",
+      "unicode": "e64c",
+      "unicode_decimal": 58956
+    },
+    {
+      "icon_id": "1272631",
+      "name": "添加",
+      "font_class": "add",
+      "unicode": "e637",
+      "unicode_decimal": 58935
     },
     {
       "icon_id": "11342936",

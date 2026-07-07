@@ -2,7 +2,7 @@
   <view class="list-page">
     <!-- 搜索栏 -->
     <view class="search-bar">
-      <text class="search-icon">🔍</text>
+      <text class="iconfont icon-sousuotubiao search-icon" />
       <input
         class="search-input"
         v-model="keyword"
@@ -18,7 +18,7 @@
     </view>
 
     <view v-else-if="list.length === 0" class="state-box">
-      <text class="state-icon">📋</text>
+      <text class="iconfont icon-a-jianli state-icon" />
       <text class="state-text">暂无简历</text>
       <text class="state-desc">点击右下角 + 创建第一份简历</text>
     </view>
@@ -50,7 +50,7 @@
           @tap="goDetail(item.id)"
         >
           <view class="card-title-row">
-            <text class="card-icon">📄</text>
+            <text class="iconfont icon-a-jianli card-icon" />
             <text class="card-title">{{ item.title }}</text>
           </view>
           <text v-if="item.description" class="card-desc">{{ item.description }}</text>
@@ -61,7 +61,7 @@
 
     <!-- FAB -->
     <view class="fab" @tap="goForm()">
-      <text class="fab-icon">+</text>
+      <text class="iconfont icon-add fab-icon" />
     </view>
   </view>
 </template>
@@ -216,16 +216,17 @@ function formatDateTime(dateStr: string): string {
 .swipe-wrapper {
   position: relative;
   margin-bottom: 16rpx;
-  overflow: hidden;
   border-radius: 16rpx;
 }
 .swipe-actions {
   position: absolute;
-  right: 0;
+  right: 1rpx;
   top: 0;
   bottom: 0;
   display: flex;
   width: 160rpx;
+  border-radius: 0 16rpx 16rpx 0;
+  overflow: hidden;
 }
 .swipe-btn {
   flex: 1;
@@ -233,20 +234,32 @@ function formatDateTime(dateStr: string): string {
   align-items: center;
   justify-content: center;
   font-size: 26rpx;
-  color: #fff;
   font-weight: 500;
 }
-.edit-btn { background: var(--brand-primary); }
-.delete-btn { background: #FF4757; }
+.edit-btn { color: var(--brand-primary); }
+.delete-btn { color: #FF4757; position: relative; }
+.delete-btn::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2rpx;
+  height: 28rpx;
+  background: var(--divider);
+}
 
 /* ── 卡片 ── */
 .resume-card {
   position: relative;
+  width: 100%;
   background: #fff;
   border-radius: 16rpx;
   padding: 24rpx;
   transition: transform 0.2s ease;
   z-index: 1;
+  box-sizing: border-box;
+  overflow: hidden;
 }
 .card-title-row {
   display: flex;
@@ -297,5 +310,5 @@ function formatDateTime(dateStr: string): string {
   box-shadow: 0 8rpx 24rpx  rgba(8, 201, 176, 0.4);
   z-index: 100;
 }
-.fab-icon { font-size: 36rpx; color: #fff; font-weight: 300; line-height: 0; margin-top: -2rpx; }
+.fab-icon { font-size: 28rpx; color: #fff; font-weight: 400; }
 </style>

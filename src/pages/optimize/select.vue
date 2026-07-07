@@ -13,7 +13,7 @@
     <view class="picker-trigger" @tap="openPicker('job')">
       <text class="iconfont icon-a-gangwei trigger-icon" />
       <text class="trigger-label" :class="{ placeholder: !selectedJob }">
-        {{ selectedJob ? `${selectedJob.jobName} · ${selectedJob.companyName} · ${selectedJob.salary}k` : '点击选择心动岗位' }}
+        {{ selectedJob ? `${selectedJob.companyName}（${selectedJob.jobName}） · ${selectedJob.salary}k` : '点击选择心动岗位' }}
       </text>
       <text class="trigger-arrow">▾</text>
     </view>
@@ -45,7 +45,7 @@
           <view class="hc-names">
             <text class="hc-resume">{{ h.resume?.title }}</text>
             <text class="iconfont icon-lianjie hc-x" />
-            <text class="hc-job">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
+            <text class="hc-job">{{ h.jobPosition?.companyName }}<text class="hc-job-sub">（{{ h.jobPosition?.jobName }}）</text></text>
             <text class="hc-x">=</text>
             <text class="hc-result-btn" @tap="generatingIds.has(h.id) ? onGeneratingClick() : (batchMode ? null : goResult(h.id))">
               <view v-if="generatingIds.has(h.id)" class="spinner-dot" />
@@ -75,7 +75,7 @@
           <text class="picker-done" @tap="closePicker">完成</text>
         </view>
         <view class="picker-search">
-          <text class="search-icon">🔍</text>
+          <text class="iconfont icon-sousuotubiao search-icon" />
           <input
             class="search-input"
             v-model="pickerKeyword"
@@ -92,10 +92,12 @@
             :class="{ selected: pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id }"
             @tap="selectPickerItem(item)"
           >
-            <text class="iconfont picker-item-icon" :class="pickerType === 'resume' ? 'icon-a-jianli' : 'icon-a-gangwei'" />
             <view class="picker-item-info">
-              <text class="picker-item-name">{{ pickerType === 'resume' ? (item as any).title : (item as any).jobName }}</text>
-              <text v-if="pickerType === 'job'" class="picker-item-sub">{{ (item as any).companyName }} · {{ (item as any).salary }}k</text>
+              <text class="picker-item-name">
+                <template v-if="pickerType === 'resume'">{{ (item as any).title }}</template>
+                <template v-else>{{ (item as any).companyName }}<text class="picker-item-name-sub">（{{ (item as any).jobName }}）</text></template>
+              </text>
+              <text v-if="pickerType === 'job'" class="picker-item-sub">{{ (item as any).salary }}k</text>
             </view>
             <text
               v-if="pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id"
@@ -332,7 +334,7 @@ function onGeneratingClick() {
   margin-bottom: 16rpx;
   box-shadow: 0 2rpx 12rpx rgba(0,0,0,0.04);
 }
-.trigger-icon { font-size: 36rpx; margin-right: 16rpx; flex-shrink: 0; }
+.trigger-icon { font-size: 32rpx; margin-right: 16rpx; flex-shrink: 0; color: var(--text-secondary); }
 .trigger-label {
   flex: 1;
   font-size: 28rpx;
@@ -433,6 +435,7 @@ function onGeneratingClick() {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.hc-job-sub { font-size: 22rpx; font-weight: 400; color: var(--text-secondary); }
 .hc-result-btn {
   flex-shrink: 0;
 }
@@ -540,9 +543,9 @@ function onGeneratingClick() {
   border-bottom: 1rpx solid #F8F8F8;
 }
 .picker-item.selected { background: #f8fffe; }
-.picker-item-icon { font-size: 32rpx; margin-right: 16rpx; flex-shrink: 0; }
 .picker-item-info { flex: 1; }
 .picker-item-name { font-size: 28rpx; color: var(--text-primary); font-weight: 500; display: block; }
+.picker-item-name-sub { font-size: 24rpx; font-weight: 400; color: var(--text-secondary); }
 .picker-item-sub { font-size: 22rpx; color: var(--text-secondary); margin-top: 4rpx; display: block; }
 .picker-check { font-size: 28rpx; color: var(--brand-primary); font-weight: 700; flex-shrink: 0; }
 </style>

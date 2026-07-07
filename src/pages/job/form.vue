@@ -38,13 +38,7 @@
       <view class="form-group">
         <text class="form-label">心动等级</text>
         <view class="rating-row">
-          <text
-            v-for="n in 5"
-            :key="n"
-            class="rating-star"
-            :class="{ active: n <= form.rating }"
-            @tap="form.rating = n"
-          >{{ n <= form.rating ? '⭐' : '☆' }}</text>
+          <UniRate v-model="form.rating" :max="5" :size="28" />
         </view>
       </view>
       <view class="form-group" @tap="openPicker('sourcePlatform')">
@@ -132,6 +126,7 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
 import {
   createJob,
   updateJob,
@@ -270,7 +265,7 @@ async function handleSubmit() {
 .form-page {
   background: transparent;
   min-height: 100vh;
-  padding: 24rpx 24rpx 80rpx;
+  padding: 24rpx 24rpx 160rpx;
 }
 
 /* ── 分区 ── */
@@ -339,15 +334,8 @@ async function handleSubmit() {
 
 /* ── 星级 ── */
 .rating-row {
-  display: flex;
-  gap: 12rpx;
   padding: 8rpx 0;
 }
-.rating-star {
-  font-size: 44rpx;
-  opacity: 0.3;
-}
-.rating-star.active { opacity: 1; }
 
 /* ── 提交按钮 ── */
 .submit-btn {
