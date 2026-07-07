@@ -103,11 +103,12 @@
       </scroll-view>
 
       <!-- 底部输入栏 -->
+      <view class="ai-disclaimer">内容由AI生成，仅供参考，请注意甄别</view>
       <view class="input-bar">
         <textarea
           class="msg-input"
           v-model="inputText"
-          placeholder="输入你的问题..."
+          placeholder="输入你的问题"
           :disabled="isStreaming"
           auto-height
           maxlength="500"
@@ -426,6 +427,13 @@ function formatDate(dateStr: string): string {
   padding: 10rpx 20rpx;
   border-radius: 20rpx;
   margin: 6rpx 10rpx 6rpx 0;
+}
+
+.ai-disclaimer {
+  text-align: center;
+  font-size: 20rpx;
+  color: var(--text-secondary);
+  padding: 8rpx 0 16rpx;
 }
 
 .input-bar {

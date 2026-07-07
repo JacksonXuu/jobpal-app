@@ -2,8 +2,11 @@
   <view class="home-page">
     <!-- 第一栏：问候区 -->
     <view class="greeting-card">
-      <text class="greeting-text"><text class="iconfont icon-a-jobpal greeting-icon" /> {{ typedGreeting }}</text>
-      <text class="greeting-sub" :class="{ 'sub-hidden': isTyping }">欢迎回来</text>
+      <view class="greeting-text" :class="{ 'greeting-slide-up': showGreetingSlide }">
+        <text class="iconfont icon-a-jobpal greeting-icon" />
+        <text class="greeting-name">你好，{{ authStore.userInfo?.username }}</text>
+      </view>
+      <text class="greeting-sub">欢迎回来</text>
     </view>
 
     <!-- 第二栏：资产卡片 -->
@@ -91,37 +94,18 @@ async function fetchStats() {
   } catch { /* 拦截器已 toast */ }
 }
 
-const typedGreeting = ref('')
-const isTyping = ref(false)
+const showGreetingSlide = ref(false)
 
 onLoad(() => fetchStats())
 onShow(() => {
   fetchStats()
-  // 首次进入首页，打字机效果
-  const shown = uni.getStorageSync('GREETING_SHOWN')
-  if (!shown && authStore.userInfo?.username) {
-    startTypewriter()
-    uni.setStorageSync('GREETING_SHOWN', '1')
-  } else if (!isTyping.value) {
-    typedGreeting.value = `你好，${authStore.userInfo?.username || ''}`
+  const shown = uni.getStorageSync('GREETING_SLIDE_SHOWN')
+  if (!shown) {
+    showGreetingSlide.value = true
+    uni.setStorageSync('GREETING_SLIDE_SHOWN', '1')
+    setTimeout(() => { showGreetingSlide.value = false }, 700)
   }
 })
-
-function startTypewriter() {
-  const text = `你好，${authStore.userInfo?.username || ''}`
-  let i = 0
-  isTyping.value = true
-  typedGreeting.value = ''
-  const timer = setInterval(() => {
-    if (i < text.length) {
-      typedGreeting.value += text[i]
-      i++
-    } else {
-      clearInterval(timer)
-      isTyping.value = false
-    }
-  }, 120)
-}
 
 /** 跳转到目标页面 */
 function navigateTo(title: string) {
@@ -170,15 +154,22 @@ function navigateTo(title: string) {
   font-weight: 700;
   color: #fff;
   letter-spacing: 1rpx;
-  white-space: nowrap;
   overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .greeting-icon {
   font-size: 48rpx;
   margin-right: 10rpx;
   font-weight: 400;
+  flex-shrink: 0;
+}
+
+.greeting-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .greeting-sub {
@@ -188,8 +179,13 @@ function navigateTo(title: string) {
   margin-top: 8rpx;
 }
 
-.sub-hidden {
-  visibility: hidden;
+.greeting-slide-up {
+  animation: slideUp 0.6s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(60rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 /* ===== 区域标题 ===== */
