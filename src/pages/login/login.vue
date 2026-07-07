@@ -146,11 +146,9 @@ async function handleSubmit() {
     })
 
     if (isLogin) {
-      // 登录成功：保存 token 并跳转首页
       authStore.setLogin(res.token, res.userInfo)
       uni.switchTab({ url: '/pages/home' })
     } else {
-      // 注册成功：保存 token 并跳转首页
       uni.showToast({ title: '注册成功', icon: 'success' })
       authStore.setLogin(res.token, res.userInfo)
       uni.switchTab({ url: '/pages/home' })

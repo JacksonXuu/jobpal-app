@@ -11,7 +11,6 @@ onLaunch(() => {
   appStore.init()
   // #ifdef H5
   if (appStore.isDesktop) {
-    uni.hideTabBar()
     document.documentElement.classList.add('desktop-mode')
   }
   // #endif
