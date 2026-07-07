@@ -58,6 +58,11 @@
         <button class="submit-btn" :loading="loading" @tap="handleSubmit">
           {{ activeTab === 'login' ? '立即登录' : '立即注册' }}
         </button>
+
+        <!-- 开发者信息 -->
+        <view class="dev-info">
+          <text class="dev-text">© {{ currentYear }} JobPal · 徐渝松 个人项目</text>
+        </view>
       </view>
     </view>
   </view>
@@ -70,6 +75,7 @@ import { login, register, validateUsername, validatePassword } from '@/apis/auth
 import { useAuthStore } from '@/stores/auth'
 
 const authStore = useAuthStore()
+const currentYear = new Date().getFullYear()
 
 onLoad(() => {
   // 已登录则直接跳转首页
@@ -251,5 +257,18 @@ async function handleSubmit() {
 
 .submit-btn[loading] {
   opacity: 0.7;
+}
+
+/* === 开发者信息 === */
+.dev-info {
+  margin-top: 60rpx;
+  text-align: center;
+}
+
+.dev-text {
+  font-size: 22rpx;
+  color: #B0B0B0;
+  letter-spacing: 1rpx;
+  font-weight: 400;
 }
 </style>
