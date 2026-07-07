@@ -41,16 +41,24 @@
     </template>
 
     <!-- ====== 聊天视图（复用 ChatPanel） ====== -->
-    <ChatPanel v-else ref="chatPanelRef" />
+    <template v-else>
+      <DesktopLayout v-if="appStore.isDesktop" active="ask" @navigate="onSidebarNav">
+        <ChatPanel ref="chatPanelRef" mode="desktop" />
+      </DesktopLayout>
+      <ChatPanel v-else ref="chatPanelRef" />
+    </template>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { onLoad } from '@dcloudio/uni-app'
+import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getConversations, deleteConversation, getSuggestions, type Conversation } from '@/apis/chat'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import ChatPanel from '@/components/chat/ChatPanel.vue'
 
+const appStore = useAppStore()
 const view = ref<'list' | 'chat'>('chat')
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
@@ -63,6 +71,12 @@ const chatPanelRef = ref<InstanceType<typeof ChatPanel>>()
 onLoad(() => {
   fetchConversations()
   fetchSuggestions()
+})
+
+onShow(() => {
+  // #ifdef H5
+  if (appStore.isDesktop) uni.hideTabBar()
+  // #endif
 })
 
 async function fetchConversations() {
@@ -102,6 +116,11 @@ function startWithSuggestion(_q: string) {
 function openConversation(item: Conversation) {
   chatPanelRef.value?.openConversation(item)
   view.value = 'chat'
+}
+
+function onSidebarNav(page: string) {
+  if (page === 'ask') return
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
 }
 
 function formatDate(dateStr: string): string {

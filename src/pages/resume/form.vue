@@ -1,5 +1,7 @@
 <template>
-  <view class="form-page">
+  <DesktopLayout v-if="appStore.isDesktop" active="resume" @navigate="onSidebarNav">
+    <view class="form-page form-desktop">
+    <view class="form-back" @click="uni.navigateBack()">← 返回</view>
     <view class="form-section">
       <view class="form-group">
         <text class="form-label">简历标题 <text class="required">*</text></text>
@@ -49,11 +51,40 @@
       {{ isEdit ? '保存修改' : '创建简历' }}
     </button>
   </view>
+  </DesktopLayout>
+
+  <!-- 手机端 -->
+  <view v-else class="form-page">
+    <view class="form-section">
+      <view class="form-group">
+        <text class="form-label">简历标题 <text class="required">*</text></text>
+        <input class="form-input" v-model="form.title" placeholder="请输入简历标题" maxlength="100" />
+        <view class="form-divider" />
+        <text class="form-label">简历描述</text>
+        <textarea class="form-textarea-sm" v-model="form.description" placeholder="一句话描述这份简历..." maxlength="200" />
+      </view>
+      <view class="form-group">
+        <text class="form-label">简历正文 <text class="required">*</text></text>
+        <text class="form-tip">使用 Markdown 语法编写</text>
+        <textarea class="form-textarea" v-model="form.content" placeholder="使用 Markdown 语法编写简历正文..." maxlength="5000" />
+      </view>
+    </view>
+    <button class="submit-btn" :loading="submitting" @tap="handleSubmit">{{ isEdit ? '保存修改' : '创建简历' }}</button>
+  </view>
 </template>
 
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
+
+const appStore = useAppStore()
+
+function onSidebarNav(page: string) {
+  if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
+}
 import { marked } from 'marked'
 import { createResume, updateResume, getResumeDetail, validateResumeForm } from '@/apis/resume'
 
@@ -125,6 +156,16 @@ async function handleSubmit() {
   background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 80rpx;
+}
+.form-desktop {
+  padding: 24rpx 32rpx;
+  min-height: auto;
+}
+.form-back {
+  font-size: 14px;
+  color: var(--brand-primary);
+  cursor: pointer;
+  margin-bottom: 16rpx;
 }
 
 .form-section { margin-bottom: 24rpx; }

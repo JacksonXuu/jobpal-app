@@ -1,16 +1,19 @@
 <template>
-  <view class="list-page">
-    <!-- 搜索栏 -->
-    <view class="search-bar">
-      <text class="iconfont icon-sousuotubiao search-icon" />
-      <input
-        class="search-input"
-        v-model="keyword"
-        placeholder="搜索简历标题..."
-        @input="onSearchInput"
-      />
-      <text v-if="keyword" class="search-clear" @tap="clearSearch">✕</text>
-    </view>
+  <!-- 桌面端壳 -->
+  <DesktopLayout v-if="appStore.isDesktop" active="resume" @navigate="onSidebarNav">
+    <view class="list-page list-desktop">
+      <!-- 桌面端操作栏 -->
+      <view class="dt-action-bar">
+        <view class="dt-actions">
+          <button class="dt-btn" @click="goForm()" size="mini"><text class="iconfont icon-tianjia" /> 添加</button>
+          <button class="dt-btn dt-btn-refresh" @click="fetchList" size="mini"><text class="iconfont icon-shuaxin" /> 刷新</button>
+        </view>
+        <view class="dt-search">
+          <text class="iconfont icon-sousuotubiao search-icon" />
+          <input class="search-input" v-model="keyword" placeholder="搜索简历标题" @input="onSearchInput" />
+          <text v-if="keyword" class="search-clear" @tap="clearSearch">✕</text>
+        </view>
+      </view>
 
     <!-- 列表 -->
     <view v-if="loading" class="state-box">
@@ -31,12 +34,8 @@
       >
         <!-- 操作按钮 -->
         <view class="swipe-actions">
-          <view class="swipe-btn edit-btn" @tap.stop="handleEdit(item.id)">
-            <text>编辑</text>
-          </view>
-          <view class="swipe-btn delete-btn" @tap.stop="handleDelete(item.id)">
-            <text>删除</text>
-          </view>
+          <view class="swipe-btn edit-btn" @tap.stop="handleEdit(item.id)"><button size="mini">编辑</button></view>
+          <view class="swipe-btn delete-btn" @tap.stop="handleDelete(item.id)"><button size="mini">删除</button></view>
         </view>
 
         <!-- 卡片 -->
@@ -52,6 +51,10 @@
           <view class="card-title-row">
             <text class="iconfont icon-a-jianli card-icon" />
             <text class="card-title">{{ item.title }}</text>
+            <view class="card-actions">
+              <button class="card-action-edit" size="mini" @tap.stop="handleEdit(item.id)">编辑</button>
+              <button class="card-action-delete" size="mini" @tap.stop="handleDelete(item.id)">删除</button>
+            </view>
           </view>
           <text v-if="item.description" class="card-desc">{{ item.description }}</text>
           <text class="card-date">最近更新：{{ formatDateTime(item.updatedAt) }}</text>
@@ -64,11 +67,45 @@
       <text class="iconfont icon-add fab-icon" />
     </view>
   </view>
+  </DesktopLayout>
+
+  <!-- 手机端 -->
+  <view v-else class="list-page">
+    <view class="search-bar">
+      <text class="iconfont icon-sousuotubiao search-icon" />
+      <input class="search-input" v-model="keyword" placeholder="搜索简历标题" @input="onSearchInput" />
+      <text v-if="keyword" class="search-clear" @tap="clearSearch">✕</text>
+    </view>
+    <view v-if="loading" class="state-box"><text class="state-text">加载中...</text></view>
+    <view v-else-if="list.length === 0" class="state-box">
+      <text class="iconfont icon-a-jianli state-icon" />
+      <text class="state-text">暂无简历</text>
+      <text class="state-desc">点击右下角 + 创建第一份简历</text>
+    </view>
+    <view v-else class="card-list">
+      <view v-for="(item, index) in list" :key="item.id" class="swipe-wrapper">
+        <view class="swipe-actions">
+          <view class="swipe-btn edit-btn" @tap.stop="handleEdit(item.id)"><button size="mini">编辑</button></view>
+          <view class="swipe-btn delete-btn" @tap.stop="handleDelete(item.id)"><button size="mini">删除</button></view>
+        </view>
+        <view class="resume-card" :class="{ 'swiped': swipedId === item.id }" :style="{ transform: swipedId === item.id ? 'translateX(-160rpx)' : 'translateX(0)' }" @touchstart="onTouchStart($event, item.id, index)" @touchmove="onTouchMove($event, item.id, index)" @touchend="onTouchEnd($event, item.id)" @tap="goDetail(item.id)">
+          <view class="card-title-row"><text class="iconfont icon-a-jianli card-icon" /><text class="card-title">{{ item.title }}</text></view>
+          <text v-if="item.description" class="card-desc">{{ item.description }}</text>
+          <text class="card-date">最近更新：{{ formatDateTime(item.updatedAt) }}</text>
+        </view>
+      </view>
+    </view>
+    <view class="fab" @tap="goForm()"><text class="iconfont icon-add fab-icon" /></view>
+  </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
+
+const appStore = useAppStore()
 import { getResumeList, deleteResume, type Resume } from '@/apis/resume'
 
 // ── 列表数据 ──
@@ -140,6 +177,11 @@ function goDetail(id: string) {
   uni.navigateTo({ url: `/pages/resume/detail?id=${id}` })
 }
 
+function onSidebarNav(page: string) {
+  if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
+}
+
 function goForm(id?: string) {
   uni.navigateTo({ url: id ? `/pages/resume/form?id=${id}` : '/pages/resume/form' })
 }
@@ -183,6 +225,64 @@ function formatDateTime(dateStr: string): string {
   min-height: 100vh;
   padding: 24rpx 24rpx 160rpx;
 }
+.list-desktop {
+  padding: 32rpx;
+  min-height: auto;
+}
+
+/* 桌面端操作栏 */
+.dt-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 20rpx;
+}
+.dt-actions {
+  display: flex;
+  gap: 24rpx;
+  flex-shrink: 0;
+}
+.dt-btn {
+  padding: 0 24rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  font-size: 14px;
+  color: #fff;
+  background: var(--brand-primary);
+  border-radius: 8rpx;
+  cursor: pointer;
+  white-space: nowrap;
+  border: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 6rpx;
+}
+.dt-btn::after { border: none; }
+.dt-btn-refresh {
+  background: #fff;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+}
+.dt-search {
+  display: flex;
+  align-items: center;
+  width: 680rpx;
+  background: #fff;
+  border-radius: 8rpx;
+  padding: 0 16rpx;
+  height: 40px;
+  box-sizing: border-box;
+}
+.dt-search .search-input {
+  flex: 1;
+  height: 40px;
+  font-size: 14px;
+}
+.dt-search .search-icon { font-size: 28rpx; margin-right: 8rpx; }
+.dt-search .search-clear { font-size: 24rpx; color: var(--text-secondary); padding: 4rpx; cursor: pointer; }
+
+/* 桌面端隐藏 FAB */
+.list-desktop .fab { display: none !important; }
 
 /* ── 搜索栏 ── */
 .search-bar {
@@ -228,16 +328,26 @@ function formatDateTime(dateStr: string): string {
   border-radius: 0 16rpx 16rpx 0;
   overflow: hidden;
 }
+.list-desktop .swipe-actions { display: none; }
 .swipe-btn {
   flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
+}
+.swipe-btn button {
   font-size: 26rpx;
   font-weight: 500;
+  background: transparent;
+  border: none;
+  padding: 0;
+  height: 64rpx;
+  line-height: 64rpx;
 }
-.edit-btn { color: var(--brand-primary); }
-.delete-btn { color: #FF4757; position: relative; }
+.swipe-btn button::after { border: none; }
+.edit-btn button { color: var(--brand-primary); }
+.delete-btn { position: relative; }
+.delete-btn button { color: #FF4757; }
 .delete-btn::before {
   content: '';
   position: absolute;
@@ -280,6 +390,26 @@ function formatDateTime(dateStr: string): string {
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.card-actions {
+  flex-shrink: 0;
+  gap: 16rpx;
+  margin-left: auto;
+}
+.card-action-edit, .card-action-delete {
+  font-size: 13px;
+  cursor: pointer;
+  padding: 0 16rpx;
+  height: 64rpx;
+  line-height: 64rpx;
+  border-radius: 4rpx;
+  border: none;
+  background: transparent;
+}
+.card-action-edit::after, .card-action-delete::after { border: none; }
+.card-action-edit { color: var(--brand-primary); }
+.card-action-edit:hover { background: var(--brand-light); }
+.card-action-delete { color: #FF4757; }
+.card-action-delete:hover { background: #fff0f0; }
 .card-desc {
   display: block;
   font-size: 24rpx;
