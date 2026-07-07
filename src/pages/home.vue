@@ -1,284 +1,280 @@
 <template>
-  <view class="home-page">
-    <!-- 第一栏：问候区 -->
-    <view class="greeting-card">
-      <view class="greeting-text" :class="{ 'greeting-slide-up': showGreetingSlide }">
-        <text class="iconfont icon-a-jobpal greeting-icon" />
-        <text class="greeting-name">你好，{{ authStore.userInfo?.username }}</text>
+  <!-- 桌面端：顶栏 + 侧边栏 + 内容 -->
+  <view v-if="appStore.isDesktop" class="desktop-root">
+    <view class="dt-topbar">
+      <text class="iconfont icon-a-jobpal dt-logo" />
+      <text class="dt-title">AI求职助手 JobPal</text>
+      <view class="dt-spacer" />
+      <text class="dt-username">{{ authStore.userInfo?.username }}</text>
+      <view class="dt-avatar" @click="toggleDropdown">
+        <image src="/static/img/avatar.png" mode="aspectFill" class="dt-avatar-img" />
       </view>
-      <text class="greeting-sub">欢迎回来</text>
+      <view v-if="dropdownVisible" class="dt-dropdown">
+        <text class="dd-item" @click="navigateTo('/pages/about/index')">关于开发者</text>
+        <text class="dd-item" @click="navigateTo('/pages/settings/index')">设置</text>
+        <view class="dd-divider" />
+        <text class="dd-item dd-danger" @click="handleLogout">退出登录</text>
+      </view>
     </view>
+    <!-- 下拉遮罩 -->
+    <view v-if="dropdownVisible" class="dd-mask" @click="closeDropdown" />
+    <view class="dt-body">
+      <view class="dt-sidebar">
+        <!-- 问一问（突出入口） -->
+        <view class="sb-ask-btn" @click="switchTab('/pages/ask/index')">
+          <text class="sb-ask-icon">💬</text>
+          <view class="sb-ask-text">
+            <text class="sb-ask-title">问一问</text>
+            <text class="sb-ask-sub">AI 智能求职助手</text>
+          </view>
+        </view>
 
-    <!-- 第二栏：资产卡片 -->
-    <view class="section-header">
-      <text class="section-title">我的资产</text>
-    </view>
-    <view class="asset-cards">
-      <view
-        v-for="card in assetCards"
-        :key="card.title"
-        class="asset-card"
-        @tap="navigateTo(card.title)"
-      >
-        <text
-          v-if="card.icon.startsWith('icon-')"
-          class="iconfont asset-icon"
-          :class="card.icon"
-        />
-        <text v-else class="asset-icon">{{ card.icon }}</text>
-        <text class="asset-count">{{ card.count }}</text>
-        <text class="asset-label">{{ card.title }}</text>
-      </view>
-    </view>
+        <view class="sb-divider" />
 
-    <!-- 第三栏：功能操作 -->
-    <view class="section-header">
-      <text class="section-title">功能操作</text>
-    </view>
-    <view class="feature-card">
-      <view
-        v-for="(item, index) in featureItems"
-        :key="item.title"
-        class="feature-item"
-        :class="{ 'feature-item--last': index === featureItems.length - 1 }"
-        @tap="navigateTo(item.title)"
-      >
-        <text
-          v-if="item.icon.startsWith('icon-')"
-          class="iconfont feature-icon"
-          :class="item.icon"
-        />
-        <text v-else class="feature-icon">{{ item.icon }}</text>
-        <text class="feature-text">{{ item.title }}</text>
-        <text class="feature-arrow">›</text>
+        <!-- 求职管理（含数据仪表盘） -->
+        <text class="sb-group-title">求职管理</text>
+        <view class="sb-item" @click="navigateTo('/pages/resume/list')">
+          <view class="sb-label"><text class="iconfont icon-a-jianli sb-icon" />我的简历</view>
+          <text class="sb-count">{{ stats.resumeCount }}</text>
+        </view>
+        <view class="sb-item" @click="navigateTo('/pages/job/list')">
+          <view class="sb-label"><text class="iconfont icon-a-gangwei sb-icon" />心动岗位</view>
+          <text class="sb-count">{{ stats.jobCount }}</text>
+        </view>
+        <view class="sb-item" @click="navigateTo('/pages/interview/list')">
+          <view class="sb-label"><text class="iconfont icon-lianxi2hebing_jilu sb-icon" />面试记录</view>
+          <text class="sb-count">{{ stats.interviewCount }}</text>
+        </view>
+
+        <view class="sb-divider" />
+
+        <!-- AI 工具 -->
+        <text class="sb-group-title">AI 工具</text>
+        <view class="sb-item" @click="navigateTo('/pages/optimize/select')"><view class="sb-label"><text class="iconfont icon-a-jianliyouhua sb-icon" />简历优化</view></view>
+        <view class="sb-item" @click="goPlaceholder('定向刷题')"><view class="sb-label"><text class="iconfont icon-a-dingxiangshuati sb-icon" />定向刷题</view></view>
+        <view class="sb-item" @click="goPlaceholder('模拟面试')"><view class="sb-label"><text class="iconfont icon-a-monimianshi sb-icon" />模拟面试</view></view>
       </view>
+      <scroll-view class="dt-content" scroll-y>
+        <HomeContent />
+      </scroll-view>
     </view>
   </view>
+
+  <!-- 手机端：原生布局 -->
+  <HomeContent v-else />
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
-import { onLoad, onShow } from '@dcloudio/uni-app'
+import { ref, reactive } from 'vue'
+import { onShow } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
 import { useAuthStore } from '@/stores/auth'
+import { logoutApi } from '@/apis/auth'
 import { request } from '@/utils/request'
+import HomeContent from '@/components/home/HomeContent.vue'
 
+const appStore = useAppStore()
 const authStore = useAuthStore()
 
-/** 资产卡片数据：图标、数量、标题 */
-const assetCards = ref([
-  { icon: 'icon-a-jianli', count: 0, title: '我的简历' },
-  { icon: 'icon-a-gangwei', count: 0, title: '心动岗位' },
-  { icon: 'icon-lianxi2hebing_jilu', count: 0, title: '面试记录' },
-])
+const dropdownVisible = ref(false)
 
-/** 功能操作列表数据 */
-const featureItems = ref([
-  { icon: 'icon-a-jianliyouhua', title: '简历优化' },
-  { icon: 'icon-a-dingxiangshuati', title: '定向刷题' },
-  { icon: 'icon-a-monimianshi', title: '模拟面试' },
-])
-
-/** 首页统计数据 */
-interface HomeStats {
-  resumeCount: number
-  jobCount: number
-  interviewCount: number
-}
+const stats = reactive({ resumeCount: 0, jobCount: 0, interviewCount: 0 })
 
 async function fetchStats() {
   try {
-    const res = await request<HomeStats>({ url: '/v1/home/stats' })
-    assetCards.value[0].count = res.data.resumeCount
-    assetCards.value[1].count = res.data.jobCount
-    assetCards.value[2].count = res.data.interviewCount
-  } catch { /* 拦截器已 toast */ }
+    const res = await request<{ resumeCount: number; jobCount: number; interviewCount: number }>({ url: '/v1/home/stats' })
+    Object.assign(stats, res.data)
+  } catch { /* ignore */ }
 }
 
-const showGreetingSlide = ref(false)
-
-onLoad(() => fetchStats())
 onShow(() => {
   fetchStats()
-  const shown = uni.getStorageSync('GREETING_SLIDE_SHOWN')
-  if (!shown) {
-    showGreetingSlide.value = true
-    uni.setStorageSync('GREETING_SLIDE_SHOWN', '1')
-    setTimeout(() => { showGreetingSlide.value = false }, 700)
-  }
+  // #ifdef H5
+  if (appStore.isDesktop) uni.hideTabBar()
+  // #endif
 })
 
-/** 跳转到目标页面 */
-function navigateTo(title: string) {
-  if (title === '我的简历') {
-    uni.navigateTo({ url: '/pages/resume/list' })
-    return
-  }
-  if (title === '心动岗位') {
-    uni.navigateTo({ url: '/pages/job/list' })
-    return
-  }
-  if (title === '面试记录') {
-    uni.navigateTo({ url: '/pages/interview/list' })
-    return
-  }
-  if (title === '简历优化') {
-    uni.navigateTo({ url: '/pages/optimize/select' })
-    return
-  }
-  uni.navigateTo({
-    url: `/pages/placeholder/index?title=${encodeURIComponent(title)}`,
+function switchTab(url: string) {
+  uni.switchTab({ url })
+}
+
+function navigateTo(url: string) {
+  dropdownVisible.value = false
+  uni.navigateTo({ url })
+}
+
+function toggleDropdown() {
+  dropdownVisible.value = !dropdownVisible.value
+}
+
+function closeDropdown() {
+  dropdownVisible.value = false
+}
+
+function goPlaceholder(title: string) {
+  uni.navigateTo({ url: `/pages/placeholder/index?title=${encodeURIComponent(title)}` })
+}
+
+async function handleLogout() {
+  dropdownVisible.value = false
+  const res = await uni.showModal({
+    title: '退出登录',
+    content: '确定要退出登录吗？',
+    confirmColor: '#3ddec5',
   })
+  if (!res.confirm) return
+  try { await logoutApi() } catch { /* ignore */ }
+  authStore.logout()
+  uni.removeStorageSync('GREETING_SLIDE_SHOWN')
+  uni.reLaunch({ url: '/pages/login/login' })
 }
 </script>
 
 <style scoped>
-.home-page {
-  background: transparent;
-  padding: 24rpx;
-  padding-bottom: 120rpx;
+/* ===== 桌面端布局壳 ===== */
+.desktop-root {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  display: flex;
+  flex-direction: column;
 }
 
-/* ===== 问候区 ===== */
-.greeting-card {
-  background: var(--brand-gradient);
-  border-radius: 24rpx;
-  padding: 40rpx 32rpx;
-  margin-bottom: 28rpx;
-  box-shadow: var(--brand-shadow);
-}
-
-.greeting-text {
+.dt-topbar {
+  height: 48px;
   display: flex;
   align-items: center;
-  font-size: 38rpx;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 1rpx;
-  overflow: hidden;
+  padding: 0 26px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+.dt-logo { font-size: 28px; color: var(--brand-primary); margin-right: 10px; }
+.dt-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+.dt-spacer { flex: 1; }
+.dt-username {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-right: 12px;
 }
 
-.greeting-icon {
-  font-size: 48rpx;
-  margin-right: 10rpx;
-  font-weight: 400;
+/* 头像 & 下拉 */
+.dt-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
   flex-shrink: 0;
 }
-
-.greeting-name {
-  flex: 1;
-  min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.dt-avatar-img {
+  width: 100%;
+  height: 100%;
 }
-
-.greeting-sub {
+.dt-dropdown {
+  position: fixed;
+  top: 54px;
+  right: 26px;
+  width: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  padding: 8px 0;
+}
+.dd-item {
   display: block;
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.75);
-  margin-top: 8rpx;
-}
-
-.greeting-slide-up {
-  animation: slideUp 0.6s ease-out;
-}
-
-@keyframes slideUp {
-  from { transform: translateY(60rpx); opacity: 0; }
-  to { transform: translateY(0); opacity: 1; }
-}
-
-/* ===== 区域标题 ===== */
-.section-header {
-  margin-bottom: 16rpx;
-}
-
-.section-title {
-  font-size: 28rpx;
-  font-weight: 600;
+  padding: 10px 20px;
+  font-size: 14px;
   color: var(--text-primary);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.dd-item:hover { background: #f5f5f5; }
+.dd-divider { height: 1px; background: #eee; margin: 4px 0; }
+.dd-danger { color: #FF4757; }
+
+.dd-mask {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  z-index: 199;
 }
 
-/* ===== 资产卡片 ===== */
-.asset-cards {
-  display: flex;
-  gap: 16rpx;
-  margin-bottom: 32rpx;
-}
-
-.asset-card {
+.dt-body {
   flex: 1;
-  background: #fff;
-  border-radius: 24rpx;
-  padding: 28rpx 12rpx;
-  text-align: center;
-  box-shadow: 0 2rpx 12rpx rgba(8, 201, 176, 0.08);
-  transition: transform 0.15s;
-}
-
-.asset-card:active {
-  transform: scale(0.96);
-}
-
-.asset-icon {
-  display: block;
-  font-size: 36rpx;
-  margin-bottom: 8rpx;
-  color: #94a3b8;
-}
-
-.asset-count {
-  display: block;
-  font-size: 44rpx;
-  font-weight: 700;
-  color: var(--brand-primary);
-  margin-bottom: 4rpx;
-}
-
-.asset-label {
-  display: block;
-  font-size: 22rpx;
-  color: var(--text-secondary);
-}
-
-/* ===== 功能操作 ===== */
-.feature-card {
-  background: #fff;
-  border-radius: 24rpx;
-  box-shadow: 0 2rpx 12rpx rgba(8, 201, 176, 0.08);
+  display: flex;
   overflow: hidden;
+  min-height: 0;
 }
 
-.feature-item {
+.dt-sidebar {
+  width: 240px;
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  padding: 12px 0;
+  overflow-y: auto;
+}
+
+/* 问一问入口按钮 */
+.sb-ask-btn {
   display: flex;
   align-items: center;
-  padding: 28rpx 28rpx;
-  border-bottom: 1rpx solid var(--divider);
+  margin: 8px 16px;
+  padding: 14px 16px;
+  background: var(--brand-gradient);
+  border-radius: 12px;
+  cursor: pointer;
+  transition: opacity 0.2s;
+}
+.sb-ask-btn:hover { opacity: 0.9; }
+.sb-ask-icon { font-size: 28px; margin-right: 12px; }
+.sb-ask-text { display: flex; flex-direction: column; }
+.sb-ask-title { font-size: 16px; font-weight: 700; color: #fff; }
+.sb-ask-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+
+.sb-divider {
+  height: 1px;
+  background: #eee;
+  margin: 8px 16px;
 }
 
-.feature-item--last {
-  border-bottom: none;
+/* 分组标题 */
+.sb-group-title {
+  display: block;
+  padding: 8px 28px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
-.feature-item:active {
-  background: #f0fcfb;
+/* 导航项 */
+.sb-icon { font-size: 18px; margin-right: 10px; color: var(--brand-primary); }
+.sb-label { font-size: 14px; color: var(--text-primary); display: flex; align-items: center; }
+.sb-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: background 0.15s;
 }
-
-.feature-icon {
-  font-size: 34rpx;
-  margin-right: 20rpx;
+.sb-item:hover { background: #f5f5f5; }
+.sb-active { color: var(--brand-primary); font-weight: 600; background: var(--brand-light); }
+.sb-count {
+  font-size: 13px;
+  font-weight: 600;
   color: var(--brand-primary);
+  background: var(--brand-light);
+  border-radius: 10px;
+  padding: 2px 10px;
+  min-width: 24px;
+  text-align: center;
 }
 
-.feature-text {
+.dt-content {
   flex: 1;
-  font-size: 28rpx;
-  font-weight: 500;
-  color: var(--text-primary);
-}
-
-.feature-arrow {
-  font-size: 32rpx;
-  color: var(--text-secondary);
 }
 </style>

@@ -9,6 +9,12 @@ onLaunch(() => {
   authStore.init()
   const appStore = useAppStore()
   appStore.init()
+  // #ifdef H5
+  if (appStore.isDesktop) {
+    uni.hideTabBar()
+    document.documentElement.classList.add('desktop-mode')
+  }
+  // #endif
 })
 </script>
 
@@ -65,6 +71,15 @@ page {
 }
 
 /* #ifdef H5 */
+/*
+ * 桌面端模式下，用自定义顶栏替代系统导航栏。
+ * uni-app H5 的导航栏渲染为 <uni-page-head> 自定义元素，
+ * 这是框架的公开 Web Component 标签，版本稳定。
+ */
+.desktop-mode uni-page-head {
+  display: none !important;
+}
+
 /* 桌面端鼠标指针 */
 button,
 .swipe-btn,
