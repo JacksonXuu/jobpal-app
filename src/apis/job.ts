@@ -240,3 +240,15 @@ export async function updateRemark(id: string, remark: string): Promise<JobPosit
   })
   return res.data
 }
+
+/**
+ * 批量删除岗位
+ * DELETE /v1/jobs/batch
+ */
+export async function deleteJobsBatch(ids: string[]): Promise<void> {
+  await request<void>({
+    url: '/v1/jobs/batch',
+    method: 'DELETE',
+    data: { ids } as unknown as Record<string, unknown>,
+  })
+}

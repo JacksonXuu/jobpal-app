@@ -6,7 +6,7 @@
       <input
         class="search-input"
         v-model="keyword"
-        placeholder="搜索岗位或公司..."
+        placeholder="搜索岗位或公司"
         @input="onSearchInput"
       />
       <text v-if="keyword" class="search-clear" @tap="clearSearch">✕</text>
@@ -26,6 +26,7 @@
         <text>{{ sortLabel }}</text>
         <text class="filter-arrow">▾</text>
       </view>
+      <text class="batch-toggle" @tap="toggleBatchMode">{{ batchMode ? '取消' : '批量删除' }}</text>
     </view>
 
     <!-- 列表 -->
@@ -56,29 +57,44 @@
 
         <view
           class="job-card"
-          :class="{ 'swiped': swipedId === item.id }"
+          :class="{ 'swiped': swipedId === item.id, 'batch-selected': selectedIds.includes(item.id) }"
           :style="{ transform: swipedId === item.id ? 'translateX(-160rpx)' : 'translateX(0)' }"
           @touchstart="onTouchStart($event, item.id, index)"
           @touchmove="onTouchMove($event, item.id, index)"
           @touchend="onTouchEnd($event, item.id)"
-          @tap="goDetail(item.id)"
+          @tap="batchMode ? toggleSelect(item.id) : goDetail(item.id)"
         >
-          <view class="card-top">
-            <text class="card-jobname">{{ item.companyName }}<text class="card-jobname-sub">（{{ item.jobName }}）</text></text>
-            <view class="card-rating" @tap.stop="">
-              <UniRate :value="item.rating" :max="5" readonly :size="16" />
-            </view>
+          <view v-if="batchMode" class="card-checkbox" @tap.stop="toggleSelect(item.id)">
+            <text>{{ selectedIds.includes(item.id) ? '☑' : '☐' }}</text>
           </view>
-          <view class="card-bottom">
-            <text class="card-salary"><text class="salary-num">{{ item.salary }}</text><text class="salary-unit">k</text></text>
-            <view class="card-status" @tap.stop="openStatusPicker(item)"><UniTag :text="item.status" :type="getTagType(item.status)" size="mini" /></view>
+          <view class="card-inner">
+            <view class="card-top">
+              <text class="card-jobname">{{ item.companyName }}<text class="card-jobname-sub">（{{ item.jobName }}）</text></text>
+              <view class="card-rating" @tap.stop="">
+                <UniRate :value="item.rating" :max="5" readonly :size="16" />
+              </view>
+            </view>
+            <view class="card-bottom">
+              <text class="card-salary"><text class="salary-num">{{ item.salary }}</text><text class="salary-unit">k</text></text>
+              <view class="card-status" @tap.stop="openStatusPicker(item)"><UniTag :text="item.status" :type="getTagType(item.status)" size="mini" /></view>
+            </view>
           </view>
         </view>
       </view>
     </view>
 
+    <!-- 批量操作栏 -->
+    <view v-if="batchMode" class="batch-bar">
+      <text class="batch-select-all" @tap="toggleSelectAll">
+        {{ isAllSelected ? '☑' : '☐' }} 全选
+      </text>
+      <text class="batch-delete" :class="{ disabled: selectedIds.length === 0 }" @tap="handleBatchDelete">
+        删除 ({{ selectedIds.length }})
+      </text>
+    </view>
+
     <!-- FAB -->
-    <view class="fab" @tap="goForm()">
+    <view v-if="!batchMode" class="fab" @tap="goForm()">
       <text class="iconfont icon-add fab-icon" />
     </view>
 
@@ -138,6 +154,7 @@ import UniTag from '@dcloudio/uni-ui/lib/uni-tag/uni-tag.vue'
 import {
   getJobList,
   deleteJob,
+  deleteJobsBatch,
   patchJobStatus,
   JOB_STATUS_OPTIONS,
   SOURCE_PLATFORM_OPTIONS,
@@ -285,6 +302,7 @@ let touchStartY = 0
 const SWIPE_THRESHOLD = 60
 
 function onTouchStart(e: TouchEvent, id: string, _index: number) {
+  if (batchMode.value) return
   touchStartX = e.touches[0].clientX
   touchStartY = e.touches[0].clientY
 }
@@ -368,6 +386,51 @@ async function handleDelete(id: string) {
   }
 }
 
+// ── 批量删除 ──
+const batchMode = ref(false)
+const selectedIds = ref<string[]>([])
+
+const isAllSelected = computed(() => {
+  return list.value.length > 0 && selectedIds.value.length === list.value.length
+})
+
+function toggleBatchMode() {
+  batchMode.value = !batchMode.value
+  selectedIds.value = []
+  swipedId.value = ''
+}
+
+function toggleSelect(id: string) {
+  const idx = selectedIds.value.indexOf(id)
+  if (idx > -1) selectedIds.value.splice(idx, 1)
+  else selectedIds.value.push(id)
+}
+
+function toggleSelectAll() {
+  if (isAllSelected.value) {
+    selectedIds.value = []
+  } else {
+    selectedIds.value = list.value.map((item) => item.id)
+  }
+}
+
+async function handleBatchDelete() {
+  if (selectedIds.value.length === 0) return
+  const res = await uni.showModal({
+    title: '批量删除',
+    content: `确定要删除 ${selectedIds.value.length} 个岗位吗？`,
+    confirmColor: '#3ddec5',
+  })
+  if (!res.confirm) return
+  try {
+    await deleteJobsBatch(selectedIds.value)
+    uni.showToast({ title: `已删除 ${selectedIds.value.length} 个`, icon: 'success' })
+    batchMode.value = false
+    selectedIds.value = []
+    fetchList()
+  } catch { /* 拦截器已 toast */ }
+}
+
 // ── 工具 ──
 /** 将状态映射为 UniTag type */
 function getTagType(status: string): string {
@@ -422,6 +485,7 @@ function getTagType(status: string): string {
 /* ── 筛选栏 ── */
 .filter-bar {
   display: flex;
+  align-items: center;
   gap: 16rpx;
   margin-bottom: 20rpx;
   position: sticky;
@@ -504,6 +568,22 @@ function getTagType(status: string): string {
   padding: 32rpx 24rpx;
   transition: transform 0.2s ease;
   z-index: 1;
+  display: flex;
+  align-items: center;
+}
+.job-card.batch-selected {
+  background: #f8fffe;
+  border: 2rpx solid var(--brand-primary);
+}
+.card-checkbox {
+  font-size: 36rpx;
+  color: var(--brand-primary);
+  margin-right: 12rpx;
+  flex-shrink: 0;
+}
+.card-inner {
+  flex: 1;
+  min-width: 0;
 }
 
 .card-top {
@@ -549,6 +629,43 @@ function getTagType(status: string): string {
 .salary-unit { font-size: 22rpx; }
 .card-status {
   margin-left: auto;
+}
+
+/* ── 批量操作 ── */
+.batch-toggle {
+  font-size: 24rpx;
+  color: var(--brand-primary);
+  font-weight: 500;
+  padding: 4rpx 16rpx;
+  border-radius: 8rpx;
+  background: var(--brand-light);
+  margin-left: auto;
+}
+
+.batch-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16rpx 24rpx;
+  background: #fff;
+  border-top: 1rpx solid var(--divider);
+  z-index: 100;
+}
+.batch-select-all {
+  font-size: 26rpx;
+  color: var(--text-primary);
+}
+.batch-delete {
+  font-size: 26rpx;
+  color: #FF4757;
+  font-weight: 600;
+}
+.batch-delete.disabled {
+  color: var(--text-secondary);
 }
 
 /* ── FAB ── */
