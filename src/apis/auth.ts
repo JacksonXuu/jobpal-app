@@ -1,7 +1,7 @@
 import { request } from '@/utils/request'
 
 // ── 校验常量 ──
-export const USERNAME_MIN = 3
+export const USERNAME_MIN = 2
 export const USERNAME_MAX = 20
 export const PASSWORD_MIN = 6
 export const PASSWORD_MAX = 20
