@@ -2,7 +2,7 @@
   <view class="profile-page">
     <!-- 用户信息卡片 -->
     <view class="user-card">
-      <view class="avatar">👤</view>
+      <view class="avatar-wrap"><image class="avatar-img" src="/static/img/avatar.png" mode="aspectFill" /></view>
       <text class="username">{{ authStore.userInfo?.username }}</text>
     </view>
 
@@ -67,15 +67,17 @@ async function handleLogout() {
   box-shadow: var(--brand-shadow);
 }
 
-.avatar {
+.avatar-wrap {
   width: 80rpx;
   height: 80rpx;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 40rpx;
+  overflow: hidden;
   margin-right: 24rpx;
+  flex-shrink: 0;
+}
+.avatar-img {
+  width: 100%;
+  height: 100%;
 }
 
 .username {
