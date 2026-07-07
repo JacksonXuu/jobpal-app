@@ -103,7 +103,7 @@
       </scroll-view>
 
       <!-- 底部输入栏 -->
-      <view class="ai-disclaimer">内容由AI生成，仅供参考，请注意甄别</view>
+      <view class="ai-disclaimer disclaimer-slide" :key="disclaimerKey">内容由AI生成，仅供参考，请注意甄别</view>
       <view class="input-bar">
         <textarea
           class="msg-input"
@@ -122,7 +122,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { getConversations, getConversationDetail, deleteConversation, getSuggestions, type Conversation, type ChatMessage } from '@/apis/chat'
 import { useSSE } from '@/composables/useSSE'
@@ -130,6 +130,8 @@ import ChatBubble from '@/components/ChatBubble.vue'
 
 // ── 视图切换 ──
 const view = ref<'list' | 'chat'>('chat')
+const disclaimerKey = ref(0)
+watch(view, (v) => { if (v === 'chat') disclaimerKey.value++ })
 
 // ── 对话列表 ──
 const conversations = ref<Conversation[]>([])
@@ -434,6 +436,15 @@ function formatDate(dateStr: string): string {
   font-size: 20rpx;
   color: var(--text-secondary);
   padding: 8rpx 0 16rpx;
+}
+
+.disclaimer-slide {
+  animation: slideUp 0.5s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30rpx); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
 }
 
 .input-bar {

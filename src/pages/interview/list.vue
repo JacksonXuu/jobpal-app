@@ -6,7 +6,7 @@
       <input
         class="search-input"
         v-model="keyword"
-        placeholder="搜索岗位或公司..."
+        placeholder="搜索岗位或公司"
         @input="onSearchInput"
       />
       <text v-if="keyword" class="search-clear" @tap="clearSearch">✕</text>
