@@ -2,7 +2,7 @@
   <view class="home-page">
     <!-- 第一栏：问候区 -->
     <view class="greeting-card">
-      <text class="greeting-text">👋 你好，{{ authStore.userInfo?.username }}</text>
+      <text class="greeting-text"><text class="iconfont icon-a-jobpal greeting-icon" /> 你好，{{ authStore.userInfo?.username }}</text>
       <text class="greeting-sub">欢迎回来</text>
     </view>
 
@@ -17,7 +17,12 @@
         class="asset-card"
         @tap="navigateTo(card.title)"
       >
-        <text class="asset-icon">{{ card.icon }}</text>
+        <text
+          v-if="card.icon.startsWith('icon-')"
+          class="iconfont asset-icon"
+          :class="card.icon"
+        />
+        <text v-else class="asset-icon">{{ card.icon }}</text>
         <text class="asset-count">{{ card.count }}</text>
         <text class="asset-label">{{ card.title }}</text>
       </view>
@@ -35,7 +40,12 @@
         :class="{ 'feature-item--last': index === featureItems.length - 1 }"
         @tap="navigateTo(item.title)"
       >
-        <text class="feature-icon">{{ item.icon }}</text>
+        <text
+          v-if="item.icon.startsWith('icon-')"
+          class="iconfont feature-icon"
+          :class="item.icon"
+        />
+        <text v-else class="feature-icon">{{ item.icon }}</text>
         <text class="feature-text">{{ item.title }}</text>
         <text class="feature-arrow">›</text>
       </view>
@@ -53,16 +63,16 @@ const authStore = useAuthStore()
 
 /** 资产卡片数据：图标、数量、标题 */
 const assetCards = ref([
-  { icon: '📄', count: 0, title: '我的简历' },
-  { icon: '💼', count: 0, title: '心动岗位' },
-  { icon: '📝', count: 0, title: '面试记录' },
+  { icon: 'icon-a-jianli', count: 0, title: '我的简历' },
+  { icon: 'icon-a-gangwei', count: 0, title: '心动岗位' },
+  { icon: 'icon-lianxi2hebing_jilu', count: 0, title: '面试记录' },
 ])
 
 /** 功能操作列表数据 */
 const featureItems = ref([
-  { icon: '✨', title: '简历优化' },
-  { icon: '🎯', title: '定向刷题' },
-  { icon: '💬', title: '模拟面试' },
+  { icon: 'icon-a-jianliyouhua', title: '简历优化' },
+  { icon: 'icon-a-dingxiangshuati', title: '定向刷题' },
+  { icon: 'icon-a-monimianshi', title: '模拟面试' },
 ])
 
 /** 首页统计数据 */
@@ -125,32 +135,27 @@ function navigateTo(title: string) {
 }
 
 .greeting-text {
-  display: block;
+  display: flex;
+  align-items: center;
   font-size: 38rpx;
   font-weight: 700;
   color: #fff;
   letter-spacing: 1rpx;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.greeting-icon {
+  font-size: 48rpx;
+  margin-right: 10rpx;
+  font-weight: 400;
 }
 
 .greeting-sub {
   display: block;
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.75);
-  margin-top: 8rpx;
-}
-
-.greeting-text {
-  display: block;
-  font-size: 38rpx;
-  font-weight: 700;
-  color: #fff;
-  letter-spacing: 1rpx;
-}
-
-.greeting-sub {
-  display: block;
-  font-size: 26rpx;
-  color: rgba(255, 255, 255, 0.7);
   margin-top: 8rpx;
 }
 
@@ -190,13 +195,14 @@ function navigateTo(title: string) {
   display: block;
   font-size: 36rpx;
   margin-bottom: 8rpx;
+  color: #94a3b8;
 }
 
 .asset-count {
   display: block;
   font-size: 44rpx;
   font-weight: 700;
-  color: #22c9b3;
+  color: var(--brand-primary);
   margin-bottom: 4rpx;
 }
 
@@ -232,6 +238,7 @@ function navigateTo(title: string) {
 .feature-icon {
   font-size: 34rpx;
   margin-right: 20rpx;
+  color: var(--brand-primary);
 }
 
 .feature-text {

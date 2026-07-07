@@ -154,7 +154,7 @@ async function handleDelete(id: string) {
   const res = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该简历吗？',
-    confirmColor: '#08c9b0',
+    confirmColor: '#3ddec5',
   })
   if (!res.confirm) return
   try {

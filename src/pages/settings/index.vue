@@ -21,7 +21,7 @@ async function handleDeleteAccount() {
     title: '注销账号',
     content: '注销后所有数据将被永久删除且不可恢复。\n\n确定要注销账号吗？',
     confirmText: '确认注销',
-    confirmColor: '#08c9b0',
+    confirmColor: '#3ddec5',
   })
   if (!res.confirm) return
 

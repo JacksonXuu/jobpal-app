@@ -11,13 +11,14 @@ onLaunch(() => {
 
 <style lang="scss">
 @import '@/uni.scss';
+@import '@/static/iconfont/iconfont.css';
 
 /* ── 全局 CSS 变量 ── */
 page {
-  --brand-primary: #08c9b0;
+  --brand-primary: #3ddec5;
   --brand-secondary: #007299;
   --brand-gradient: linear-gradient(135deg, #3cd6c4, #3d9dc8);
-  --brand-shadow: 0 4rpx 16rpx rgba(8, 201, 176, 0.1);
+  --brand-shadow: 0 4rpx 16rpx rgba(61, 222, 197, 0.1);
   --text-primary: #1e293b;
   --text-secondary: #94a3b8;
   --border-light: #e2e8f0;

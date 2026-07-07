@@ -2,7 +2,10 @@
   <view class="auth-page">
     <!-- 渐变头部 -->
     <view class="header">
-      <text class="header-title">欢迎使用AI求职助手</text>
+      <view class="header-title-row">
+        <text class="iconfont icon-a-jobpal header-logo" />
+        <text class="header-title">欢迎使用AI求职助手</text>
+      </view>
       <text class="header-subtitle">简历管理 · AI简历优化 · 智能助手</text>
     </view>
 
@@ -31,7 +34,7 @@
       <!-- 表单 -->
       <view class="form">
         <view class="input-wrap">
-          <text class="input-icon">👤</text>
+          <image class="input-icon" src="/static/icon-img/user.png" mode="aspectFit" />
           <input
             class="input"
             v-model="form.username"
@@ -41,7 +44,7 @@
         </view>
 
         <view class="input-wrap">
-          <text class="input-icon">🔒</text>
+          <image class="input-icon" src="/static/icon-img/password.png" mode="aspectFit" />
           <input
             class="input"
             v-model="form.password"
@@ -49,9 +52,12 @@
             :password="!showPwd"
             maxlength="20"
           />
-          <text class="pwd-toggle" @tap="showPwd = !showPwd">
-            {{ showPwd ? '🙈' : '👁' }}
-          </text>
+          <image
+            class="pwd-toggle"
+            :src="showPwd ? '/static/icon-img/preview-open.png' : '/static/icon-img/preview-close.png'"
+            mode="aspectFit"
+            @tap="showPwd = !showPwd"
+          />
         </view>
 
         <!-- 提交按钮 -->
@@ -124,14 +130,23 @@ async function handleSubmit() {
 
   loading.value = true
   try {
-    const api = activeTab.value === 'login' ? login : register
+    const isLogin = activeTab.value === 'login'
+    const api = isLogin ? login : register
     const res = await api({
       username: form.username,
       password: form.password,
     })
 
-    authStore.setLogin(res.token, res.userInfo)
-    uni.switchTab({ url: '/pages/home' })
+    if (isLogin) {
+      // 登录成功：保存 token 并跳转首页
+      authStore.setLogin(res.token, res.userInfo)
+      uni.switchTab({ url: '/pages/home' })
+    } else {
+      // 注册成功：保存 token 并跳转首页
+      uni.showToast({ title: '注册成功', icon: 'success' })
+      authStore.setLogin(res.token, res.userInfo)
+      uni.switchTab({ url: '/pages/home' })
+    }
   } catch {
     // request.ts 拦截器已统一 toast 错误信息，此处不再重复
   } finally {
@@ -152,8 +167,19 @@ async function handleSubmit() {
   padding: 160rpx 48rpx 60rpx;
 }
 
+.header-title-row {
+  display: flex;
+  align-items: center;
+}
+
+.header-logo {
+  font-size: 68rpx;
+  color: #fff;
+  margin-right: 16rpx;
+  font-weight: 400;
+}
+
 .header-title {
-  display: block;
   font-size: 48rpx;
   font-weight: 700;
   color: #fff;
@@ -220,8 +246,10 @@ async function handleSubmit() {
 }
 
 .input-icon {
-  font-size: 36rpx;
+  width: 40rpx;
+  height: 40rpx;
   margin-right: 16rpx;
+  flex-shrink: 0;
 }
 
 .input {
@@ -232,8 +260,10 @@ async function handleSubmit() {
 }
 
 .pwd-toggle {
-  font-size: 32rpx;
+  width: 30rpx;
+  height: 30rpx;
   padding: 12rpx;
+  flex-shrink: 0;
 }
 
 /* === Button === */

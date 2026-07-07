@@ -281,7 +281,7 @@ async function handleBatchDelete() {
   const res = await uni.showModal({
     title: '批量删除',
     content: `确定要删除 ${selectedIds.value.length} 条记录吗？`,
-    confirmColor: '#08c9b0',
+    confirmColor: '#3ddec5',
   })
   if (!res.confirm) return
   try {

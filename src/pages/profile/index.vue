@@ -41,7 +41,7 @@ async function handleLogout() {
   const res = await uni.showModal({
     title: '退出登录',
     content: '确定要退出登录吗？',
-    confirmColor: '#08c9b0',
+    confirmColor: '#3ddec5',
   })
   if (!res.confirm) return
   try { await logoutApi() } catch { /* ignore */ }
@@ -82,6 +82,9 @@ async function handleLogout() {
   font-size: 36rpx;
   font-weight: 600;
   color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .menu-list {

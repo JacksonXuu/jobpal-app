@@ -165,7 +165,7 @@ function onSwipeMove(e: TouchEvent, id: string) {
 
 async function handleDelete(id: string) {
   swipedId.value = ''
-  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#08c9b0' })
+  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#3ddec5' })
   if (!res.confirm) return
   try {
     await deleteConversation(id)
@@ -449,6 +449,7 @@ function formatDate(dateStr: string): string {
   overflow-y: auto;
 }
 .send-btn {
+  font-size: 28rpx;
   font-size: 28rpx;
   color: var(--brand-primary);
   font-weight: 600;

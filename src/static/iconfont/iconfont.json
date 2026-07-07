@@ -1,0 +1,79 @@
+{
+  "id": "5204928",
+  "name": "jobpal",
+  "font_family": "iconfont",
+  "css_prefix_text": "icon-",
+  "description": "AI求职助手jobpal",
+  "glyphs": [
+    {
+      "icon_id": "38287287",
+      "name": "gitee",
+      "font_class": "gitee",
+      "unicode": "e604",
+      "unicode_decimal": 58884
+    },
+    {
+      "icon_id": "22018863",
+      "name": "记录",
+      "font_class": "lianxi2hebing_jilu",
+      "unicode": "e630",
+      "unicode_decimal": 58928
+    },
+    {
+      "icon_id": "566039",
+      "name": "用户",
+      "font_class": "yonghu",
+      "unicode": "e603",
+      "unicode_decimal": 58883
+    },
+    {
+      "icon_id": "6265235",
+      "name": "发送-实色",
+      "font_class": "send-s",
+      "unicode": "e652",
+      "unicode_decimal": 58962
+    },
+    {
+      "icon_id": "48009106",
+      "name": "我的简历",
+      "font_class": "a-jianli",
+      "unicode": "e621",
+      "unicode_decimal": 58913
+    },
+    {
+      "icon_id": "48009122",
+      "name": "心动岗位",
+      "font_class": "a-gangwei",
+      "unicode": "e622",
+      "unicode_decimal": 58914
+    },
+    {
+      "icon_id": "48009040",
+      "name": "简历优化",
+      "font_class": "a-jianliyouhua",
+      "unicode": "e61e",
+      "unicode_decimal": 58910
+    },
+    {
+      "icon_id": "48009071",
+      "name": "定向刷题",
+      "font_class": "a-dingxiangshuati",
+      "unicode": "e61f",
+      "unicode_decimal": 58911
+    },
+    {
+      "icon_id": "48009083",
+      "name": "模拟面试",
+      "font_class": "a-monimianshi",
+      "unicode": "e620",
+      "unicode_decimal": 58912
+    },
+    {
+      "icon_id": "48008956",
+      "name": "jobpal",
+      "font_class": "a-jobpal",
+      "unicode": "e749",
+      "unicode_decimal": 59209
+    }
+  ]
+}

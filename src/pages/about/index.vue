@@ -2,8 +2,8 @@
   <view class="about-page">
     <!-- Logo + 名称 -->
     <view class="hero">
-      <text class="logo">🤖</text>
-      <text class="app-name">求职助手 JobPal</text>
+      <text class="iconfont icon-a-jobpal logo" />
+      <text class="app-name">AI求职助手 JobPal</text>
       <text class="version">v1.0.0</text>
     </view>
 
@@ -17,7 +17,7 @@
     <view class="card">
       <text class="card-title">开发者</text>
       <view class="info-row">
-        <text class="info-icon">👤</text>
+        <text class="iconfont icon-yonghu info-icon" />
         <text class="info-label">姓名</text>
         <text class="info-value">徐渝松</text>
       </view>
@@ -27,12 +27,12 @@
     <view class="card">
       <text class="card-title">开源地址</text>
       <view class="info-row">
-        <text class="info-icon">🔗</text>
+        <text class="iconfont icon-gitee info-icon" />
         <text class="info-label">Gitee</text>
         <text class="info-value link" @tap="openLink('https://gitee.com/JacksonXuu')">JacksonXuu</text>
       </view>
       <view class="info-row">
-        <text class="info-icon">📦</text>
+        <text class="iconfont icon-gitee info-icon" />
         <text class="info-label">仓库</text>
         <text class="info-value link" @tap="openLink('https://gitee.com/JacksonXuu/jobpal-app')">jobpal-app</text>
       </view>
@@ -85,7 +85,7 @@ function openLink(url: string) {
   align-items: center;
   padding: 48rpx 0;
 }
-.logo { font-size: 96rpx; margin-bottom: 16rpx; }
+.logo { font-size: 96rpx; margin-bottom: 16rpx; color: var(--brand-primary); }
 .app-name { font-size: 36rpx; font-weight: 700; color: var(--text-primary); }
 .version { font-size: 24rpx; color: var(--text-secondary); margin-top: 8rpx; }
 
@@ -116,7 +116,9 @@ function openLink(url: string) {
   border-bottom: 1rpx solid #F8F8F8;
 }
 .info-row:last-child { border-bottom: none; }
-.info-icon { font-size: 28rpx; flex-shrink: 0; margin-right: 8rpx; width: 44rpx; text-align: center; }
+.info-icon { font-size: 28rpx; flex-shrink: 0; margin-right: 8rpx; width: 44rpx; display: flex; align-items: center; justify-content: center; }
+.icon-yonghu.info-icon { color: #94a3b8; }
+.icon-gitee.info-icon { color: #d81e06; }
 .info-label { font-size: 26rpx; color: var(--text-secondary); flex-shrink: 0; margin-right: 20rpx; width: 80rpx; }
 .info-value { font-size: 26rpx; color: var(--text-primary); }
 .info-value.link { color: var(--brand-primary); }

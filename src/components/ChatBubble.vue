@@ -2,7 +2,7 @@
   <view class="chat-bubble" :class="role === 'user' ? 'bubble-user-wrap' : 'bubble-ai-wrap'">
     <!-- AI 气泡 -->
     <template v-if="role === 'assistant'">
-      <view class="avatar avatar-ai">🤖</view>
+      <view class="iconfont icon-a-jobpal avatar avatar-ai avatar-logo" />
       <view class="bubble-ai">
         <rich-text v-if="content || isStreaming" :nodes="html"></rich-text>
         <view v-else class="typing-dots">
@@ -19,7 +19,7 @@
       <view class="bubble-user">
         <text>{{ content }}</text>
       </view>
-      <view class="avatar avatar-user">👤</view>
+      <view class="iconfont icon-yonghu avatar avatar-user avatar-user-icon" />
     </template>
   </view>
 </template>
@@ -63,9 +63,16 @@ const html = computed(() => {
   background: #ecfefe;
   margin-right: 12rpx;
 }
+.avatar-logo {
+  font-size: 50rpx !important;
+}
 .avatar-user {
   background: #E8F5E9;
   margin-left: 12rpx;
+}
+.avatar-user-icon {
+  font-size: 44rpx !important;
+  color: #5e6673;
 }
 
 /* AI 气泡 */
@@ -101,7 +108,7 @@ const html = computed(() => {
 }
 .bubble-user {
   max-width: 80%;
-  background: #0cb5b2;
+  background: var(--brand-primary);
   color: #fff;
   border-radius: 16rpx 0 16rpx 16rpx;
   padding: 20rpx 24rpx;
@@ -127,7 +134,7 @@ const html = computed(() => {
 
 .cursor {
   font-size: 28rpx;
-  color: #0cb5b2;
+  color: var(--brand-primary);
   animation: blink 0.8s infinite;
 }
 </style>

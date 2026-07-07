@@ -354,7 +354,7 @@ async function handleDelete(id: string) {
   const modalRes = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该岗位吗？此操作不可撤销。',
-    confirmColor: '#08c9b0',
+    confirmColor: '#3ddec5',
   })
   if (!modalRes.confirm) return
 
