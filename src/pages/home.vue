@@ -2,8 +2,8 @@
   <view class="home-page">
     <!-- 第一栏：问候区 -->
     <view class="greeting-card">
-      <text class="greeting-text"><text class="iconfont icon-a-jobpal greeting-icon" /> 你好，{{ authStore.userInfo?.username }}</text>
-      <text class="greeting-sub">欢迎回来</text>
+      <text class="greeting-text"><text class="iconfont icon-a-jobpal greeting-icon" /> {{ typedGreeting }}</text>
+      <text class="greeting-sub" :class="{ 'sub-hidden': isTyping }">欢迎回来</text>
     </view>
 
     <!-- 第二栏：资产卡片 -->
@@ -91,8 +91,37 @@ async function fetchStats() {
   } catch { /* 拦截器已 toast */ }
 }
 
+const typedGreeting = ref('')
+const isTyping = ref(false)
+
 onLoad(() => fetchStats())
-onShow(() => fetchStats())
+onShow(() => {
+  fetchStats()
+  // 首次进入首页，打字机效果
+  const shown = uni.getStorageSync('GREETING_SHOWN')
+  if (!shown && authStore.userInfo?.username) {
+    startTypewriter()
+    uni.setStorageSync('GREETING_SHOWN', '1')
+  } else if (!isTyping.value) {
+    typedGreeting.value = `你好，${authStore.userInfo?.username || ''}`
+  }
+})
+
+function startTypewriter() {
+  const text = `你好，${authStore.userInfo?.username || ''}`
+  let i = 0
+  isTyping.value = true
+  typedGreeting.value = ''
+  const timer = setInterval(() => {
+    if (i < text.length) {
+      typedGreeting.value += text[i]
+      i++
+    } else {
+      clearInterval(timer)
+      isTyping.value = false
+    }
+  }, 120)
+}
 
 /** 跳转到目标页面 */
 function navigateTo(title: string) {
@@ -157,6 +186,10 @@ function navigateTo(title: string) {
   font-size: 26rpx;
   color: rgba(255, 255, 255, 0.75);
   margin-top: 8rpx;
+}
+
+.sub-hidden {
+  visibility: hidden;
 }
 
 /* ===== 区域标题 ===== */

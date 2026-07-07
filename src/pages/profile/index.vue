@@ -46,6 +46,7 @@ async function handleLogout() {
   if (!res.confirm) return
   try { await logoutApi() } catch { /* ignore */ }
   authStore.logout()
+  uni.removeStorageSync('GREETING_SHOWN')
   uni.reLaunch({ url: '/pages/login/login' })
 }
 </script>

@@ -6,6 +6,20 @@
   "description": "AI求职助手jobpal",
   "glyphs": [
     {
+      "icon_id": "26876079",
+      "name": "薪资管理",
+      "font_class": "xinziguanli",
+      "unicode": "ea4a",
+      "unicode_decimal": 59978
+    },
+    {
+      "icon_id": "11342936",
+      "name": "搜索图标",
+      "font_class": "sousuotubiao",
+      "unicode": "e6bb",
+      "unicode_decimal": 59067
+    },
+    {
       "icon_id": "108773",
       "name": "链接",
       "font_class": "lianjie",
