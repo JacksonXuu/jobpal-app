@@ -12,6 +12,27 @@
     "routerMode": "hash",
     "publicPath": "./"
   },
+  "app-plus": {
+    "distribute": {
+      "android": {
+        "packageName": "com.jobpal.app",
+        "abiFilters": ["armeabi-v7a", "arm64-v8a"],
+        "minSdkVersion": 21,
+        "targetSdkVersion": 30,
+        "permissions": [
+          "<uses-permission android:name=\"android.permission.INTERNET\"/>",
+          "<uses-permission android:name=\"android.permission.ACCESS_NETWORK_STATE\"/>"
+        ]
+      },
+      "icons": {
+        "android": {
+          "hdpi": "",
+          "xhdpi": "",
+          "xxhdpi": ""
+        }
+      }
+    }
+  },
   "mp-weixin": {
     "appid": "",
     "setting": {
