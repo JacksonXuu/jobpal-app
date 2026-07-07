@@ -443,8 +443,10 @@ function formatDate(dateStr: string): string {
   border-radius: 24rpx;
   padding: 14rpx 24rpx;
   font-size: 28rpx;
+  line-height: 1.5;
   color: var(--text-primary);
-  max-height: 160rpx;
+  max-height: 224rpx;
+  overflow-y: auto;
 }
 .send-btn {
   font-size: 28rpx;
