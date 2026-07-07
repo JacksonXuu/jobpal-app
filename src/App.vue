@@ -13,6 +13,19 @@ onLaunch(() => {
   if (appStore.isDesktop) {
     document.documentElement.classList.add('desktop-mode')
   }
+
+  // QQ/微信内置浏览器：清空 <title> 并持续拦截，让浏览器标题栏不显示文字。
+  // uni-app 导航栏完好无损，布局零影响。解决 QQ/微信双导航栏问题。
+  const ua = navigator.userAgent
+  if (/QQ\//i.test(ua) || /MicroMessenger/i.test(ua)) {
+    const stripTitle = () => {
+      const t = document.querySelector('title')
+      if (t && t.textContent) t.textContent = ''
+    }
+    stripTitle()
+    // 监听 <title> 元素变化（uni-app 切换页面时会更新 document.title）
+    new MutationObserver(stripTitle).observe(document.head, { childList: true, subtree: true, characterData: true })
+  }
   // #endif
 })
 </script>

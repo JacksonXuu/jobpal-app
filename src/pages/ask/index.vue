@@ -131,7 +131,7 @@ function formatDate(dateStr: string): string {
 </script>
 
 <style scoped>
-.ask-page { background: transparent; height: 100%; display: flex; flex-direction: column; overflow: hidden; }
+.ask-page { background: transparent; position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; overflow: hidden; }
 
 .list-header { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 32rpx; }
 .list-title { font-size: 34rpx; font-weight: 700; color: var(--text-primary); }
