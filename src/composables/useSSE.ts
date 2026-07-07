@@ -23,7 +23,7 @@ export function useSSE() {
     error.value = ''
     abortController = new AbortController()
 
-    const BASE_URL = 'http://localhost:3000'
+    const BASE_URL = import.meta.env.VITE_API_BASE_URL
     const token = '' // 由 request.ts 管理，但 SSE 需要手动设置
 
     try {

@@ -22,9 +22,8 @@ interface ApiResponse<T = unknown> {
   data: T
 }
 
-/** 开发环境 Base URL */
-// const BASE_URL = 'http://47.107.30.30:3000'
-const BASE_URL = 'http://localhost:3000'
+/** Base URL（由环境变量注入） */
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 /**
  * 通用请求方法

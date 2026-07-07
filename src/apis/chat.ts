@@ -1,7 +1,7 @@
 import { request } from '@/utils/request'
 import { useAuthStore } from '@/stores/auth'
 
-const BASE_URL = 'http://localhost:3000'
+const BASE_URL = import.meta.env.VITE_API_BASE_URL
 
 // ── 类型 ──
 export interface Conversation {
