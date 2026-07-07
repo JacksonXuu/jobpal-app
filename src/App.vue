@@ -1,11 +1,14 @@
 <script setup lang="ts">
 import { onLaunch } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
+import { useAppStore } from '@/stores/app'
 
 onLaunch(() => {
   console.log('App Launch')
   const authStore = useAuthStore()
   authStore.init()
+  const appStore = useAppStore()
+  appStore.init()
 })
 </script>
 
@@ -60,4 +63,36 @@ page {
   background: var(--brand-gradient) !important;
   box-shadow: var(--brand-shadow) !important;
 }
+
+/* #ifdef H5 */
+/* 桌面端鼠标指针 */
+button,
+.swipe-btn,
+.fab,
+.filter-item,
+.picker-trigger,
+.feature-item,
+.asset-card,
+.tab-item,
+.resume-card,
+.job-card,
+.interview-card,
+.conv-card,
+.menu-item,
+.batch-toggle,
+.send-btn,
+.pwd-toggle,
+.picker-item,
+.picker-option,
+.search-clear,
+.suggestion-item,
+.suggestion-tag,
+.history-btn,
+.hc-result-btn,
+.action-btn,
+.avatar,
+.fab-icon {
+  cursor: pointer;
+}
+/* #endif */
 </style>

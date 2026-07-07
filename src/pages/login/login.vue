@@ -1,7 +1,13 @@
 <template>
-  <view class="auth-page">
-    <!-- 渐变头部 -->
-    <view class="header">
+  <view class="auth-page" :class="{ 'auth-desktop': appStore.isDesktop }">
+    <!-- 桌面端顶栏 -->
+    <view v-if="appStore.isDesktop" class="desktop-topbar">
+      <text class="iconfont icon-a-jobpal topbar-logo" />
+      <text class="topbar-title">AI求职助手 JobPal</text>
+    </view>
+
+    <!-- 渐变头部（手机端） -->
+    <view v-if="!appStore.isDesktop" class="header">
       <view class="header-title-row">
         <text class="iconfont icon-a-jobpal header-logo" />
         <text class="header-title">欢迎使用AI求职助手</text>
@@ -10,7 +16,7 @@
     </view>
 
     <!-- 主体卡片 -->
-    <view class="card">
+    <view class="card" :class="{ 'card-desktop': appStore.isDesktop }">
       <!-- Tab 切换 -->
       <view class="tabs">
         <view
@@ -79,8 +85,10 @@ import { ref, reactive } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { login, register, validateUsername, validatePassword } from '@/apis/auth'
 import { useAuthStore } from '@/stores/auth'
+import { useAppStore } from '@/stores/app'
 
 const authStore = useAuthStore()
+const appStore = useAppStore()
 const currentYear = new Date().getFullYear()
 
 onLoad(() => {
@@ -300,5 +308,65 @@ async function handleSubmit() {
   color: #B0B0B0;
   letter-spacing: 1rpx;
   font-weight: 400;
+}
+
+/* ===== 桌面端适配 ===== */
+.auth-desktop {
+  background: linear-gradient(180deg, #f5fdfc 0%, #e8f6fc 100%);
+}
+
+.desktop-topbar {
+  width: 100%;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 26px;
+  background: #fff;
+  border-bottom: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  box-sizing: border-box;
+}
+
+.topbar-logo {
+  font-size: 28px;
+  color: var(--brand-primary);
+  margin-right: 10px;
+}
+
+.topbar-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.card-desktop {
+  background: #fff;
+  border-radius: 16rpx;
+  padding: 72rpx 64rpx 64rpx;
+  flex: none;
+  width: 480px;
+  max-width: 90vw;
+  margin: auto;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);
+}
+
+.card-desktop .tabs {
+  margin-bottom: 56rpx;
+}
+
+.card-desktop .input-wrap {
+  margin-bottom: 32rpx;
+}
+
+.card-desktop .input {
+  height: 108rpx;
+}
+
+.card-desktop .submit-btn {
+  margin-top: 72rpx;
+}
+
+.card-desktop .dev-info {
+  margin-top: 48rpx;
 }
 </style>
