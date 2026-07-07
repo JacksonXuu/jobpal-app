@@ -22,8 +22,8 @@
 
     <!-- 底部操作栏（仅完成/历史模式显示） -->
     <view v-if="displayText" class="action-bar">
-      <text class="action-btn" @tap="copyResult">📋 复制</text>
-      <text class="action-btn" @tap="goBack">🔄 重新优化</text>
+      <text class="action-btn" @tap="copyResult">复制</text>
+      <text class="action-btn" @tap="reOptimize">重新优化</text>
     </view>
   </view>
 </template>
@@ -37,6 +37,8 @@ import { getOptimizeDetail } from '@/apis/optimize'
 const loading = ref(false)
 const displayText = ref('')
 const subtitle = ref('')
+const autoResumeId = ref('')
+const autoJobId = ref('')
 
 onLoad((options?: Record<string, string>) => {
   if (options?.id) loadDetail(options.id)
@@ -48,6 +50,8 @@ async function loadDetail(id: string) {
     const detail = await getOptimizeDetail(id)
     displayText.value = detail.optimizedText || detail.originalText
     subtitle.value = `${detail.resume.title} → ${detail.jobPosition.jobName}`
+    autoResumeId.value = detail.resumeId
+    autoJobId.value = detail.jobPositionId
   } catch { /* 拦截器已 toast */ }
   finally { loading.value = false }
 }
@@ -64,8 +68,12 @@ function copyResult() {
   })
 }
 
-function goBack() {
-  uni.navigateBack()
+function reOptimize() {
+  if (autoResumeId.value && autoJobId.value) {
+    uni.redirectTo({ url: `/pages/optimize/select?autoResumeId=${autoResumeId.value}&autoJobId=${autoJobId.value}` })
+  } else {
+    uni.navigateBack()
+  }
 }
 </script>
 

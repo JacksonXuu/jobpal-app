@@ -1,6 +1,6 @@
 <template>
   <view class="placeholder-page">
-    <text class="placeholder-icon">🚀</text>
+    <image class="placeholder-icon" src="/static/img/fun-deving.png" mode="aspectFit" />
     <text class="placeholder-title">{{ title }}</text>
     <text class="placeholder-desc">功能即将上线，敬请期待</text>
   </view>
@@ -32,7 +32,8 @@ onLoad((options?: Record<string, string>) => {
 }
 
 .placeholder-icon {
-  font-size: 100rpx;
+  width: 560rpx;
+  height: 560rpx;
   margin-bottom: 32rpx;
 }
 

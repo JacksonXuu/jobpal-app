@@ -2,7 +2,7 @@
   <view class="select-page">
     <!-- 选择简历 -->
     <view class="picker-trigger" @tap="openPicker('resume')">
-      <text class="trigger-icon">📄</text>
+      <text class="iconfont icon-a-jianli trigger-icon" />
       <text class="trigger-label" :class="{ placeholder: !selectedResume }">
         {{ selectedResume ? selectedResume.title : '点击选择简历' }}
       </text>
@@ -11,7 +11,7 @@
 
     <!-- 选择岗位 -->
     <view class="picker-trigger" @tap="openPicker('job')">
-      <text class="trigger-icon">💼</text>
+      <text class="iconfont icon-a-gangwei trigger-icon" />
       <text class="trigger-label" :class="{ placeholder: !selectedJob }">
         {{ selectedJob ? `${selectedJob.jobName} · ${selectedJob.companyName} · ${selectedJob.salary}k` : '点击选择心动岗位' }}
       </text>
@@ -21,11 +21,9 @@
     <!-- 立即优化 -->
     <button
       class="optimize-btn"
-      :class="{ disabled: !canOptimize }"
-      :disabled="!canOptimize"
       @tap="startOptimize"
     >
-      ✨ 立即优化
+      立即优化
     </button>
 
     <!-- 优化历史 -->
@@ -45,13 +43,13 @@
             <text>{{ selectedIds.includes(h.id) ? '☑' : '☐' }}</text>
           </view>
           <view class="hc-names">
-            <text class="hc-resume" @tap="batchMode ? null : goResumeDetail(h.resumeId)">{{ h.resume?.title }}</text>
-            <text class="hc-x">×</text>
-            <text class="hc-job" @tap="batchMode ? null : goJobDetail(h.jobPositionId)">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
+            <text class="hc-resume">{{ h.resume?.title }}</text>
+            <text class="iconfont icon-lianjie hc-x" />
+            <text class="hc-job">{{ h.jobPosition?.companyName }}({{ h.jobPosition?.jobName }})</text>
             <text class="hc-x">=</text>
-            <text class="hc-result-btn" @tap="batchMode ? null : goResult(h.id)">
+            <text class="hc-result-btn" @tap="generatingIds.has(h.id) ? onGeneratingClick() : (batchMode ? null : goResult(h.id))">
               <view v-if="generatingIds.has(h.id)" class="spinner-dot" />
-              <text v-else>📋</text>
+              <text v-else class="iconfont icon-a-jianliyouhua hc-result-icon" />
             </text>
           </view>
         </view>
@@ -94,7 +92,7 @@
             :class="{ selected: pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id }"
             @tap="selectPickerItem(item)"
           >
-            <text class="picker-item-icon">{{ pickerType === 'resume' ? '📄' : '💼' }}</text>
+            <text class="iconfont picker-item-icon" :class="pickerType === 'resume' ? 'icon-a-jianli' : 'icon-a-gangwei'" />
             <view class="picker-item-info">
               <text class="picker-item-name">{{ pickerType === 'resume' ? (item as any).title : (item as any).jobName }}</text>
               <text v-if="pickerType === 'job'" class="picker-item-sub">{{ (item as any).companyName }} · {{ (item as any).salary }}k</text>
@@ -120,8 +118,6 @@ import { getOptimizeHistory, deleteOptimizeBatch, requestOptimize, getOptimizeDe
 // ── 选择 ──
 const selectedResumeId = ref('')
 const selectedJobId = ref('')
-const canOptimize = computed(() => selectedResumeId.value && selectedJobId.value)
-
 const selectedResume = computed(() => resumes.value.find((r) => r.id === selectedResumeId.value))
 const selectedJob = computed(() => (jobs.value as JobPosition[]).find((j) => j.id === selectedJobId.value))
 
@@ -143,7 +139,19 @@ async function fetchData() {
   } catch { /* 拦截器已 toast */ }
 }
 
-onLoad(() => fetchData())
+onLoad((options?: Record<string, string>) => {
+  fetchData()
+  if (options?.autoResumeId && options?.autoJobId) {
+    selectedResumeId.value = options.autoResumeId
+    selectedJobId.value = options.autoJobId
+    // 等数据加载完再触发优化
+    setTimeout(() => {
+      if (selectedResume.value && selectedJob.value) {
+        startOptimize()
+      }
+    }, 500)
+  }
+})
 onShow(() => fetchData())
 
 // ── Picker ──
@@ -211,7 +219,8 @@ function selectPickerItem(item: PickerItem) {
 const generatingIds = ref(new Set<string>())
 
 async function startOptimize() {
-  if (!canOptimize.value) return
+  if (!selectedResumeId.value) { uni.showToast({ title: '请先选择简历', icon: 'none' }); return }
+  if (!selectedJobId.value) { uni.showToast({ title: '请先选择岗位', icon: 'none' }); return }
   const resume = selectedResume.value!
   const job = selectedJob.value!
   try {
@@ -239,7 +248,6 @@ async function startOptimize() {
           generatingIds.value.delete(id)
           generatingIds.value = new Set(generatingIds.value)
           fetchData()
-          uni.navigateTo({ url: `/pages/optimize/result?id=${id}` })
         } else {
           setTimeout(poll, 2000)
         }
@@ -297,13 +305,10 @@ function goResult(id: string) {
   uni.navigateTo({ url: `/pages/optimize/result?id=${id}` })
 }
 
-function goResumeDetail(id: string) {
-  uni.navigateTo({ url: `/pages/resume/detail?id=${id}` })
+function onGeneratingClick() {
+  uni.showToast({ title: '简历优化生成中，请稍后查看', icon: 'none' })
 }
 
-function goJobDetail(id: string) {
-  uni.navigateTo({ url: `/pages/job/detail?id=${id}` })
-}
 
 </script>
 
@@ -354,11 +359,6 @@ function goJobDetail(id: string) {
   box-shadow: 0 8rpx 24rpx rgba(12,181,178,0.3);
 }
 .optimize-btn::after { border: none; }
-.optimize-btn.disabled {
-  background: var(--text-secondary);
-  box-shadow: none;
-  opacity: 0.5;
-}
 
 /* ── 历史 ── */
 .history-section {
@@ -415,32 +415,36 @@ function goJobDetail(id: string) {
   flex: 1;
   min-width: 0;
   font-size: 26rpx;
-  color: var(--brand-primary);
+  color: var(--text-primary);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .hc-x { font-size: 22rpx; color: var(--text-secondary); flex-shrink: 0; }
+.icon-lianjie.hc-x { font-size: 45rpx; }
 .hc-job {
   flex: 1;
   min-width: 0;
   font-size: 26rpx;
-  color: var(--brand-primary);
+  color: var(--text-primary);
   font-weight: 500;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 .hc-result-btn {
-  font-size: 32rpx;
   flex-shrink: 0;
 }
+.hc-result-icon {
+  font-size: 32rpx;
+  color: var(--brand-primary);
+}
 .spinner-dot {
-  width: 28rpx;
-  height: 28rpx;
+  width: 24rpx;
+  height: 24rpx;
   border: 4rpx solid #E0E0E0;
-  border-top-color: var(--brand-primary);
+  border-top-color: #f0ad4e;
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
   display: inline-block;

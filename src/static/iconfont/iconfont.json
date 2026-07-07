@@ -6,6 +6,13 @@
   "description": "AI求职助手jobpal",
   "glyphs": [
     {
+      "icon_id": "108773",
+      "name": "链接",
+      "font_class": "lianjie",
+      "unicode": "e600",
+      "unicode_decimal": 58880
+    },
+    {
       "icon_id": "38287287",
       "name": "gitee",
       "font_class": "gitee",
