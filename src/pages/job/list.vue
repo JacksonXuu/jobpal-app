@@ -335,7 +335,6 @@ function goDetail(id: string) {
 }
 
 function goForm(id?: string) {
-  trackAction(id ? 'edit' : 'create')
   const url = id ? `/pages/job/form?id=${id}` : '/pages/job/form'
   uni.navigateTo({ url })
 }

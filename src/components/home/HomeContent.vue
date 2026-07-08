@@ -44,10 +44,8 @@ import { ref } from 'vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
 import { request } from '@/utils/request'
-import { useTracking } from '@/composables/useTracking'
 
 const authStore = useAuthStore()
-const { trackClick } = useTracking({ module: 'home' })
 
 const assetCards = ref([
   { icon: 'icon-a-jianli', count: 0, title: '我的简历' },
@@ -89,23 +87,10 @@ onShow(() => {
 })
 
 function navigateTo(title: string) {
-  if (title === '我的简历') {
-    trackClick('click_stats_resume')
-    uni.navigateTo({ url: '/pages/resume/list' }); return
-  }
-  if (title === '心动岗位') {
-    trackClick('click_stats_job')
-    uni.navigateTo({ url: '/pages/job/list' }); return
-  }
-  if (title === '面试记录') {
-    trackClick('click_stats_interview')
-    uni.navigateTo({ url: '/pages/interview/list' }); return
-  }
-  if (title === '简历优化') {
-    trackClick('click_quick_optimize')
-    uni.navigateTo({ url: '/pages/optimize/select' }); return
-  }
-  trackClick('click_quick_placeholder')
+  if (title === '我的简历') { uni.navigateTo({ url: '/pages/resume/list' }); return }
+  if (title === '心动岗位') { uni.navigateTo({ url: '/pages/job/list' }); return }
+  if (title === '面试记录') { uni.navigateTo({ url: '/pages/interview/list' }); return }
+  if (title === '简历优化') { uni.navigateTo({ url: '/pages/optimize/select' }); return }
   uni.navigateTo({ url: `/pages/placeholder/index?title=${encodeURIComponent(title)}` })
 }
 </script>

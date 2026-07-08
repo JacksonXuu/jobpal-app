@@ -191,7 +191,6 @@ function onSidebarNav(page: string) {
 }
 
 function goForm(id?: string) {
-  trackAction(id ? 'edit' : 'create')
   uni.navigateTo({ url: id ? `/pages/resume/form?id=${id}` : '/pages/resume/form' })
 }
 
