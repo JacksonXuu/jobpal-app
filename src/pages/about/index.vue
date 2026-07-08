@@ -2,7 +2,7 @@
   <view class="about-page">
     <!-- Logo + 名称 -->
     <view class="hero">
-      <text class="iconfont icon-a-jobpal logo" />
+      <text class="iconfont icon-a-jobpal-solid logo" />
       <text class="app-name">AI求职助手 JobPal</text>
       <text class="version">v1.0.0</text>
     </view>

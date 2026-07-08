@@ -2,14 +2,14 @@
   <view class="auth-page" :class="{ 'auth-desktop': appStore.isDesktop }">
     <!-- 桌面端顶栏 -->
     <view v-if="appStore.isDesktop" class="desktop-topbar">
-      <text class="iconfont icon-a-jobpal topbar-logo" />
+      <text class="iconfont icon-a-jobpal-solid topbar-logo" />
       <text class="topbar-title">AI求职助手 JobPal</text>
     </view>
 
     <!-- 渐变头部（手机端） -->
     <view v-if="!appStore.isDesktop" class="header">
       <view class="header-title-row">
-        <text class="iconfont icon-a-jobpal header-logo" />
+        <text class="iconfont icon-a-jobpal-solid header-logo" />
         <text class="header-title">欢迎使用AI求职助手</text>
       </view>
       <text class="header-subtitle">简历管理 · AI简历优化 · 智能助手</text>
@@ -40,7 +40,7 @@
       <!-- 表单 -->
       <view class="form">
         <view class="input-wrap">
-          <image class="input-icon" src="/static/icon-img/user.png" mode="aspectFit" />
+          <text class="iconfont icon-yonghuguanli input-icon" />
           <input
             class="input"
             v-model="form.username"
@@ -50,7 +50,7 @@
         </view>
 
         <view class="input-wrap">
-          <image class="input-icon" src="/static/icon-img/password.png" mode="aspectFit" />
+          <text class="iconfont icon-suoding input-icon" />
           <input
             class="input"
             v-model="form.password"
@@ -58,10 +58,9 @@
             :password="!showPwd"
             maxlength="20"
           />
-          <image
-            class="pwd-toggle"
-            :src="showPwd ? '/static/icon-img/preview-open.png' : '/static/icon-img/preview-close.png'"
-            mode="aspectFit"
+          <text
+            class="iconfont pwd-toggle"
+            :class="showPwd ? 'icon-biyan' : 'icon-zhengyan'"
             @tap="showPwd = !showPwd"
           />
         </view>
@@ -228,14 +227,14 @@ async function handleSubmit() {
 }
 
 .tab-item.active {
-  color: #0cb5b2;
+  color: var(--brand-primary);
   font-weight: 600;
 }
 
 .tab-underline {
   width: 48rpx;
   height: 6rpx;
-  background: #0cb5b2;
+  background: var(--brand-primary);
   border-radius: 3rpx;
   margin: 8rpx auto 0;
 }
@@ -253,14 +252,14 @@ async function handleSubmit() {
 }
 
 .input-wrap:focus-within {
-  border-color: #0cb5b2;
+  border-color: var(--brand-primary);
 }
 
 .input-icon {
-  width: 40rpx;
-  height: 40rpx;
+  font-size: 36rpx;
   margin-right: 16rpx;
   flex-shrink: 0;
+  color: var(--brand-primary);
 }
 
 .input {
@@ -271,10 +270,10 @@ async function handleSubmit() {
 }
 
 .pwd-toggle {
-  width: 30rpx;
-  height: 30rpx;
+  font-size: 36rpx;
   padding: 12rpx;
   flex-shrink: 0;
+  color: #94a3b8;
 }
 
 /* === Button === */
@@ -282,14 +281,19 @@ async function handleSubmit() {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: var(--brand-gradient);
+  background: var(--brand-primary);
   color: #fff;
   font-size: 34rpx;
   font-weight: 600;
   border-radius: 48rpx;
   border: none;
   margin-top: 48rpx;
-  box-shadow: 0 8rpx 24rpx rgba(12, 181, 178, 0.3);
+  box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px;
+  transition: background 0.3s;
+}
+
+.submit-btn:hover {
+  background: #80ede0;
 }
 
 .submit-btn::after {
@@ -319,6 +323,8 @@ async function handleSubmit() {
 }
 
 .desktop-topbar {
+  position: relative;
+  z-index: 1;
   width: 100%;
   height: 48px;
   display: flex;
@@ -326,6 +332,7 @@ async function handleSubmit() {
   padding: 0 26px;
   background: #fff;
   border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
   box-sizing: border-box;
 }
@@ -342,12 +349,23 @@ async function handleSubmit() {
   color: var(--text-primary);
 }
 
+.card-desktop .submit-btn {
+  height: 48px;
+  line-height: 48px;
+  font-size: 16px;
+  margin-top: 24px;
+}
+
 .card-desktop {
   background: #fff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   border-radius: 16rpx;
-  padding: 72rpx 64rpx 64rpx;
+  padding: 72rpx 80rpx;
   flex: none;
-  width: 480px;
+  width: 380px;
+  height: 550px;
   max-width: 90vw;
   margin: auto;
   box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.08);

@@ -27,6 +27,7 @@
 import { useAuthStore } from '@/stores/auth'
 import { logoutApi } from '@/apis/auth'
 import { useTracking } from '@/composables/useTracking'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 const authStore = useAuthStore()
 const { trackClick, trackAction } = useTracking({ module: 'profile' })
@@ -46,7 +47,7 @@ async function handleLogout() {
   const res = await uni.showModal({
     title: '退出登录',
     content: '确定要退出登录吗？',
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!res.confirm) return
   try { await logoutApi() } catch { /* ignore */ }
@@ -66,11 +67,11 @@ async function handleLogout() {
 .user-card {
   display: flex;
   align-items: center;
-  background: var(--brand-gradient);
+  background: linear-gradient(135deg, #3ddec5, #6ae8d8);
   border-radius: 24rpx;
   padding: 40rpx 32rpx;
   margin-bottom: 32rpx;
-  box-shadow: var(--brand-shadow);
+  box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px;
 }
 
 .avatar-wrap {

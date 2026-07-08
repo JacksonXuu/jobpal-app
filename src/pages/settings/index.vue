@@ -14,6 +14,7 @@
 import { useAuthStore } from '@/stores/auth'
 import { deleteAccount } from '@/apis/auth'
 import { useTracking } from '@/composables/useTracking'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 const { trackAction } = useTracking({ module: 'settings' })
 
@@ -24,7 +25,7 @@ async function handleDeleteAccount() {
     title: '注销账号',
     content: '注销后所有数据将被永久删除且不可恢复。\n\n确定要注销账号吗？',
     confirmText: '确认注销',
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!res.confirm) return
 

@@ -195,7 +195,7 @@ defineExpose({ newSession, openConversation })
 .chat-header {
   display: flex;
   align-items: center;
-  padding: 12rpx 24rpx;
+  padding: 20rpx 24rpx;
   flex-shrink: 0;
 }
 .header-btn { font-size: 28rpx; color: var(--brand-primary); font-weight: 500; flex-shrink: 0; cursor: pointer; }

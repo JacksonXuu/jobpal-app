@@ -117,6 +117,7 @@ import { getResumeList, type Resume } from '@/apis/resume'
 import { getJobList, type JobPosition } from '@/apis/job'
 import { getOptimizeHistory, deleteOptimizeBatch, requestOptimize, getOptimizeDetail, type OptimizeHistoryItem } from '@/apis/optimize'
 import { useTracking } from '@/composables/useTracking'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 const { trackAction } = useTracking({ module: 'optimize' })
 
@@ -297,7 +298,7 @@ async function handleBatchDelete() {
   const res = await uni.showModal({
     title: '批量删除',
     content: `确定要删除 ${selectedIds.value.length} 条记录吗？`,
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!res.confirm) return
   try {

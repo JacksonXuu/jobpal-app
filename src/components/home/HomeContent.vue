@@ -3,7 +3,7 @@
     <!-- 问候区 -->
     <view class="greeting-card">
       <view class="greeting-text" :class="{ 'greeting-slide-up': showGreetingSlide }">
-        <text class="iconfont icon-a-jobpal greeting-icon" />
+        <text class="iconfont icon-a-jobpal-solid greeting-icon" />
         <text class="greeting-name">你好，{{ authStore.userInfo?.username }}</text>
       </view>
       <text class="greeting-sub">欢迎回来</text>
@@ -103,11 +103,11 @@ function navigateTo(title: string) {
 
 /* 问候区 */
 .greeting-card {
-  background: var(--brand-gradient);
+  background: linear-gradient(135deg, #3ddec5, #6ae8d8);
   border-radius: 24rpx;
   padding: 40rpx 32rpx;
   margin-bottom: 28rpx;
-  box-shadow: var(--brand-shadow);
+  box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px;
 }
 .greeting-text {
   display: flex;

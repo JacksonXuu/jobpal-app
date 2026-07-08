@@ -58,6 +58,7 @@ import { useAppStore } from '@/stores/app'
 import DesktopLayout from '@/components/DesktopLayout.vue'
 import ChatPanel from '@/components/chat/ChatPanel.vue'
 import { useTracking } from '@/composables/useTracking'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 const appStore = useAppStore()
 const { trackAction, trackClick } = useTracking({ module: 'ask' })
@@ -100,7 +101,7 @@ function onSwipeMove(e: TouchEvent, id: string) {
 
 async function handleDelete(id: string) {
   swipedId.value = ''
-  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#3ddec5' })
+  const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: BRAND_PRIMARY })
   if (!res.confirm) return
   try {
     trackAction('delete_conversation')

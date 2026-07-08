@@ -5,7 +5,7 @@
       <!-- 桌面端操作栏 -->
       <view class="dt-action-bar">
         <view class="dt-actions">
-          <button class="dt-btn" @click="goForm()" size="mini"><text class="iconfont icon-tianjia" /> 添加</button>
+          <button class="dt-btn" @click="goForm()" size="mini"><text class="iconfont icon-tianjia" /> 新建简历</button>
           <button class="dt-btn dt-btn-refresh" @click="fetchList" size="mini"><text class="iconfont icon-shuaxin" /> 刷新</button>
         </view>
         <view class="dt-search">
@@ -108,6 +108,7 @@ import DesktopLayout from '@/components/DesktopLayout.vue'
 const appStore = useAppStore()
 import { getResumeList, deleteResume, type Resume } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 const { trackAction } = useTracking({ module: 'resume' })
 
@@ -204,7 +205,7 @@ async function handleDelete(id: string) {
   const res = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该简历吗？',
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!res.confirm) return
   try {
@@ -252,26 +253,29 @@ function formatDateTime(dateStr: string): string {
   flex-shrink: 0;
 }
 .dt-btn {
-  padding: 0 24rpx;
-  height: 64rpx;
-  line-height: 64rpx;
+  padding: 0 15px;
+  height: 32px;
+  line-height: 30px;
   font-size: 14px;
-  color: #fff;
-  background: var(--brand-primary);
-  border-radius: 8rpx;
+  color: var(--brand-primary);
+  background: transparent;
+  border: 1px solid var(--brand-primary);
+  border-radius: 6px;
   cursor: pointer;
   white-space: nowrap;
-  border: none;
   display: inline-flex;
   align-items: center;
-  gap: 6rpx;
+  gap: 4px;
+  transition: all 0.2s;
 }
+.dt-btn:hover { color: #80ede0; border-color: #80ede0; }
 .dt-btn::after { border: none; }
 .dt-btn-refresh {
-  background: #fff;
-  color: var(--text-secondary);
-  border: 1px solid var(--border-light);
+  background: transparent;
+  color: var(--brand-primary);
+  border: 1px solid var(--brand-primary);
 }
+.dt-btn-refresh:hover { color: #80ede0; border-color: #80ede0; }
 .dt-search {
   display: flex;
   align-items: center;

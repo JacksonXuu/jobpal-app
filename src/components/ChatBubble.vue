@@ -2,7 +2,7 @@
   <view class="chat-bubble" :class="role === 'user' ? 'bubble-user-wrap' : 'bubble-ai-wrap'">
     <!-- AI 气泡 -->
     <template v-if="role === 'assistant'">
-      <view class="iconfont icon-a-jobpal avatar avatar-ai avatar-logo" :class="{ 'avatar-pulse': isStreaming }" />
+      <view class="iconfont icon-a-jobpal-solid avatar avatar-ai avatar-logo" :class="{ 'avatar-pulse': isStreaming }" />
       <view class="bubble-ai">
         <rich-text v-if="content || isStreaming" :nodes="html"></rich-text>
         <view v-else class="typing-dots">
@@ -65,8 +65,11 @@ const html = computed(() => {
 }
 .avatar-logo {
   font-size: 50rpx !important;
+  color: var(--brand-primary);
 }
 .avatar-user {
+  width: 52rpx;
+  height: 52rpx;
   background: #E8F5E9;
   margin-left: 12rpx;
 }

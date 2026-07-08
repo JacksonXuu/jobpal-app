@@ -161,6 +161,7 @@ import {
   SORT_BY_OPTIONS,
   type JobPosition,
 } from '@/apis/job'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 // ── 列表数据 ──
 const list = ref<JobPosition[]>([])
@@ -380,7 +381,7 @@ async function handleDelete(id: string) {
   const modalRes = await uni.showModal({
     title: '确认删除',
     content: '确定要删除该岗位吗？此操作不可撤销。',
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!modalRes.confirm) return
 
@@ -427,7 +428,7 @@ async function handleBatchDelete() {
   const res = await uni.showModal({
     title: '批量删除',
     content: `确定要删除 ${selectedIds.value.length} 个岗位吗？`,
-    confirmColor: '#3ddec5',
+    confirmColor: BRAND_PRIMARY,
   })
   if (!res.confirm) return
   try {

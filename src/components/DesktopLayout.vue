@@ -2,19 +2,21 @@
   <view class="desktop-root">
     <!-- 顶栏 -->
     <view class="dt-topbar">
-      <text class="iconfont icon-a-jobpal dt-logo" />
+      <text class="iconfont icon-a-jobpal-solid dt-logo" />
       <text class="dt-title">AI求职助手 JobPal</text>
       <view class="dt-spacer" />
       <text class="dt-username">{{ authStore.userInfo?.username }}</text>
       <view class="dt-avatar" @click="toggleDropdown">
         <image src="/static/img/avatar.png" mode="aspectFill" class="dt-avatar-img" />
       </view>
-      <view v-if="dropdownVisible" class="dt-dropdown">
-        <text class="dd-item" @click="goPage('/pages/about/index')">关于开发者</text>
-        <text class="dd-item" @click="goPage('/pages/settings/index')">设置</text>
-        <view class="dd-divider" />
-        <text class="dd-item dd-danger" @click="handleLogout">退出登录</text>
-      </view>
+    </view>
+
+    <!-- 头像下拉面板 + 蒙层（放在顶栏外层，避免层叠上下文问题） -->
+    <view v-if="dropdownVisible" class="dt-dropdown">
+      <text class="dd-item" @click="goPage('/pages/about/index')">关于开发者</text>
+      <text class="dd-item" @click="goPage('/pages/settings/index')">设置</text>
+      <view class="dd-divider" />
+      <text class="dd-item dd-danger" @click="handleLogout">退出登录</text>
     </view>
     <view v-if="dropdownVisible" class="dd-mask" @click="closeDropdown" />
 
@@ -34,15 +36,15 @@
 
         <!-- 求职管理 -->
         <text class="sb-group-title">求职管理</text>
-        <view class="sb-item" @click="goPage('/pages/resume/list')">
+        <view class="sb-item" :class="{ 'sb-active': active === 'resume' }" @click="goPage('/pages/resume/list')">
           <view class="sb-label"><text class="iconfont icon-a-jianli sb-icon" />我的简历</view>
           <text class="sb-count">{{ stats.resumeCount }}</text>
         </view>
-        <view class="sb-item" @click="goPage('/pages/job/list')">
+        <view class="sb-item" :class="{ 'sb-active': active === 'job' }" @click="goPage('/pages/job/list')">
           <view class="sb-label"><text class="iconfont icon-a-gangwei sb-icon" />心动岗位</view>
           <text class="sb-count">{{ stats.jobCount }}</text>
         </view>
-        <view class="sb-item" @click="goPage('/pages/interview/list')">
+        <view class="sb-item" :class="{ 'sb-active': active === 'interview' }" @click="goPage('/pages/interview/list')">
           <view class="sb-label"><text class="iconfont icon-lianxi2hebing_jilu sb-icon" />面试记录</view>
           <text class="sb-count">{{ stats.interviewCount }}</text>
         </view>
@@ -51,7 +53,7 @@
 
         <!-- AI 工具 -->
         <text class="sb-group-title">AI 工具</text>
-        <view class="sb-item" @click="goPage('/pages/optimize/select')"><view class="sb-label"><text class="iconfont icon-a-jianliyouhua sb-icon" />简历优化</view></view>
+        <view class="sb-item" :class="{ 'sb-active': active === 'optimize' }" @click="goPage('/pages/optimize/select')"><view class="sb-label"><text class="iconfont icon-a-jianliyouhua sb-icon" />简历优化</view></view>
         <view class="sb-item" @click="goPlaceholder('定向刷题')"><view class="sb-label"><text class="iconfont icon-a-dingxiangshuati sb-icon" />定向刷题</view></view>
         <view class="sb-item" @click="goPlaceholder('模拟面试')"><view class="sb-label"><text class="iconfont icon-a-monimianshi sb-icon" />模拟面试</view></view>
       </view>
@@ -69,6 +71,7 @@ import { onShow } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
 import { logoutApi } from '@/apis/auth'
 import { request } from '@/utils/request'
+import { BRAND_PRIMARY } from '@/utils/theme'
 
 defineProps<{ active: string }>()
 const emits = defineEmits<{ navigate: [page: string] }>()
@@ -103,7 +106,7 @@ function goPlaceholder(title: string) {
 
 async function handleLogout() {
   dropdownVisible.value = false
-  const res = await uni.showModal({ title: '退出登录', content: '确定要退出登录吗？', confirmColor: '#3ddec5' })
+  const res = await uni.showModal({ title: '退出登录', content: '确定要退出登录吗？', confirmColor: BRAND_PRIMARY })
   if (!res.confirm) return
   try { await logoutApi() } catch { /* ignore */ }
   authStore.logout()
@@ -124,12 +127,15 @@ async function handleLogout() {
 
 /* 顶栏 */
 .dt-topbar {
+  position: relative;
+  z-index: 1;
   height: 48px;
   display: flex;
   align-items: center;
   padding: 0 26px;
   background: #fff;
   border-bottom: 1px solid #e8e8e8;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
   box-sizing: border-box;
 }
