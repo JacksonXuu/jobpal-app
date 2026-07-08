@@ -29,6 +29,9 @@ import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { marked } from 'marked'
 import { getResumeDetail, type Resume } from '@/apis/resume'
+import { useTracking } from '@/composables/useTracking'
+
+useTracking({ module: 'resume' })
 
 const resume = ref<Resume | null>(null)
 const loading = ref(true)

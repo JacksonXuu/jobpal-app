@@ -33,7 +33,9 @@ import { ref, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { marked } from 'marked'
 import { getOptimizeDetail } from '@/apis/optimize'
+import { useTracking } from '@/composables/useTracking'
 
+const { trackAction } = useTracking({ module: 'optimize' })
 const loading = ref(false)
 const displayText = ref('')
 const subtitle = ref('')
@@ -62,6 +64,7 @@ const html = computed(() => {
 })
 
 function copyResult() {
+  trackAction('copy_result')
   uni.setClipboardData({
     data: displayText.value,
     success: () => uni.showToast({ title: '已复制', icon: 'success' }),
@@ -69,6 +72,7 @@ function copyResult() {
 }
 
 function reOptimize() {
+  trackAction('re_optimize')
   if (autoResumeId.value && autoJobId.value) {
     uni.redirectTo({ url: `/pages/optimize/select?autoResumeId=${autoResumeId.value}&autoJobId=${autoJobId.value}` })
   } else {

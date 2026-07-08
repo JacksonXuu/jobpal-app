@@ -116,6 +116,9 @@ import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getResumeList, type Resume } from '@/apis/resume'
 import { getJobList, type JobPosition } from '@/apis/job'
 import { getOptimizeHistory, deleteOptimizeBatch, requestOptimize, getOptimizeDetail, type OptimizeHistoryItem } from '@/apis/optimize'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'optimize' })
 
 // ── 选择 ──
 const selectedResumeId = ref('')
@@ -210,8 +213,10 @@ function onPickerSearch() { /* computed reacts automatically */ }
 
 function selectPickerItem(item: PickerItem) {
   if (pickerType.value === 'resume') {
+    trackAction('select_resume')
     selectedResumeId.value = item.id
   } else {
+    trackAction('select_job')
     selectedJobId.value = item.id
   }
   closePicker()
@@ -223,6 +228,7 @@ const generatingIds = ref(new Set<string>())
 async function startOptimize() {
   if (!selectedResumeId.value) { uni.showToast({ title: '请先选择简历', icon: 'none' }); return }
   if (!selectedJobId.value) { uni.showToast({ title: '请先选择岗位', icon: 'none' }); return }
+  trackAction('start_optimize')
   const resume = selectedResume.value!
   const job = selectedJob.value!
   try {
@@ -295,6 +301,7 @@ async function handleBatchDelete() {
   })
   if (!res.confirm) return
   try {
+    trackAction('batch_delete_history')
     await deleteOptimizeBatch(selectedIds.value)
     uni.showToast({ title: `已删除 ${selectedIds.value.length} 条`, icon: 'success' })
     batchMode.value = false
@@ -304,6 +311,7 @@ async function handleBatchDelete() {
 }
 
 function goResult(id: string) {
+  trackAction('view_result')
   uni.navigateTo({ url: `/pages/optimize/result?id=${id}` })
 }
 

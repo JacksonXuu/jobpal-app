@@ -1,7 +1,9 @@
 <script setup lang="ts">
-import { onLaunch } from '@dcloudio/uni-app'
+import { onLaunch, onHide } from '@dcloudio/uni-app'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import { useTrackingStore } from '@/stores/tracking'
+import { flush } from '@/utils/tracking'
 
 onLaunch(() => {
   console.log('App Launch')
@@ -9,6 +11,12 @@ onLaunch(() => {
   authStore.init()
   const appStore = useAppStore()
   appStore.init()
+
+  // 如果本地已有有效登录态，启动追踪
+  if (authStore.isLogin) {
+    useTrackingStore().init()
+  }
+
   // #ifdef H5
   if (appStore.isDesktop) {
     document.documentElement.classList.add('desktop-mode')
@@ -27,6 +35,11 @@ onLaunch(() => {
     new MutationObserver(stripTitle).observe(document.head, { childList: true, subtree: true, characterData: true })
   }
   // #endif
+})
+
+// App 进入后台时 flush 缓冲（避免长时间无操作导致事件丢失）
+onHide(() => {
+  flush()
 })
 </script>
 

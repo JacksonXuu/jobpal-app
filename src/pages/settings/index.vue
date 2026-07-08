@@ -13,6 +13,9 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { deleteAccount } from '@/apis/auth'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'settings' })
 
 const authStore = useAuthStore()
 
@@ -26,6 +29,7 @@ async function handleDeleteAccount() {
   if (!res.confirm) return
 
   try {
+    trackAction('delete_account')
     await deleteAccount()
     authStore.logout()
     uni.showToast({ title: '账号已注销', icon: 'success' })

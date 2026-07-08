@@ -86,10 +86,12 @@ import { onLoad } from '@dcloudio/uni-app'
 import { login, register, validateUsername, validatePassword } from '@/apis/auth'
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
+import { useTracking } from '@/composables/useTracking'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
 const currentYear = new Date().getFullYear()
+const { trackClick, trackAction } = useTracking({ module: 'auth' })
 
 onLoad(() => {
   // 已登录则直接跳转首页
@@ -112,6 +114,7 @@ function switchAuthTab(tab: 'login' | 'register') {
   activeTab.value = tab
   form.username = ''
   form.password = ''
+  trackClick(tab === 'login' ? 'switch_tab_login' : 'switch_tab_register')
 }
 
 /**
@@ -146,9 +149,11 @@ async function handleSubmit() {
     })
 
     if (isLogin) {
+      trackAction('login_success')
       authStore.setLogin(res.token, res.userInfo)
       uni.switchTab({ url: '/pages/home' })
     } else {
+      trackAction('register_success')
       uni.showToast({ title: '注册成功', icon: 'success' })
       authStore.setLogin(res.token, res.userInfo)
       uni.switchTab({ url: '/pages/home' })

@@ -180,6 +180,7 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null
 function onSearchInput() {
   if (searchTimer) clearTimeout(searchTimer)
   searchTimer = setTimeout(() => {
+    trackAction('search')
     fetchList()
   }, 300)
 }
@@ -284,6 +285,10 @@ async function fetchList() {
 
 let initialLoaded = false
 
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'job' })
+
 onLoad(() => {
   fetchList().then(() => { initialLoaded = true })
 })
@@ -325,10 +330,12 @@ function onTouchEnd(_e: TouchEvent, id: string) {
 
 // ── 操作 ──
 function goDetail(id: string) {
+  trackAction('view_detail')
   uni.navigateTo({ url: `/pages/job/detail?id=${id}` })
 }
 
 function goForm(id?: string) {
+  trackAction(id ? 'edit' : 'create')
   const url = id ? `/pages/job/form?id=${id}` : '/pages/job/form'
   uni.navigateTo({ url })
 }
@@ -361,6 +368,7 @@ async function confirmStatusPicker() {
     return
   }
   try {
+    trackAction('change_status')
     await patchJobStatus(statusTarget.id, statusPickerTemp.value)
     statusPickerVisible.value = false
     statusTarget = null
@@ -378,6 +386,7 @@ async function handleDelete(id: string) {
   if (!modalRes.confirm) return
 
   try {
+    trackAction('delete')
     await deleteJob(id)
     uni.showToast({ title: '已删除', icon: 'success' })
     fetchList()
@@ -423,6 +432,7 @@ async function handleBatchDelete() {
   })
   if (!res.confirm) return
   try {
+    trackAction('batch_delete')
     await deleteJobsBatch(selectedIds.value)
     uni.showToast({ title: `已删除 ${selectedIds.value.length} 个`, icon: 'success' })
     batchMode.value = false

@@ -57,8 +57,10 @@ import { getConversations, deleteConversation, getSuggestions, type Conversation
 import { useAppStore } from '@/stores/app'
 import DesktopLayout from '@/components/DesktopLayout.vue'
 import ChatPanel from '@/components/chat/ChatPanel.vue'
+import { useTracking } from '@/composables/useTracking'
 
 const appStore = useAppStore()
+const { trackAction, trackClick } = useTracking({ module: 'ask' })
 const view = ref<'list' | 'chat'>('chat')
 const conversations = ref<Conversation[]>([])
 const loading = ref(false)
@@ -100,20 +102,26 @@ async function handleDelete(id: string) {
   swipedId.value = ''
   const res = await uni.showModal({ title: '确认删除', content: '确定要删除该对话吗？', confirmColor: '#3ddec5' })
   if (!res.confirm) return
-  try { await deleteConversation(id); fetchConversations() } catch { /* ignore */ }
+  try {
+    trackAction('delete_conversation')
+    await deleteConversation(id); fetchConversations()
+  } catch { /* ignore */ }
 }
 
 function startNewChat() {
+  trackAction('new_session')
   chatPanelRef.value?.newSession()
   view.value = 'chat'
 }
 
 function startWithSuggestion(_q: string) {
+  trackClick('click_suggestion')
   chatPanelRef.value?.newSession()
   view.value = 'chat'
 }
 
 function openConversation(item: Conversation) {
+  trackAction('open_conversation')
   chatPanelRef.value?.openConversation(item)
   view.value = 'chat'
 }

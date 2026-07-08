@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
 import { ref, computed } from 'vue'
+import { useTrackingStore } from '@/stores/tracking'
 
 interface UserInfo {
   id: string
@@ -32,10 +33,14 @@ export const useAuthStore = defineStore('auth', () => {
     userInfo.value = info
     uni.setStorageSync('token', t)
     uni.setStorageSync('userInfo', JSON.stringify(info))
+    // 登录成功后启用行为追踪
+    useTrackingStore().init()
   }
 
   /** 退出登录 */
   function logout() {
+    // 登出前停用追踪（内部自动 flush 缓冲区）
+    useTrackingStore().destroy()
     token.value = ''
     userInfo.value = null
     uni.removeStorageSync('token')

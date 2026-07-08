@@ -87,6 +87,9 @@ function onSidebarNav(page: string) {
 }
 import { marked } from 'marked'
 import { createResume, updateResume, getResumeDetail, validateResumeForm } from '@/apis/resume'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'resume' })
 
 const isEdit = ref(false)
 const previewMode = ref(false)
@@ -140,8 +143,10 @@ async function handleSubmit() {
       description: form.description.trim() || undefined,
     }
     if (isEdit.value && editId) {
+      trackAction('submit_edit')
       await updateResume(editId, params)
     } else {
+      trackAction('submit_create')
       await createResume(params)
     }
     uni.showToast({ title: isEdit.value ? '修改成功' : '创建成功', icon: 'success', duration: 800 })

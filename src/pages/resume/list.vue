@@ -107,6 +107,9 @@ import DesktopLayout from '@/components/DesktopLayout.vue'
 
 const appStore = useAppStore()
 import { getResumeList, deleteResume, type Resume } from '@/apis/resume'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'resume' })
 
 // ── 列表数据 ──
 const list = ref<Resume[]>([])
@@ -118,10 +121,14 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null
 
 function onSearchInput() {
   if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => fetchList(), 300)
+  searchTimer = setTimeout(() => {
+    trackAction('search')
+    fetchList()
+  }, 300)
 }
 
 function clearSearch() {
+  trackAction('clear_search')
   keyword.value = ''
   fetchList()
 }
@@ -174,6 +181,7 @@ function onTouchEnd(_e: TouchEvent, _id: string) {}
 
 // ── 导航 ──
 function goDetail(id: string) {
+  trackAction('view_detail')
   uni.navigateTo({ url: `/pages/resume/detail?id=${id}` })
 }
 
@@ -183,6 +191,7 @@ function onSidebarNav(page: string) {
 }
 
 function goForm(id?: string) {
+  trackAction(id ? 'edit' : 'create')
   uni.navigateTo({ url: id ? `/pages/resume/form?id=${id}` : '/pages/resume/form' })
 }
 
@@ -200,6 +209,7 @@ async function handleDelete(id: string) {
   })
   if (!res.confirm) return
   try {
+    trackAction('delete')
     await deleteResume(id)
     uni.showToast({ title: '已删除', icon: 'success' })
     fetchList()

@@ -58,6 +58,9 @@ import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
 import { getJobDetail, type JobPosition } from '@/apis/job'
+import { useTracking } from '@/composables/useTracking'
+
+useTracking({ module: 'job' })
 
 const job = ref<JobPosition | null>(null)
 const loading = ref(true)

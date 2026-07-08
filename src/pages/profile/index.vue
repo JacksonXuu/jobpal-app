@@ -26,18 +26,23 @@
 <script setup lang="ts">
 import { useAuthStore } from '@/stores/auth'
 import { logoutApi } from '@/apis/auth'
+import { useTracking } from '@/composables/useTracking'
 
 const authStore = useAuthStore()
+const { trackClick, trackAction } = useTracking({ module: 'profile' })
 
 function showAbout() {
+  trackClick('menu_about')
   uni.navigateTo({ url: '/pages/about/index' })
 }
 
 function goSettings() {
+  trackClick('menu_settings')
   uni.navigateTo({ url: '/pages/settings/index' })
 }
 
 async function handleLogout() {
+  trackAction('logout')
   const res = await uni.showModal({
     title: '退出登录',
     content: '确定要退出登录吗？',

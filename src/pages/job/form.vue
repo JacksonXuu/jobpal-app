@@ -135,6 +135,9 @@ import {
   JOB_STATUS_OPTIONS,
   SOURCE_PLATFORM_OPTIONS,
 } from '@/apis/job'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'job' })
 
 // ── 模式判断 ──
 const isEdit = ref(false)
@@ -243,9 +246,11 @@ async function handleSubmit() {
     }
 
     if (isEdit.value && editId) {
+      trackAction('submit_edit')
       await updateJob(editId, params)
       uni.showToast({ title: '修改成功', icon: 'success' })
     } else {
+      trackAction('submit_create')
       await createJob(params)
       uni.showToast({ title: '创建成功', icon: 'success' })
     }

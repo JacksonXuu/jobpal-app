@@ -59,7 +59,12 @@
 </template>
 
 <script setup lang="ts">
+import { useTracking } from '@/composables/useTracking'
+
+const { trackClick } = useTracking({ module: 'about' })
+
 function openLink(url: string) {
+  trackClick('open_link')
   // #ifdef H5
   window.open(url, '_blank')
   // #endif

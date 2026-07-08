@@ -125,6 +125,9 @@ import {
   INTERVIEW_STATUS_OPTIONS,
   type JobPosition,
 } from '@/apis/job'
+import { useTracking } from '@/composables/useTracking'
+
+const { trackAction } = useTracking({ module: 'interview' })
 
 // ── 列表 ──
 const list = ref<JobPosition[]>([])
@@ -136,7 +139,10 @@ let searchTimer: ReturnType<typeof setTimeout> | null = null
 
 function onSearchInput() {
   if (searchTimer) clearTimeout(searchTimer)
-  searchTimer = setTimeout(() => fetchList(), 300)
+  searchTimer = setTimeout(() => {
+    trackAction('search')
+    fetchList()
+  }, 300)
 }
 
 function clearSearch() {
@@ -189,6 +195,7 @@ function openPicker() {
 }
 function closePicker() { pickerVisible.value = false }
 function confirmPicker() {
+  trackAction('filter_status')
   status.value = pickerTemp.value
   pickerVisible.value = false
   fetchList()
