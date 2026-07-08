@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 5204928 */
-  src: url('iconfont.woff2?t=1783422485905') format('woff2'),
-       url('iconfont.woff?t=1783422485905') format('woff'),
-       url('iconfont.ttf?t=1783422485905') format('truetype');
+  src: url('iconfont.woff2?t=1783501570422') format('woff2'),
+       url('iconfont.woff?t=1783501570422') format('woff'),
+       url('iconfont.ttf?t=1783501570422') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,54 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-zhengyan:before {
+  content: "\e6cf";
+}
+
+.icon-biyan:before {
+  content: "\e6d1";
+}
+
+.icon-suoding:before {
+  content: "\e602";
+}
+
+.icon-jiesuo:before {
+  content: "\e605";
+}
+
+.icon-yemiancaozuo:before {
+  content: "\e64e";
+}
+
+.icon-tuichu:before {
+  content: "\e606";
+}
+
+.icon-huoyue:before {
+  content: "\e60f";
+}
+
+.icon-w_huo:before {
+  content: "\e669";
+}
+
+.icon-shujukanban:before {
+  content: "\e63e";
+}
+
+.icon-yonghuguanli:before {
+  content: "\e608";
+}
+
+.icon-team-fill:before {
+  content: "\e7a3";
+}
+
+.icon-a-jobpal-solid:before {
+  content: "\e623";
 }
 
 .icon-shuaxin:before {
@@ -37,7 +85,7 @@
   content: "\e762";
 }
 
-.icon-shezhi01-F:before {
+.icon-shezhi:before {
   content: "\e618";
 }
 
