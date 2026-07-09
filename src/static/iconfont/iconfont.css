@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 5204928 */
-  src: url('iconfont.woff2?t=1783501570422') format('woff2'),
-       url('iconfont.woff?t=1783501570422') format('woff'),
-       url('iconfont.ttf?t=1783501570422') format('truetype');
+  src: url('iconfont.woff2?t=1783564141467') format('woff2'),
+       url('iconfont.woff?t=1783564141467') format('woff'),
+       url('iconfont.ttf?t=1783564141467') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-xiaoxi:before {
+  content: "\e638";
+}
+
+.icon-chat-ai-4-line:before {
+  content: "\e7c9";
+}
+
+.icon-AIzhushou:before {
+  content: "\e612";
 }
 
 .icon-zhengyan:before {
@@ -55,6 +67,10 @@
 
 .icon-team-fill:before {
   content: "\e7a3";
+}
+
+.icon-a-jobpal-solid-primary-copy:before {
+  content: "\e7d2";
 }
 
 .icon-a-jobpal-solid:before {

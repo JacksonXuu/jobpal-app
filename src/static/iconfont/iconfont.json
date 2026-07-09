@@ -6,6 +6,27 @@
   "description": "AI求职助手jobpal",
   "glyphs": [
     {
+      "icon_id": "42738314",
+      "name": "消息",
+      "font_class": "xiaoxi",
+      "unicode": "e638",
+      "unicode_decimal": 58936
+    },
+    {
+      "icon_id": "46794877",
+      "name": "问一问",
+      "font_class": "chat-ai-4-line",
+      "unicode": "e7c9",
+      "unicode_decimal": 59337
+    },
+    {
+      "icon_id": "46938984",
+      "name": "AI助手",
+      "font_class": "AIzhushou",
+      "unicode": "e612",
+      "unicode_decimal": 58898
+    },
+    {
       "icon_id": "8361844",
       "name": "眼睛",
       "font_class": "zhengyan",
@@ -81,6 +102,13 @@
       "font_class": "team-fill",
       "unicode": "e7a3",
       "unicode_decimal": 59299
+    },
+    {
+      "icon_id": "48030564",
+      "name": "459356020",
+      "font_class": "a-jobpal-solid-primary-copy",
+      "unicode": "e7d2",
+      "unicode_decimal": 59346
     },
     {
       "icon_id": "48028375",

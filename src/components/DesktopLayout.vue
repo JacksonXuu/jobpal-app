@@ -25,7 +25,7 @@
       <view class="dt-sidebar">
         <!-- 问一问 -->
         <view class="sb-ask-btn" @click="emits('navigate', 'ask')">
-          <text class="sb-ask-icon">💬</text>
+          <text class="iconfont icon-chat-ai-4-line sb-ask-icon" />
           <view class="sb-ask-text">
             <text class="sb-ask-title">问一问</text>
             <text class="sb-ask-sub">AI 智能求职助手</text>
@@ -140,7 +140,7 @@ async function handleLogout() {
   box-sizing: border-box;
 }
 .dt-logo { font-size: 28px; color: var(--brand-primary); margin-right: 10px; }
-.dt-title { font-size: 20px; font-weight: 600; color: var(--text-primary); }
+.dt-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
 .dt-spacer { flex: 1; }
 .dt-username { font-size: 14px; color: var(--text-secondary); margin-right: 12px; }
 
@@ -164,9 +164,9 @@ async function handleLogout() {
 /* 侧边栏 */
 .dt-sidebar { width: 240px; background: #fff; border-right: 1px solid #e8e8e8; flex-shrink: 0; padding: 12px 0; overflow-y: auto; }
 
-.sb-ask-btn { display: flex; align-items: center; margin: 8px 16px; padding: 14px 16px; background: var(--brand-gradient); border-radius: 12px; cursor: pointer; }
-.sb-ask-btn:hover { opacity: 0.9; }
-.sb-ask-icon { font-size: 28px; margin-right: 12px; }
+.sb-ask-btn { display: flex; align-items: center; margin: 8px 12px; padding: 14px 16px; background: var(--brand-primary); border-radius: 12px; cursor: pointer; box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px; transition: background 0.3s; }
+.sb-ask-btn:hover { background: #80ede0; }
+.sb-ask-icon { font-size: 24px; margin-right: 12px; color: #fff; }
 .sb-ask-text { display: flex; flex-direction: column; }
 .sb-ask-title { font-size: 16px; font-weight: 700; color: #fff; }
 .sb-ask-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
@@ -178,7 +178,9 @@ async function handleLogout() {
 .sb-label { font-size: 14px; color: var(--text-primary); display: flex; align-items: center; }
 .sb-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 28px; cursor: pointer; transition: background 0.15s; }
 .sb-item:hover { background: #f5f5f5; }
-.sb-active { color: var(--brand-primary); font-weight: 600; background: var(--brand-light); }
+.sb-item:hover .sb-icon,
+.sb-active .sb-icon { filter: brightness(1.1); }
+.sb-active { color: var(--brand-primary); background: var(--brand-light); }
 
 .sb-count { font-size: 13px; font-weight: 600; color: var(--brand-primary); background: var(--brand-light); border-radius: 10px; padding: 2px 10px; min-width: 24px; text-align: center; }
 
