@@ -7,6 +7,12 @@ triggers:
     branches:
       include:
         - master
+variables:
+  global:
+    - SSH_PRIVATE_KEY
+    - REMOTE_HOST
+    - REMOTE_USER
+    - REMOTE_PATH
 stages:
   - name: build-and-deploy
     displayName: '构建与部署'
@@ -24,6 +30,7 @@ stages:
           - npm run type-check
           - npm test
           - npm run build:h5
+          - ls -la dist/build/h5/
           - apt-get update && apt-get install -y openssh-client rsync
           - mkdir -p ~/.ssh
           - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
