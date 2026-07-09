@@ -26,6 +26,11 @@
     <!-- 消息列表 -->
     <view v-else class="msg-list-wrap">
       <scroll-view class="msg-list" scroll-y :scroll-into-view="scrollToId" scroll-with-animation>
+        <!-- 推荐问题加载中 -->
+        <view v-if="messages.length === 0 && suggestionsLoading" class="suggestions-bar">
+          <text class="suggest-label">💡 猜你想问：</text>
+          <text class="loading-dots">...</text>
+        </view>
         <!-- 推荐问题 -->
         <view v-if="messages.length === 0 && suggestions.length > 0" class="suggestions-bar">
           <text class="suggest-label">💡 猜你想问：</text>
@@ -97,6 +102,7 @@ const scrollToId = ref('chat-bottom')
 let conversationId: string | null = null
 
 const suggestions = ref<string[]>([])
+const suggestionsLoading = ref(false)
 
 onMounted(() => {
   fetchConversations()
@@ -111,9 +117,11 @@ async function fetchConversations() {
 }
 
 async function fetchSuggestions() {
+  suggestionsLoading.value = true
   try {
     suggestions.value = await getSuggestions()
   } catch { suggestions.value = [] }
+  finally { suggestionsLoading.value = false }
 }
 
 function sendMessage(text: string) {
@@ -258,6 +266,21 @@ defineExpose({ newSession, openConversation })
 }
 .chat-desktop .suggest-label { font-size: 16px; margin-bottom: 20px; }
 .chat-desktop .suggest-tag { font-size: 16px; padding: 10px 20px; margin: 0 12px 12px 0; }
+
+/* 加载中动画 */
+.loading-dots {
+  font-size: 36rpx;
+  font-weight: 700;
+  color: var(--brand-primary);
+  letter-spacing: 6rpx;
+  padding-left: 8rpx;
+  animation: dotPulse 0.6s steps(1, end) infinite;
+}
+.chat-desktop .loading-dots { font-size: 24px; }
+@keyframes dotPulse {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
 
 .input-wrap {
   flex-shrink: 0;
