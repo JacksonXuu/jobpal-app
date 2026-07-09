@@ -1,48 +1,33 @@
+version: '1.0'
 name: master-deploy
 displayName: 'Master 分支自动部署'
 triggers:
+  trigger: auto
   push:
-    - matchType: PRECISE
-      branch: master
+    branches:
+      include:
+        - master
 stages:
-  - stage:
-      name: build-stage
-      displayName: '构建'
-      steps:
-        - step: npmbuild@1
-          name: build
-          displayName: 'npm 构建'
-          inputs:
-            nodeVersion: 18
-            goals: |
-              node -v
-              npm -v
-              npm ci
-              npm run type-check
-              npm test
-              npm run build:h5
-            uploadArtifact: true
-            uploadArtifactOptions:
-              artifactPath: 'dist/build/h5'
-              artifactRepository: 'gitee-go'
-              artifactName: 'h5-dist'
-
-  - stage:
-      name: deploy-stage
-      displayName: '部署'
-      steps:
-        - step:
-            image: alpine:latest
-            name: deploy
-            displayName: 'SSH 部署到服务器'
-            script: |
-              apk add --no-cache openssh-client rsync
-              mkdir -p ~/.ssh
-              echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
-              chmod 600 ~/.ssh/id_ed25519
-              ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
-              rsync -avz --delete \
-                -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" \
-                dist/build/h5/ \
-                $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/
-              echo "部署完成！"
+  - name: build-and-deploy
+    displayName: '构建与部署'
+    strategy: naturally
+    trigger: auto
+    steps:
+      - step: build@nodejs
+        name: deploy
+        displayName: '构建并部署'
+        nodeVersion: 18.17.0
+        commands:
+          - node -v
+          - npm -v
+          - npm ci
+          - npm run type-check
+          - npm test
+          - npm run build:h5
+          - apt-get update && apt-get install -y openssh-client rsync
+          - mkdir -p ~/.ssh
+          - echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+          - chmod 600 ~/.ssh/id_ed25519
+          - ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+          - rsync -avz --delete -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" dist/build/h5/ $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/
+          - echo "部署完成！"
