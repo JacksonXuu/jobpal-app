@@ -22,10 +22,10 @@ onLaunch(() => {
     document.documentElement.classList.add('desktop-mode')
   }
 
-  // QQ/微信内置浏览器：清空 <title> 并持续拦截，让浏览器标题栏不显示文字。
-  // uni-app 导航栏完好无损，布局零影响。解决 QQ/微信双导航栏问题。
   const ua = navigator.userAgent
   if (/QQ\//i.test(ua) || /MicroMessenger/i.test(ua)) {
+    // QQ/微信内置浏览器：清空 <title> 并持续拦截，让浏览器标题栏不显示文字。
+    // uni-app 导航栏完好无损，布局零影响。解决 QQ/微信双导航栏问题。
     const stripTitle = () => {
       const t = document.querySelector('title')
       if (t && t.textContent) t.textContent = ''
@@ -33,6 +33,19 @@ onLaunch(() => {
     stripTitle()
     // 监听 <title> 元素变化（uni-app 切换页面时会更新 document.title）
     new MutationObserver(stripTitle).observe(document.head, { childList: true, subtree: true, characterData: true })
+  } else {
+    // 普通浏览器：自动为页面标题添加 "JobPal求职助手 - " 前缀，统一浏览器标签页展示
+    const BASE_TITLE = 'JobPal求职助手'
+    const formatTitle = () => {
+      const t = document.querySelector('title')
+      if (!t || !t.textContent) return
+      const text = t.textContent.trim()
+      if (!text || text === BASE_TITLE) return
+      if (text.startsWith(BASE_TITLE)) return // 已格式化，跳过避免死循环
+      t.textContent = `${BASE_TITLE} - ${text}`
+    }
+    formatTitle()
+    new MutationObserver(formatTitle).observe(document.head, { childList: true, subtree: true, characterData: true })
   }
   // #endif
 })

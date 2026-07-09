@@ -3,7 +3,7 @@
     <!-- 顶栏 -->
     <view class="dt-topbar">
       <text class="iconfont icon-a-jobpal-solid dt-logo" />
-      <text class="dt-title">AI求职助手 JobPal</text>
+      <text class="dt-title">JobPal求职助手</text>
       <view class="dt-spacer" />
       <text class="dt-username">{{ authStore.userInfo?.username }}</text>
       <view class="dt-avatar" @click="toggleDropdown">

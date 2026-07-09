@@ -3,7 +3,7 @@
     {
       "path": "pages/login/login",
       "style": {
-        "navigationBarTitleText": "",
+        "navigationBarTitleText": "登录",
         "navigationStyle": "custom",
         "navigationBarTextStyle": "white"
       }
@@ -127,7 +127,7 @@
   },
   "globalStyle": {
     "navigationBarTextStyle": "black",
-    "navigationBarTitleText": "求职助手",
+    "navigationBarTitleText": "JobPal求职助手",
     "navigationBarBackgroundColor": "#f5fdfc",
     "backgroundColor": "#e8f6fc"
   }
