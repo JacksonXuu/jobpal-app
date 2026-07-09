@@ -1,0 +1,30 @@
+stages:
+  - build-and-deploy
+
+build-and-deploy:
+  image: node:18
+  steps:
+    - checkout
+    - run: |
+        set -e
+        echo "=== Node 环境 ==="
+        node -v && npm -v
+        echo "=== 安装依赖 ==="
+        npm install
+        echo "=== TypeScript 检查 ==="
+        npm run type-check
+        echo "=== 运行测试 ==="
+        npm test
+        echo "=== 构建 H5 ==="
+        npm run build:h5
+        ls -la dist/build/h5/
+        echo "=== 安装 SSH 工具 ==="
+        apt-get update -qq && apt-get install -y -qq openssh-client rsync
+        echo "=== 配置 SSH ==="
+        mkdir -p ~/.ssh
+        echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_ed25519
+        chmod 600 ~/.ssh/id_ed25519
+        ssh-keyscan -H $REMOTE_HOST >> ~/.ssh/known_hosts
+        echo "=== 部署到服务器 ==="
+        rsync -avz --delete -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=no" dist/build/h5/ $REMOTE_USER@$REMOTE_HOST:$REMOTE_PATH/
+        echo "=== 部署完成 ==="
