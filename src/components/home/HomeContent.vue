@@ -10,7 +10,7 @@
     </view>
 
     <!-- 我的资产 -->
-    <view class="section-header"><text class="section-title">我的资产</text></view>
+    <view class="section-header"><text class="section-title">求职管理</text></view>
     <view class="asset-cards">
       <view v-for="card in assetCards" :key="card.title" class="asset-card" @tap="navigateTo(card.title)">
         <text v-if="card.icon.startsWith('icon-')" class="iconfont asset-icon" :class="card.icon" />
@@ -21,7 +21,7 @@
     </view>
 
     <!-- 功能操作 -->
-    <view class="section-header"><text class="section-title">功能操作</text></view>
+    <view class="section-header"><text class="section-title">AI 工具</text></view>
     <view class="feature-card">
       <view
         v-for="(item, index) in featureItems"
@@ -147,7 +147,7 @@ function navigateTo(title: string) {
 
 /* 区域标题 */
 .section-header { margin-bottom: 16rpx; }
-.section-title { font-size: 28rpx; font-weight: 600; color: var(--text-primary); }
+.section-title { font-size: 30rpx; font-weight: 600; color: var(--text-primary); padding-left: 16rpx; border-left: 6rpx solid #80ede0; }
 
 /* 资产卡片 */
 .asset-cards { display: flex; gap: 16rpx; margin-bottom: 32rpx; }
@@ -181,6 +181,6 @@ function navigateTo(title: string) {
 .feature-item--last { border-bottom: none; }
 .feature-item:active { background: #f0fcfb; }
 .feature-icon { font-size: 34rpx; margin-right: 20rpx; color: var(--brand-primary); }
-.feature-text { flex: 1; font-size: 28rpx; font-weight: 500; color: var(--text-primary); }
+.feature-text { flex: 1; font-size: 26rpx; font-weight: 500; color: var(--text-primary); }
 .feature-arrow { font-size: 32rpx; color: var(--text-secondary); }
 </style>
