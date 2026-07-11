@@ -445,7 +445,7 @@ function formatDateTime(dateStr: string): string {
   bottom: 120rpx;
   width: 72rpx;
   height: 72rpx;
-  background: var(--brand-gradient);
+  background: #3ddec5;
   border-radius: 50%;
   display: flex;
   align-items: center;
