@@ -45,7 +45,9 @@
       <DesktopLayout v-if="appStore.isDesktop" active="ask" @navigate="onSidebarNav">
         <ChatPanel ref="chatPanelRef" mode="desktop" />
       </DesktopLayout>
-      <ChatPanel v-else ref="chatPanelRef" />
+      <view v-else class="chat-panel-wrapper">
+        <ChatPanel ref="chatPanelRef" />
+      </view>
     </template>
   </view>
 </template>
@@ -140,7 +142,7 @@ function formatDate(dateStr: string): string {
 </script>
 
 <style scoped>
-.ask-page { background: transparent; position: absolute; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; overflow: hidden; }
+.ask-page { background: transparent; position: fixed; top: 0; right: 0; bottom: 0; left: 0; display: flex; flex-direction: column; overflow: hidden; }
 
 .list-header { display: flex; justify-content: space-between; align-items: center; padding: 20rpx 32rpx; }
 .list-title { font-size: 34rpx; font-weight: 700; color: var(--text-primary); }
@@ -179,4 +181,8 @@ function formatDate(dateStr: string): string {
 
 .fab { position: fixed; right: 40rpx; bottom: 120rpx; width: 72rpx; height: 72rpx; background: var(--brand-gradient); border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8rpx 24rpx rgba(8,201,176,0.4); z-index: 100; }
 .fab-icon { font-size: 36rpx; color: #fff; font-weight: 300; line-height: 0; margin-top: -2rpx; }
+.chat-panel-wrapper {
+  height: 100%;
+  overflow: hidden;
+}
 </style>
