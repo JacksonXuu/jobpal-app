@@ -89,7 +89,7 @@ function formatDateTime(dateStr: string): string {
 
 /* ── 头部 ── */
 .header-card {
-  background: var(--brand-gradient);
+  background: linear-gradient(135deg, #3ddec5, #6ae8d8);
   border-radius: 24rpx;
   padding: 36rpx 32rpx;
   margin-bottom: 24rpx;
