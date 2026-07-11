@@ -48,8 +48,9 @@ export async function deleteConversation(id: string): Promise<void> {
   })
 }
 
-/** 智能推荐提问（使用 fetch 静默失败，避免 request 拦截器 toast） */
+/** 智能推荐提问（静默失败，避免 toast 打扰用户） */
 export async function getSuggestions(): Promise<string[]> {
+  // #ifdef H5
   try {
     const token = useAuthStore().token
     const response = await fetch(BASE_URL + '/v1/chat/suggestions', {
@@ -61,4 +62,21 @@ export async function getSuggestions(): Promise<string[]> {
   } catch {
     return []
   }
+  // #endif
+  // #ifdef MP-WEIXIN
+  try {
+    const token = useAuthStore().token
+    const res = await new Promise<{ data: { suggestions: string[] } }>((resolve, reject) => {
+      uni.request({
+        url: BASE_URL + '/v1/chat/suggestions',
+        header: token ? { Authorization: `Bearer ${token}` } : {},
+        success: (r) => resolve(r.data as { data: { suggestions: string[] } }),
+        fail: reject,
+      })
+    })
+    return res?.data?.suggestions || []
+  } catch {
+    return []
+  }
+  // #endif
 }

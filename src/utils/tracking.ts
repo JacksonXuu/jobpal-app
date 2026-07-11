@@ -170,18 +170,10 @@ function sendBatch(payload: AnalyticsBatchPayload): void {
     })
   }
 
-  // 使用 fetch + keepalive（sendBeacon 无法携带 Authorization 头）
-  fetch(url, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
-    },
-    body,
-    keepalive: true,
-  })
-    .then((res) => {
-      if (res.ok) {
+  // 跨平台发送（H5 用 fetch+keepalive，小程序用 uni.request）
+  sendToServer(url, body, authToken)
+    .then((ok: boolean) => {
+      if (ok) {
         retryCount = 0
       } else {
         requeue(payload)
@@ -192,7 +184,39 @@ function sendBatch(payload: AnalyticsBatchPayload): void {
     })
 }
 
-/** 失败重试：重新入队，超过最大次数则丢弃 */
+/** 批量上报到服务端（跨平台兼容） */
+function sendToServer(
+  url: string,
+  body: string,
+  authToken: string,
+): Promise<boolean> {
+  // #ifdef H5
+  return fetch(url, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+    },
+    body,
+    keepalive: true,
+  }).then((res) => res.ok)
+  // #endif
+  // #ifdef MP-WEIXIN
+  return new Promise((resolve) => {
+    uni.request({
+      url,
+      method: 'POST',
+      header: {
+        'Content-Type': 'application/json',
+        ...(authToken ? { Authorization: `Bearer ${authToken}` } : {}),
+      },
+      data: JSON.parse(body),
+      success: (res) => resolve(res.statusCode === 200),
+      fail: () => resolve(false),
+    })
+  })
+  // #endif
+}
 function requeue(payload: AnalyticsBatchPayload): void {
   retryCount++
   if (retryCount > MAX_RETRIES) {
