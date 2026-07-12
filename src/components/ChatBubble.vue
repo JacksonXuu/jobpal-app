@@ -35,8 +35,8 @@ const props = defineProps<{
 }>()
 
 const html = ref('')
-watchEffect(async () => {
-  html.value = await renderMarkdown(props.content)
+watchEffect(() => {
+  html.value = renderMarkdown(props.content)
 })
 </script>
 
