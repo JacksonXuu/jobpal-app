@@ -26,3 +26,4 @@ dist
 # uni-app build-time copies (sources at project root)
 src/manifest.json
 src/pages.json
+bundle-analysis.html
