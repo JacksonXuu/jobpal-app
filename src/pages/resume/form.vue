@@ -89,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useAppStore } from '@/stores/app'
 import DesktopLayout from '@/components/DesktopLayout.vue'
@@ -100,7 +100,7 @@ function onSidebarNav(page: string) {
   if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
   if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
 }
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { createResume, updateResume, getResumeDetail, validateResumeForm } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
 
@@ -110,10 +110,11 @@ const isEdit = ref(false)
 const previewMode = ref(false)
 
 /** 预览 HTML */
-const previewHtml = computed(() => {
-  if (!form.content) return ''
-  return marked.parse(form.content) as string
-})
+const previewHtml = ref('')
+async function updatePreview() {
+  previewHtml.value = await renderMarkdown(form.content)
+}
+watch(() => form.content, updatePreview)
 let editId: string | null = null
 
 const form = reactive({
