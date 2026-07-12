@@ -25,9 +25,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { getResumeDetail, type Resume } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
 
@@ -38,10 +38,10 @@ const loading = ref(true)
 const error = ref(false)
 
 /** Markdown → HTML */
-const html = computed(() => {
-  if (!resume.value?.content) return ''
-  return marked.parse(resume.value.content) as string
-})
+const html = ref('')
+async function updateHtml() {
+  html.value = await renderMarkdown(resume.value?.content || '')
+}
 
 onLoad((options?: Record<string, string>) => {
   if (options?.id) loadDetail(options.id)
@@ -53,12 +53,16 @@ async function loadDetail(id: string) {
   error.value = false
   try {
     resume.value = await getResumeDetail(id)
+    updateHtml()
   } catch {
     error.value = true
   } finally {
     loading.value = false
   }
 }
+
+// 监听 resume 内容变化重新渲染
+watch(() => resume.value?.content, updateHtml)
 
 function formatDateTime(dateStr: string): string {
   if (!dateStr) return ''
@@ -89,7 +93,7 @@ function formatDateTime(dateStr: string): string {
 
 /* ── 头部 ── */
 .header-card {
-  background: var(--brand-gradient);
+  background: linear-gradient(135deg, #3ddec5, #6ae8d8);
   border-radius: 24rpx;
   padding: 36rpx 32rpx;
   margin-bottom: 24rpx;

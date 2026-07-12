@@ -360,7 +360,7 @@ function onGeneratingClick() {
   width: 100%;
   height: 96rpx;
   line-height: 96rpx;
-  background: var(--brand-gradient);
+  background: #3ddec5;
   color: #fff;
   font-size: 32rpx;
   font-weight: 600;

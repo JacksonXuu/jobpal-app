@@ -4,7 +4,7 @@
     <view class="chat-header">
       <text class="header-btn" @click="view = 'list'">历史</text>
       <view style="flex:1" />
-      <text class="header-btn" :class="{ disabled: !conversationId && messages.length === 0 }" @click="newSession">新对话</text>
+      <text class="header-btn" :class="{ disabled: isNewDisabled }" @click="newSession">新对话</text>
     </view>
 
     <!-- 对话列表 -->
@@ -32,7 +32,7 @@
           <text class="loading-dots">...</text>
         </view>
         <!-- 推荐问题 -->
-        <view v-if="messages.length === 0 && suggestions.length > 0" class="suggestions-bar">
+        <view v-else-if="messages.length === 0 && suggestions.length > 0" class="suggestions-bar">
           <text class="suggest-label">💡 猜你想问：</text>
           <view v-for="(q, i) in suggestions" :key="i" class="suggest-tag" @click="sendMessage(q)">
             <text>{{ q }}</text>
@@ -84,7 +84,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, nextTick, onMounted } from 'vue'
+import { ref, nextTick, onMounted, computed } from 'vue'
 import { useSSE } from '@/composables/useSSE'
 import { getConversations, getConversationDetail, getSuggestions, type Conversation, type ChatMessage } from '@/apis/chat'
 import ChatBubble from '@/components/ChatBubble.vue'
@@ -99,7 +99,8 @@ const messages = ref<Array<{ id: string; role: 'user' | 'assistant'; content: st
 const inputText = ref('')
 const inputFocused = ref(false)
 const scrollToId = ref('chat-bottom')
-let conversationId: string | null = null
+const conversationId = ref<string | null>(null)
+const isNewDisabled = computed(() => !conversationId.value && messages.value.length === 0)
 
 const suggestions = ref<string[]>([])
 const suggestionsLoading = ref(false)
@@ -118,6 +119,7 @@ async function fetchConversations() {
 
 async function fetchSuggestions() {
   suggestionsLoading.value = true
+  suggestions.value = []
   try {
     suggestions.value = await getSuggestions()
   } catch { suggestions.value = [] }
@@ -135,8 +137,9 @@ function scrollToBottom() {
 
 /** 新建会话 */
 function newSession() {
+  if (isNewDisabled.value) return
   abort()
-  conversationId = null
+  conversationId.value = null
   messages.value = []
   streamingText.value = ''
   view.value = 'chat'
@@ -145,7 +148,7 @@ function newSession() {
 
 /** 打开历史对话 */
 async function openConversation(item: Conversation) {
-  conversationId = item.id
+  conversationId.value = item.id
   view.value = 'chat'
   try {
     const detail = await getConversationDetail(item.id)
@@ -170,9 +173,9 @@ async function send(text?: string) {
 
   await connect({
     url: '/v1/chat',
-    body: { conversationId, message: msg },
+    body: { conversationId: conversationId.value, message: msg },
     onStart(data) {
-      if (!conversationId) conversationId = data.conversationId
+      if (!conversationId.value) conversationId.value = data.conversationId
     },
     onComplete(data) {
       messages.value.push({

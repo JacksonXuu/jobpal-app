@@ -64,9 +64,24 @@
         <textarea class="form-textarea-sm" v-model="form.description" placeholder="一句话描述这份简历..." maxlength="200" />
       </view>
       <view class="form-group">
-        <text class="form-label">简历正文 <text class="required">*</text></text>
-        <text class="form-tip">使用 Markdown 语法编写</text>
-        <textarea class="form-textarea" v-model="form.content" placeholder="使用 Markdown 语法编写简历正文..." maxlength="5000" />
+        <view class="section-header">
+          <text class="section-label">简历正文 <text class="required">*</text></text>
+          <text class="toggle-btn" @tap="previewMode = !previewMode">
+            {{ previewMode ? '编辑' : '预览' }}
+          </text>
+        </view>
+        <textarea
+          v-if="!previewMode"
+          class="form-textarea"
+          v-model="form.content"
+          placeholder="使用 Markdown 语法编写简历正文..."
+          maxlength="5000"
+        />
+        <view v-else class="preview-box preview-mobile">
+          <rich-text v-if="form.content" :nodes="previewHtml"></rich-text>
+          <text v-else class="preview-empty">暂无内容</text>
+        </view>
+        <text class="char-count">{{ form.content.length }}/5000</text>
       </view>
     </view>
     <button class="submit-btn" :loading="submitting" @tap="handleSubmit">{{ isEdit ? '保存修改' : '创建简历' }}</button>
@@ -74,7 +89,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
 import { useAppStore } from '@/stores/app'
 import DesktopLayout from '@/components/DesktopLayout.vue'
@@ -85,7 +100,7 @@ function onSidebarNav(page: string) {
   if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
   if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
 }
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { createResume, updateResume, getResumeDetail, validateResumeForm } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
 
@@ -95,10 +110,11 @@ const isEdit = ref(false)
 const previewMode = ref(false)
 
 /** 预览 HTML */
-const previewHtml = computed(() => {
-  if (!form.content) return ''
-  return marked.parse(form.content) as string
-})
+const previewHtml = ref('')
+async function updatePreview() {
+  previewHtml.value = await renderMarkdown(form.content)
+}
+watch(() => form.content, updatePreview)
 let editId: string | null = null
 
 const form = reactive({
@@ -243,6 +259,19 @@ async function handleSubmit() {
   line-height: 1.6;
 }
 
+.form-textarea {
+  width: 100%;
+  height: 500rpx;
+  font-size: 28rpx;
+  color: var(--text-primary);
+  background: transparent;
+  border-radius: 12rpx;
+  padding: 16rpx;
+  box-sizing: border-box;
+  line-height: 1.7;
+  font-family: 'Courier New', 'Consolas', monospace;
+}
+
 .form-textarea-md {
   width: 100%;
   height: 600rpx;
@@ -264,6 +293,7 @@ async function handleSubmit() {
   color: var(--text-primary);
   overflow-y: auto;
 }
+.preview-mobile { height: 500rpx; }
 .preview-empty {
   font-size: 26rpx;
   color: var(--text-secondary);

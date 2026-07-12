@@ -29,9 +29,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
-import { marked } from 'marked'
+import { renderMarkdown } from '@/utils/markdown'
 import { getOptimizeDetail } from '@/apis/optimize'
 import { useTracking } from '@/composables/useTracking'
 
@@ -54,14 +54,12 @@ async function loadDetail(id: string) {
     subtitle.value = `${detail.resume.title} → ${detail.jobPosition.jobName}`
     autoResumeId.value = detail.resumeId
     autoJobId.value = detail.jobPositionId
+    html.value = await renderMarkdown(displayText.value)
   } catch { /* 拦截器已 toast */ }
   finally { loading.value = false }
 }
 
-const html = computed(() => {
-  if (!displayText.value) return ''
-  return marked.parse(displayText.value) as string
-})
+const html = ref('')
 
 function copyResult() {
   trackAction('copy_result')

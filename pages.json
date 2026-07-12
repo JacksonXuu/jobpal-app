@@ -71,7 +71,8 @@
     {
       "path": "pages/ask/index",
       "style": {
-        "navigationBarTitleText": "问一问"
+        "navigationBarTitleText": "问一问",
+        "disableScroll": true
       }
     },
     {

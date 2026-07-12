@@ -25,8 +25,8 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { marked } from 'marked'
+import { ref, watchEffect } from 'vue'
+import { renderMarkdown } from '@/utils/markdown'
 
 const props = defineProps<{
   role: 'user' | 'assistant'
@@ -34,9 +34,9 @@ const props = defineProps<{
   isStreaming?: boolean
 }>()
 
-const html = computed(() => {
-  if (!props.content) return ''
-  return marked.parse(props.content) as string
+const html = ref('')
+watchEffect(async () => {
+  html.value = await renderMarkdown(props.content)
 })
 </script>
 
