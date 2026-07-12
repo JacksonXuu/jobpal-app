@@ -27,14 +27,14 @@
     <view class="card">
       <text class="card-title">开源地址</text>
       <view class="info-row">
-        <text class="iconfont icon-gitee info-icon" />
-        <text class="info-label">Gitee</text>
-        <text class="info-value link" @tap="openLink('https://gitee.com/JacksonXuu')">JacksonXuu</text>
+        <text class="iconfont icon-github-fill github-icon info-icon" />
+        <text class="info-label">GitHub</text>
+        <text class="info-value link" @tap="openLink('https://github.com/JacksonXuu')">JacksonXuu</text>
       </view>
       <view class="info-row">
-        <text class="iconfont icon-gitee info-icon" />
+        <text class="iconfont icon-github-fill github-icon info-icon" />
         <text class="info-label">仓库</text>
-        <text class="info-value link" @tap="openLink('https://gitee.com/JacksonXuu/jobpal-app')">jobpal-app</text>
+        <text class="info-value link" @tap="openLink('https://github.com/JacksonXuu/jobpal-app')">jobpal-app</text>
       </view>
     </view>
 
@@ -123,7 +123,7 @@ function openLink(url: string) {
 .info-row:last-child { border-bottom: none; }
 .info-icon { font-size: 28rpx; flex-shrink: 0; margin-right: 8rpx; width: 44rpx; display: flex; align-items: center; justify-content: center; }
 .icon-yonghu.info-icon { color: #94a3b8; }
-.icon-gitee.info-icon { color: #d81e06; }
+.icon-github-fill.info-icon { color: #24292f; }
 .info-label { font-size: 26rpx; color: var(--text-secondary); flex-shrink: 0; margin-right: 20rpx; width: 80rpx; }
 .info-value { font-size: 26rpx; color: var(--text-primary); }
 .info-value.link { color: var(--brand-primary); }

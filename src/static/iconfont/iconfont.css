@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 5204928 */
-  src: url('iconfont.woff2?t=1783564141467') format('woff2'),
-       url('iconfont.woff?t=1783564141467') format('woff'),
-       url('iconfont.ttf?t=1783564141467') format('truetype');
+  src: url('iconfont.woff2?t=1783853990276') format('woff2'),
+       url('iconfont.woff?t=1783853990276') format('woff'),
+       url('iconfont.ttf?t=1783853990276') format('truetype');
 }
 
 .iconfont {
@@ -11,6 +11,18 @@
   font-style: normal;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+.icon-csdn:before {
+  content: "\e639";
+}
+
+.icon-github-fill:before {
+  content: "\e885";
+}
+
+.icon-juejin:before {
+  content: "\e609";
 }
 
 .icon-xiaoxi:before {
@@ -71,6 +83,10 @@
 
 .icon-a-jobpal-solid-primary-copy:before {
   content: "\e7d2";
+}
+
+.icon-a-jobpal-solid-primary-copy-copy:before {
+  content: "\e7d3";
 }
 
 .icon-a-jobpal-solid:before {
