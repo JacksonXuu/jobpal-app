@@ -75,7 +75,7 @@ npm run type-check    # TypeScript 类型检查
 | 文件 | 用途 | 内容 |
 |------|------|------|
 | `.env.development` | 本地开发 | `VITE_API_BASE_URL=http://localhost:3000` |
-| `.env.production` | 生产环境 | `VITE_API_BASE_URL=http://47.107.30.30:3000` |
+| `.env.production` | 生产环境 | `VITE_API_BASE_URL=https://jobpal.jacksonxu.cn/api` |
 
 ## 项目结构
 
@@ -130,7 +130,7 @@ bash deploy-h5.sh
 ```
 
 目标：`root@47.107.30.30:/var/www/jobpal/app`
-访问：`http://47.107.30.30`
+访问：`https://jobpal.jacksonxu.cn/app/`
 
 ## 相关项目
 

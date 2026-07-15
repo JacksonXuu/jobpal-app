@@ -29,4 +29,4 @@ else
   scp -r "$LOCAL_DIST"/* "$SERVER:$REMOTE_PATH/"
 fi
 
-echo "部署完成！访问地址: http://47.107.30.30"
+echo "部署完成！访问地址: https://jobpal.jacksonxu.cn/app/"

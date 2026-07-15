@@ -53,7 +53,7 @@ jobpal-app 和 jobpal-manage 共用 jobpal-server 提供的 API 服务。
 VITE_API_BASE_URL=http://localhost:3000
 
 # .env.production（生产环境）
-VITE_API_BASE_URL=http://47.107.30.30:3000
+VITE_API_BASE_URL=https://jobpal.jacksonxu.cn/api
 ```
 
 ## 目录结构
@@ -167,7 +167,7 @@ jobpal-app/
 
 ## API 接口
 
-> Base URL 由 `VITE_API_BASE_URL` 环境变量注入，开发环境为 `http://localhost:3000`，生产环境为 `http://47.107.30.30:3000`
+> Base URL 由 `VITE_API_BASE_URL` 环境变量注入，开发环境为 `http://localhost:3000`，生产环境为 `https://jobpal.jacksonxu.cn/api`
 
 **统一响应格式：** `{ "code": 0, "message": "success", "data": {} }`
 
@@ -301,9 +301,10 @@ jobpal-app/
 
 ```
 Nginx (ECS 47.107.30.30, :80/:443)
-  ├── jobpal.com        → 管理端静态文件
-  ├── api.jobpal.com    → proxy_pass → NestJS :3000
-  └── app.jobpal.com    → 本项目 H5 构建产物 (/var/www/jobpal/app)
+  └── jobpal.jacksonxu.cn
+        ├── /api/*   → proxy_pass → NestJS :3000
+        ├── /app/*   → 本项目 H5 构建产物 (/var/www/jobpal/app)
+        └── /manage/* → 管理端
 ```
 
 ### H5 部署
