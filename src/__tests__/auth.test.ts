@@ -1,12 +1,30 @@
 import { describe, it, expect, beforeEach, vi } from "vitest";
 
+// vi.hoisted 确保 mock 函数在模块加载前初始化
+const { mockEncryptPassword } = vi.hoisted(() => ({
+  mockEncryptPassword: vi.fn(
+    async (password: string) => `sha256:${password}`
+  ),
+}));
+
 // mock request 模块
 vi.mock("@/utils/request", () => ({
   request: vi.fn(),
 }));
 
+// mock crypto 模块 — 密码会被哈希后再传输
+vi.mock("@/utils/crypto", () => ({
+  encryptPassword: mockEncryptPassword,
+}));
+
 import { request } from "@/utils/request";
-import { login, register, logoutApi, validateUsername, validatePassword } from "../apis/auth";
+import {
+  login,
+  register,
+  logoutApi,
+  validateUsername,
+  validatePassword,
+} from "../apis/auth";
 
 beforeEach(() => {
   vi.clearAllMocks();
@@ -19,7 +37,7 @@ describe("validateUsername", () => {
   });
 
   it("过短 (<3)", () => {
-    expect(validateUsername("ab")).toContain("用户名需");
+    expect(validateUsername("a")).toContain("用户名需");
   });
 
   it("过长 (>20)", () => {
@@ -63,7 +81,7 @@ describe("validatePassword", () => {
 
 // === API 测试（mock request） ===
 describe("login", () => {
-  it("登录成功返回 token 和 userInfo", async () => {
+  it("登录成功返回 token 和 userInfo（密码已 SHA-256 哈希）", async () => {
     (request as any).mockResolvedValueOnce({
       code: 0,
       data: {
@@ -75,6 +93,19 @@ describe("login", () => {
     const res = await login({ username: "alice", password: "123456" });
     expect(res.token).toBe("jwt_token_xxx");
     expect(res.userInfo.username).toBe("alice");
+
+    // 验证密码被哈希后再传输
+    expect(mockEncryptPassword).toHaveBeenCalledWith("123456");
+    expect((request as any)).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: "/v1/auth/login",
+        method: "POST",
+        data: expect.objectContaining({
+          username: "alice",
+          password: "sha256:123456",
+        }),
+      })
+    );
   });
 
   it("401 密码错误", async () => {
@@ -86,7 +117,7 @@ describe("login", () => {
 });
 
 describe("register", () => {
-  it("注册成功后自动登录返回 token", async () => {
+  it("注册成功后自动登录返回 token（密码已 SHA-256 哈希）", async () => {
     // 注册请求
     (request as any).mockResolvedValueOnce({
       code: 0,
@@ -104,6 +135,19 @@ describe("register", () => {
     const res = await register({ username: "alice", password: "123456" });
     expect(res.token).toBe("jwt_token_xxx");
     expect(res.userInfo.username).toBe("alice");
+
+    // 验证注册时密码被哈希
+    expect(mockEncryptPassword).toHaveBeenCalledWith("123456");
+    // 第一次调用：注册请求，密码已被哈希
+    expect((request as any)).toHaveBeenNthCalledWith(
+      1,
+      expect.objectContaining({
+        url: "/v1/auth/register",
+        data: expect.objectContaining({
+          password: "sha256:123456",
+        }),
+      })
+    );
   });
 
   it("注册用户名已存在", async () => {

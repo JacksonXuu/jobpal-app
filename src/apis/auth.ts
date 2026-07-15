@@ -1,4 +1,5 @@
 import { request } from '@/utils/request'
+import { encryptPassword } from '@/utils/crypto'
 
 // ── 校验常量 ──
 export const USERNAME_MIN = 2
@@ -67,7 +68,10 @@ export async function login(params: LoginParams): Promise<AuthResult> {
   const res = await request<{ access_token: string; user: { id: string; username: string } }>({
     url: '/v1/auth/login',
     method: 'POST',
-    data: params as unknown as Record<string, unknown>,
+    data: {
+      username: params.username,
+      password: await encryptPassword(params.password),
+    } as unknown as Record<string, unknown>,
   })
   return {
     token: res.data.access_token,
@@ -84,7 +88,10 @@ export async function register(params: RegisterParams): Promise<AuthResult> {
   await request({
     url: '/v1/auth/register',
     method: 'POST',
-    data: params as unknown as Record<string, unknown>,
+    data: {
+      username: params.username,
+      password: await encryptPassword(params.password),
+    } as unknown as Record<string, unknown>,
   })
   // 注册不返回 token，自动登录
   return login(params)
