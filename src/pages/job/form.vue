@@ -1,5 +1,59 @@
 <template>
-  <view class="form-page">
+  <!-- 桌面端壳 -->
+  <DesktopLayout v-if="appStore.isDesktop" active="job" @navigate="onSidebarNav">
+    <view class="form-page form-desktop">
+      <view class="form-back" @click="goBack()">← 返回</view>
+      <view class="form-section">
+        <text class="section-label">必填项</text>
+        <view class="form-group">
+          <text class="form-label">岗位名称 <text class="required">*</text></text>
+          <input class="form-input" v-model="form.jobName" placeholder="请输入岗位名称" maxlength="100" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">公司名称 <text class="required">*</text></text>
+          <input class="form-input" v-model="form.companyName" placeholder="请输入公司名称" maxlength="100" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">薪资 (K) <text class="required">*</text></text>
+          <input class="form-input" v-model.number="form.salary" type="digit" placeholder="请输入薪资，单位 k" />
+        </view>
+      </view>
+      <view class="form-section">
+        <text class="section-label">可选项</text>
+        <view class="form-group">
+          <text class="form-label">心动等级</text>
+          <view class="rating-row"><UniRate v-model="form.rating" :max="5" :size="28" /></view>
+        </view>
+        <view class="form-group" @tap="openPicker('sourcePlatform')">
+          <text class="form-label">来源平台</text>
+          <view class="form-picker"><text :class="{ placeholder: !form.sourcePlatform }">{{ form.sourcePlatform || '请选择来源平台' }}</text><text class="picker-arrow">›</text></view>
+        </view>
+        <view class="form-group" @tap="openPicker('status')">
+          <text class="form-label">状态</text>
+          <view class="form-picker"><text :class="{ placeholder: !form.status }">{{ form.status || '请选择状态' }}</text><text class="picker-arrow">›</text></view>
+        </view>
+      </view>
+      <view class="form-section">
+        <text class="section-label">详细信息</text>
+        <view class="form-group">
+          <text class="form-label">岗位要求</text>
+          <textarea class="form-textarea" v-model="form.requirements" placeholder="请输入岗位要求..." maxlength="2000" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">岗位职责</text>
+          <textarea class="form-textarea" v-model="form.responsibilities" placeholder="请输入岗位职责..." maxlength="2000" />
+        </view>
+        <view class="form-group">
+          <text class="form-label">心动原因</text>
+          <textarea class="form-textarea" v-model="form.attractiveness" placeholder="请输入心动原因..." maxlength="2000" />
+        </view>
+      </view>
+      <button class="submit-btn" :loading="submitting" @tap="handleSubmit">{{ isEdit ? '保存修改' : '创建岗位' }}</button>
+    </view>
+  </DesktopLayout>
+
+  <!-- 手机端 -->
+  <view v-else class="form-page">
     <!-- 必填项 -->
     <view class="form-section">
       <text class="section-label">必填项</text>
@@ -126,7 +180,25 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
+
+const appStore = useAppStore()
+
+function onSidebarNav(page: string) {
+  if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
+}
+
+function goBack() {
+  const pages = getCurrentPages()
+  if (pages.length <= 1) {
+    uni.redirectTo({ url: '/pages/job/list' })
+  } else {
+    uni.navigateBack()
+  }
+}
 import {
   createJob,
   updateJob,
@@ -256,7 +328,12 @@ async function handleSubmit() {
     }
 
     setTimeout(() => {
-      uni.navigateBack()
+      const pages = getCurrentPages()
+      if (pages.length <= 1) {
+        uni.redirectTo({ url: '/pages/job/list' })
+      } else {
+        uni.navigateBack()
+      }
     }, 800)
   } catch {
     // 拦截器已 toast
@@ -271,6 +348,18 @@ async function handleSubmit() {
   background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 160rpx;
+}
+.form-desktop {
+  padding: 24rpx 32rpx;
+  min-height: auto;
+  display: flex;
+  flex-direction: column;
+}
+.form-back {
+  font-size: 14px;
+  color: var(--brand-primary);
+  cursor: pointer;
+  margin-bottom: 16px;
 }
 
 /* ── 分区 ── */
@@ -358,6 +447,26 @@ async function handleSubmit() {
 }
 .submit-btn::after { border: none; }
 .submit-btn[loading] { opacity: 0.7; }
+
+/* 桌面端：与列表页操作按钮风格一致（实心，右对齐） */
+.form-desktop .submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: unset;
+  min-width: unset;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 20px;
+  margin: 32rpx 0 0 auto;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.form-desktop .submit-btn:hover { background: #80ede0; }
 
 /* ── Picker 弹层 ── */
 .picker-overlay {

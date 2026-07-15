@@ -1,7 +1,7 @@
 <template>
   <DesktopLayout v-if="appStore.isDesktop" active="resume" @navigate="onSidebarNav">
     <view class="form-page form-desktop">
-    <view class="form-back" @click="uni.navigateBack()">← 返回</view>
+    <view class="form-back" @click="goBack()">← 返回</view>
     <view class="form-section">
       <view class="form-group">
         <text class="form-label">简历标题 <text class="required">*</text></text>
@@ -100,6 +100,15 @@ function onSidebarNav(page: string) {
   if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
   if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
 }
+
+function goBack() {
+  const pages = getCurrentPages()
+  if (pages.length <= 1) {
+    uni.redirectTo({ url: '/pages/resume/list' })
+  } else {
+    uni.navigateBack()
+  }
+}
 import { renderMarkdown } from '@/utils/markdown'
 import { createResume, updateResume, getResumeDetail, validateResumeForm } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
@@ -166,7 +175,14 @@ async function handleSubmit() {
       await createResume(params)
     }
     uni.showToast({ title: isEdit.value ? '修改成功' : '创建成功', icon: 'success', duration: 800 })
-    uni.navigateBack()
+    setTimeout(() => {
+      const pages = getCurrentPages()
+      if (pages.length <= 1) {
+        uni.redirectTo({ url: '/pages/resume/list' })
+      } else {
+        uni.navigateBack()
+      }
+    }, 800)
   } catch { /* 拦截器已 toast */ }
   finally { submitting.value = false }
 }
@@ -181,12 +197,14 @@ async function handleSubmit() {
 .form-desktop {
   padding: 24rpx 32rpx;
   min-height: auto;
+  display: flex;
+  flex-direction: column;
 }
 .form-back {
   font-size: 14px;
   color: var(--brand-primary);
   cursor: pointer;
-  margin-bottom: 16rpx;
+  margin-bottom: 16px;
 }
 
 .form-section { margin-bottom: 24rpx; }
@@ -355,4 +373,27 @@ async function handleSubmit() {
 }
 .submit-btn::after { border: none; }
 .submit-btn[loading] { opacity: 0.7; }
+
+/* 桌面端：与列表页操作按钮风格一致（实心，右对齐） */
+.form-desktop .submit-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: unset;
+  min-width: unset;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 20px;
+  margin: 32rpx 0 0 auto;
+  font-size: 14px;
+  font-weight: 500;
+  background: var(--brand-primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  box-shadow: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.form-desktop .submit-btn:hover { background: #80ede0; }
 </style>

@@ -1,39 +1,38 @@
 <template>
-  <view class="result-page">
-    <!-- 头部信息 -->
-    <view class="info-bar">
-      <text class="info-text">{{ subtitle }}</text>
+  <!-- 桌面端壳 -->
+  <DesktopLayout v-if="appStore.isDesktop" active="optimize" @navigate="onSidebarNav">
+    <view class="result-page result-desktop">
+      <view class="info-bar"><text class="info-text">{{ subtitle }}</text></view>
+      <scroll-view class="content-area" scroll-y>
+        <view v-if="loading" class="state-box"><text class="state-text">加载中...</text></view>
+        <template v-else><view class="md-body"><rich-text v-if="displayText" :nodes="html"></rich-text><text v-if="!displayText && !loading" class="state-text">暂无内容</text></view></template>
+      </scroll-view>
+      <view v-if="displayText" class="action-bar"><text class="action-btn" @tap="copyResult">复制</text><text class="action-btn" @tap="reOptimize">重新优化</text></view>
     </view>
+  </DesktopLayout>
 
-    <!-- 内容区 -->
+  <!-- 手机端 -->
+  <view v-else class="result-page">
+    <view class="info-bar"><text class="info-text">{{ subtitle }}</text></view>
     <scroll-view class="content-area" scroll-y>
-      <view v-if="loading" class="state-box">
-        <text class="state-text">加载中...</text>
-      </view>
-
-      <template v-else>
-        <view class="md-body">
-          <rich-text v-if="displayText" :nodes="html"></rich-text>
-          <text v-if="!displayText && !loading" class="state-text">暂无内容</text>
-        </view>
-      </template>
-
+      <view v-if="loading" class="state-box"><text class="state-text">加载中...</text></view>
+      <template v-else><view class="md-body"><rich-text v-if="displayText" :nodes="html"></rich-text><text v-if="!displayText && !loading" class="state-text">暂无内容</text></view></template>
     </scroll-view>
-
-    <!-- 底部操作栏（仅完成/历史模式显示） -->
-    <view v-if="displayText" class="action-bar">
-      <text class="action-btn" @tap="copyResult">复制</text>
-      <text class="action-btn" @tap="reOptimize">重新优化</text>
-    </view>
+    <view v-if="displayText" class="action-bar"><text class="action-btn" @tap="copyResult">复制</text><text class="action-btn" @tap="reOptimize">重新优化</text></view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import { renderMarkdown } from '@/utils/markdown'
 import { getOptimizeDetail } from '@/apis/optimize'
 import { useTracking } from '@/composables/useTracking'
+
+const appStore = useAppStore()
+function onSidebarNav(page: string) { if (page === 'ask') uni.switchTab({ url: '/pages/ask/index' }); else if (page === 'home') uni.switchTab({ url: '/pages/home' }) }
 
 const { trackAction } = useTracking({ module: 'optimize' })
 const loading = ref(false)
@@ -74,7 +73,12 @@ function reOptimize() {
   if (autoResumeId.value && autoJobId.value) {
     uni.redirectTo({ url: `/pages/optimize/select?autoResumeId=${autoResumeId.value}&autoJobId=${autoJobId.value}` })
   } else {
-    uni.navigateBack()
+    const pages = getCurrentPages()
+    if (pages.length <= 1) {
+      uni.redirectTo({ url: '/pages/optimize/select' })
+    } else {
+      uni.navigateBack()
+    }
   }
 }
 </script>

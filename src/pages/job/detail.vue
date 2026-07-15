@@ -1,5 +1,45 @@
 <template>
-  <view class="detail-page">
+  <!-- 桌面端壳 -->
+  <DesktopLayout v-if="appStore.isDesktop" active="job" @navigate="onSidebarNav">
+    <view class="detail-page detail-desktop">
+      <view class="dt-back" @click="goBack()">← 返回</view>
+      <view v-if="loading" class="state-box"><text class="state-text">加载中...</text></view>
+      <view v-else-if="error" class="state-box"><text class="state-text">加载失败，请重试</text></view>
+      <template v-else-if="job">
+        <view class="info-card">
+          <text class="info-jobname">{{ job.jobName }}</text>
+          <text class="info-company">{{ job.companyName }}</text>
+          <view class="info-meta">
+            <text class="meta-item">{{ job.salary }}k</text>
+            <view class="meta-item"><UniRate :value="job.rating" :max="5" readonly :size="14" /></view>
+          </view>
+          <view class="info-meta">
+            <text class="tag">来源：{{ job.sourcePlatform }}</text>
+            <text class="tag status-tag">状态：{{ job.status }}</text>
+          </view>
+          <text class="info-date">更新于 {{ formatDateTime(job.updatedAt) }}</text>
+        </view>
+        <view v-if="job.requirements" class="section-card">
+          <text class="section-title">岗位要求</text>
+          <text class="section-text">{{ job.requirements }}</text>
+        </view>
+        <view v-if="job.responsibilities" class="section-card">
+          <text class="section-title">岗位职责</text>
+          <text class="section-text">{{ job.responsibilities }}</text>
+        </view>
+        <view v-if="job.attractiveness" class="section-card">
+          <text class="section-title">心动原因</text>
+          <text class="section-text">{{ job.attractiveness }}</text>
+        </view>
+        <view v-if="!job.requirements && !job.responsibilities && !job.attractiveness" class="state-box">
+          <text class="state-desc">暂无更多信息</text>
+        </view>
+      </template>
+    </view>
+  </DesktopLayout>
+
+  <!-- 手机端 -->
+  <view v-else class="detail-page">
     <!-- Loading -->
     <view v-if="loading" class="state-box">
       <text class="state-text">加载中...</text>
@@ -56,9 +96,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import UniRate from '@dcloudio/uni-ui/lib/uni-rate/uni-rate.vue'
 import { getJobDetail, type JobPosition } from '@/apis/job'
 import { useTracking } from '@/composables/useTracking'
+
+const appStore = useAppStore()
+
+function onSidebarNav(page: string) {
+  if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
+}
+
+function goBack() {
+  const pages = getCurrentPages()
+  if (pages.length <= 1) {
+    uni.redirectTo({ url: '/pages/job/list' })
+  } else {
+    uni.navigateBack()
+  }
+}
 
 useTracking({ module: 'job' })
 
@@ -105,6 +163,16 @@ function formatDateTime(dateStr: string): string {
   background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 60rpx;
+}
+.detail-desktop {
+  padding: 24rpx 32rpx;
+  min-height: auto;
+}
+.dt-back {
+  font-size: 14px;
+  color: var(--brand-primary);
+  cursor: pointer;
+  margin-bottom: 16rpx;
 }
 
 /* ── 状态提示 ── */

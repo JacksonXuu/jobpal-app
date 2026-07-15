@@ -1,5 +1,29 @@
 <template>
-  <view class="detail-page">
+  <!-- 桌面端壳 -->
+  <DesktopLayout v-if="appStore.isDesktop" active="resume" @navigate="onSidebarNav">
+    <view class="detail-page detail-desktop">
+      <view class="dt-back" @click="goBack()">← 返回</view>
+      <view v-if="loading" class="state-box">
+        <text class="state-text">加载中...</text>
+      </view>
+      <view v-else-if="error" class="state-box">
+        <text class="state-text">加载失败，请重试</text>
+      </view>
+      <template v-else-if="resume">
+        <view class="header-card">
+          <text class="header-title">{{ resume.title }}</text>
+          <text v-if="resume.description" class="header-desc">{{ resume.description }}</text>
+          <text class="header-date">更新于 {{ formatDateTime(resume.updatedAt) }}</text>
+        </view>
+        <view class="content-card">
+          <rich-text :nodes="html"></rich-text>
+        </view>
+      </template>
+    </view>
+  </DesktopLayout>
+
+  <!-- 手机端 -->
+  <view v-else class="detail-page">
     <view v-if="loading" class="state-box">
       <text class="state-text">加载中...</text>
     </view>
@@ -27,9 +51,27 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import { renderMarkdown } from '@/utils/markdown'
 import { getResumeDetail, type Resume } from '@/apis/resume'
 import { useTracking } from '@/composables/useTracking'
+
+const appStore = useAppStore()
+
+function onSidebarNav(page: string) {
+  if (page === 'ask') { uni.switchTab({ url: '/pages/ask/index' }); return }
+  if (page === 'home') { uni.switchTab({ url: '/pages/home' }); return }
+}
+
+function goBack() {
+  const pages = getCurrentPages()
+  if (pages.length <= 1) {
+    uni.redirectTo({ url: '/pages/resume/list' })
+  } else {
+    uni.navigateBack()
+  }
+}
 
 useTracking({ module: 'resume' })
 
@@ -81,6 +123,16 @@ function formatDateTime(dateStr: string): string {
   background: transparent;
   min-height: 100vh;
   padding: 24rpx 24rpx 60rpx;
+}
+.detail-desktop {
+  padding: 24rpx 32rpx;
+  min-height: auto;
+}
+.dt-back {
+  font-size: 14px;
+  color: var(--brand-primary);
+  cursor: pointer;
+  margin-bottom: 16rpx;
 }
 
 .state-box {

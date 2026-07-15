@@ -1,5 +1,12 @@
 <template>
-  <view class="placeholder-page">
+  <DesktopLayout v-if="appStore.isDesktop" active="" @navigate="onSidebarNav">
+    <view class="placeholder-page placeholder-desktop">
+      <image class="placeholder-icon" src="/static/img/fun-deving.png" mode="aspectFit" />
+      <text class="placeholder-title">{{ title }}</text>
+      <text class="placeholder-desc">功能即将上线，敬请期待</text>
+    </view>
+  </DesktopLayout>
+  <view v-else class="placeholder-page">
     <image class="placeholder-icon" src="/static/img/fun-deving.png" mode="aspectFit" />
     <text class="placeholder-title">{{ title }}</text>
     <text class="placeholder-desc">功能即将上线，敬请期待</text>
@@ -9,6 +16,11 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { onLoad } from '@dcloudio/uni-app'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
+
+const appStore = useAppStore()
+function onSidebarNav(page: string) { if (page === 'ask') uni.switchTab({ url: '/pages/ask/index' }); else if (page === 'home') uni.switchTab({ url: '/pages/home' }) }
 
 const title = ref('功能详情')
 
@@ -21,6 +33,7 @@ onLoad((options?: Record<string, string>) => {
 </script>
 
 <style scoped>
+.placeholder-desktop { min-height: auto; }
 .placeholder-page {
   flex: 1;
   display: flex;

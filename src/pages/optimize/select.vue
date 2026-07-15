@@ -1,5 +1,6 @@
 <template>
-  <view class="select-page">
+  <DesktopLayout v-if="appStore.isDesktop" active="optimize" @navigate="onSidebarNav">
+    <view class="select-page select-desktop">
     <!-- 选择简历 -->
     <view class="picker-trigger" @tap="openPicker('resume')">
       <text class="iconfont icon-a-jianli trigger-icon" />
@@ -107,17 +108,76 @@
         </scroll-view>
       </view>
     </view>
+    </view>
+  </DesktopLayout>
+  <view v-else class="select-page">
+    <view class="picker-trigger" @tap="openPicker('resume')">
+      <text class="iconfont icon-a-jianli trigger-icon" />
+      <text class="trigger-label" :class="{ placeholder: !selectedResume }">{{ selectedResume ? selectedResume.title : '点击选择简历' }}</text>
+      <text class="trigger-arrow">▾</text>
+    </view>
+    <view class="picker-trigger" @tap="openPicker('job')">
+      <text class="iconfont icon-a-gangwei trigger-icon" />
+      <text class="trigger-label" :class="{ placeholder: !selectedJob }">{{ selectedJob ? `${selectedJob.companyName}（${selectedJob.jobName}） · ${selectedJob.salary}k` : '点击选择心动岗位' }}</text>
+      <text class="trigger-arrow">▾</text>
+    </view>
+    <button class="optimize-btn" @tap="startOptimize">立即优化</button>
+    <view class="history-section">
+      <view class="history-header">
+        <text class="section-title">优化历史</text>
+        <view class="history-actions"><text class="batch-toggle" @tap="toggleBatchMode">{{ batchMode ? '取消' : '批量删除' }}</text></view>
+      </view>
+      <scroll-view class="history-list" scroll-y>
+        <view v-if="filteredHistory.length === 0" class="empty-tip">暂无匹配记录</view>
+        <view v-for="h in filteredHistory" :key="h.id" class="history-card" :class="{ 'batch-selected': selectedIds.includes(h.id) }" @tap="batchMode ? toggleSelect(h.id) : null">
+          <view v-if="batchMode" class="hc-checkbox" @tap.stop="toggleSelect(h.id)"><text>{{ selectedIds.includes(h.id) ? '☑' : '☐' }}</text></view>
+          <view class="hc-names">
+            <text class="hc-resume">{{ h.resume?.title }}</text>
+            <text class="iconfont icon-lianjie hc-x" />
+            <text class="hc-job">{{ h.jobPosition?.companyName }}<text class="hc-job-sub">（{{ h.jobPosition?.jobName }}）</text></text>
+            <text class="hc-x">=</text>
+            <text class="hc-result-btn" @tap="generatingIds.has(h.id) ? onGeneratingClick() : (batchMode ? null : goResult(h.id))">
+              <view v-if="generatingIds.has(h.id)" class="spinner-dot" />
+              <text v-else class="iconfont icon-a-jianliyouhua hc-result-icon" />
+            </text>
+          </view>
+        </view>
+      </scroll-view>
+      <view v-if="batchMode" class="batch-bar">
+        <text class="batch-select-all" @tap="toggleSelectAll">{{ isAllSelected ? '☑' : '☐' }} 全选</text>
+        <text class="batch-delete" :class="{ disabled: selectedIds.length === 0 }" @tap="handleBatchDelete">删除 ({{ selectedIds.length }})</text>
+      </view>
+    </view>
+  </view>
+  <view v-if="pickerVisible" class="picker-overlay" @tap="closePicker">
+    <view class="picker-sheet" @tap.stop="">
+      <view class="picker-header"><text class="picker-cancel" @tap="closePicker">取消</text><text class="picker-title">{{ pickerType === 'resume' ? '选择简历' : '选择岗位' }}</text><text class="picker-done" @tap="closePicker">完成</text></view>
+      <view class="picker-search"><text class="iconfont icon-sousuotubiao search-icon" /><input class="search-input" v-model="pickerKeyword" placeholder="搜索..." @input="onPickerSearch" /></view>
+      <scroll-view class="picker-list" scroll-y>
+        <view v-if="filteredPickerItems.length === 0" class="picker-empty">无匹配结果</view>
+        <view v-for="item in filteredPickerItems" :key="item.id" class="picker-item" :class="{ selected: pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id }" @tap="selectPickerItem(item)">
+          <view class="picker-item-info"><text class="picker-item-name"><template v-if="pickerType === 'resume'">{{ (item as any).title }}</template><template v-else>{{ (item as any).companyName }}<text class="picker-item-name-sub">（{{ (item as any).jobName }}）</text></template></text><text v-if="pickerType === 'job'" class="picker-item-sub">{{ (item as any).salary }}k</text></view>
+          <text v-if="pickerType === 'resume' ? selectedResumeId === item.id : selectedJobId === item.id" class="picker-check">✓</text>
+        </view>
+      </scroll-view>
+    </view>
   </view>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
+import { useAppStore } from '@/stores/app'
+import DesktopLayout from '@/components/DesktopLayout.vue'
 import { onLoad, onShow } from '@dcloudio/uni-app'
 import { getResumeList, type Resume } from '@/apis/resume'
 import { getJobList, type JobPosition } from '@/apis/job'
 import { getOptimizeHistory, deleteOptimizeBatch, requestOptimize, getOptimizeDetail, type OptimizeHistoryItem } from '@/apis/optimize'
 import { useTracking } from '@/composables/useTracking'
 import { BRAND_PRIMARY } from '@/utils/theme'
+
+const appStore = useAppStore()
+
+function onSidebarNav(page: string) { if (page === 'ask') uni.switchTab({ url: '/pages/ask/index' }); else if (page === 'home') uni.switchTab({ url: '/pages/home' }) }
 
 const { trackAction } = useTracking({ module: 'optimize' })
 
@@ -332,6 +392,12 @@ function onGeneratingClick() {
   overflow: hidden;
   padding: 24rpx 24rpx 0;
 }
+.select-desktop {
+  padding: 24rpx 32rpx;
+  height: auto;
+  display: flex;
+  flex-direction: column;
+}
 
 /* ── 下拉触发器 ── */
 .picker-trigger {
@@ -370,6 +436,23 @@ function onGeneratingClick() {
   box-shadow: 0 8rpx 24rpx rgba(12,181,178,0.3);
 }
 .optimize-btn::after { border: none; }
+
+/* 桌面端按钮 */
+.select-desktop .optimize-btn {
+  width: auto;
+  height: 32px;
+  line-height: 32px;
+  padding: 0 20px;
+  font-size: 14px;
+  font-weight: 500;
+  border-radius: 6px;
+  box-shadow: none;
+  margin: 16px 0 16px auto;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover { background: #80ede0; }
+}
 
 /* ── 历史 ── */
 .history-section {

@@ -115,14 +115,17 @@ async function handleLogout() {
 }
 </script>
 
-<style scoped>
+<style lang="scss" scoped>
 .desktop-root {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   display: flex;
   flex-direction: column;
   z-index: 99;
-  background: #f5fdfc;
+  background: #fff;
 }
 
 /* 顶栏 */
@@ -139,51 +142,201 @@ async function handleLogout() {
   flex-shrink: 0;
   box-sizing: border-box;
 }
-.dt-logo { font-size: 28px; color: var(--brand-primary); margin-right: 10px; }
-.dt-title { font-size: 16px; font-weight: 600; color: var(--text-primary); }
+
+.dt-logo {
+  font-size: 28px;
+  color: var(--brand-primary);
+  margin-right: 10px;
+}
+
+.dt-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
 .dt-spacer { flex: 1; }
-.dt-username { font-size: 14px; color: var(--text-secondary); margin-right: 12px; }
+
+.dt-username {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-right: 12px;
+}
 
 /* 头像下拉 */
-.dt-avatar { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; cursor: pointer; flex-shrink: 0; }
-.dt-avatar-img { width: 100%; height: 100%; }
-.dt-dropdown {
-  position: fixed; top: 54px; right: 26px; width: 160px;
-  background: #fff; border-radius: 8px;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.12); z-index: 200; padding: 8px 0;
+.dt-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  flex-shrink: 0;
 }
-.dd-item { display: block; padding: 10px 20px; font-size: 14px; color: var(--text-primary); cursor: pointer; }
-.dd-item:hover { background: #f5f5f5; }
-.dd-divider { height: 1px; background: #eee; margin: 4px 0; }
+
+.dt-avatar-img {
+  width: 100%;
+  height: 100%;
+}
+
+.dt-dropdown {
+  position: fixed;
+  top: 54px;
+  right: 26px;
+  width: 160px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  z-index: 200;
+  padding: 8px 0;
+}
+
+.dd-item {
+  display: block;
+  padding: 10px 20px;
+  font-size: 14px;
+  color: var(--text-primary);
+  cursor: pointer;
+
+  &:hover { background: #f5f5f5; }
+}
+
+.dd-divider {
+  height: 1px;
+  background: #eee;
+  margin: 4px 0;
+}
+
 .dd-danger { color: #FF4757; }
-.dd-mask { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 199; }
+
+.dd-mask {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 199;
+}
 
 /* 主体 */
-.dt-body { flex: 1; display: flex; overflow: hidden; min-height: 0; }
+.dt-body {
+  flex: 1;
+  display: flex;
+  overflow: hidden;
+  min-height: 0;
+}
 
 /* 侧边栏 */
-.dt-sidebar { width: 240px; background: #fff; border-right: 1px solid #e8e8e8; flex-shrink: 0; padding: 12px 0; overflow-y: auto; }
+.dt-sidebar {
+  width: 240px;
+  background: #fff;
+  border-right: 1px solid #e8e8e8;
+  flex-shrink: 0;
+  padding: 12px 0;
+  overflow-y: auto;
+}
 
-.sb-ask-btn { display: flex; align-items: center; margin: 8px 12px; padding: 14px 16px; background: var(--brand-primary); border-radius: 12px; cursor: pointer; box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px; transition: background 0.3s; }
-.sb-ask-btn:hover { background: #80ede0; }
-.sb-ask-icon { font-size: 24px; margin-right: 12px; color: #fff; }
-.sb-ask-text { display: flex; flex-direction: column; }
-.sb-ask-title { font-size: 16px; font-weight: 700; color: #fff; }
-.sb-ask-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
+.sb-ask-btn {
+  display: flex;
+  align-items: center;
+  margin: 8px 12px;
+  padding: 14px 16px;
+  background: var(--brand-primary);
+  border-radius: 12px;
+  cursor: pointer;
+  box-shadow: rgba(61, 222, 197, 0.3) 0px 8px 24px;
+  transition: background 0.3s;
 
-.sb-divider { height: 1px; background: #eee; margin: 8px 16px; }
-.sb-group-title { display: block; padding: 8px 28px 4px; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+  &:hover { background: #80ede0; }
+}
 
-.sb-icon { font-size: 18px; margin-right: 10px; color: var(--brand-primary); }
-.sb-label { font-size: 14px; color: var(--text-primary); display: flex; align-items: center; }
-.sb-item { display: flex; align-items: center; justify-content: space-between; padding: 12px 28px; cursor: pointer; transition: background 0.15s; }
-.sb-item:hover { background: #f5f5f5; }
-.sb-item:hover .sb-icon,
-.sb-active .sb-icon { filter: brightness(1.1); }
-.sb-active { color: var(--brand-primary); background: var(--brand-light); }
+.sb-ask-icon {
+  font-size: 24px;
+  margin-right: 12px;
+  color: #fff;
+}
 
-.sb-count { font-size: 13px; font-weight: 600; color: var(--brand-primary); background: var(--brand-light); border-radius: 10px; padding: 2px 10px; min-width: 24px; text-align: center; }
+.sb-ask-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.sb-ask-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.sb-ask-sub {
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.75);
+  margin-top: 2px;
+}
+
+.sb-divider {
+  height: 1px;
+  background: #eee;
+  margin: 8px 16px;
+}
+
+.sb-group-title {
+  display: block;
+  padding: 8px 28px 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.sb-icon {
+  font-size: 18px;
+  margin-right: 10px;
+  color: var(--brand-primary);
+}
+
+.sb-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  display: flex;
+  align-items: center;
+}
+
+.sb-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 28px;
+  cursor: pointer;
+  transition: background 0.15s;
+
+  &:hover {
+    background: #f5f5f5;
+
+    .sb-icon { filter: brightness(1.1); }
+  }
+}
+
+.sb-active {
+  color: var(--brand-primary);
+  background: var(--brand-light);
+
+  .sb-icon { filter: brightness(1.1); }
+}
+
+.sb-count {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--brand-primary);
+  background: var(--brand-light);
+  border-radius: 10px;
+  padding: 2px 10px;
+  min-width: 24px;
+  text-align: center;
+}
 
 /* 内容区 */
-.dt-content { flex: 1; }
+.dt-content {
+  flex: 1;
+  background: #f5fdfc;
+}
 </style>
