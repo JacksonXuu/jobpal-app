@@ -172,7 +172,7 @@ async function handleLogout() {
 .sb-ask-sub { font-size: 12px; color: rgba(255,255,255,0.75); margin-top: 2px; }
 
 .sb-divider { height: 1px; background: #eee; margin: 8px 16px; }
-.sb-group-title { display: block; padding: 8px 28px 4px; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; border-left: 4px solid #80ede0; margin-left: 16px; padding-left: 12px; }
+.sb-group-title { display: block; padding: 8px 28px 4px; font-size: 12px; font-weight: 600; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
 
 .sb-icon { font-size: 18px; margin-right: 10px; color: var(--brand-primary); }
 .sb-label { font-size: 14px; color: var(--text-primary); display: flex; align-items: center; }
