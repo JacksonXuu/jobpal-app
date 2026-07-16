@@ -16,7 +16,7 @@
         <textarea
           class="form-textarea-sm"
           v-model="form.description"
-          placeholder="一句话描述这份简历..."
+          placeholder="一句话描述这份简历"
           maxlength="200"
         />
       </view>
@@ -35,11 +35,12 @@
           v-if="!previewMode"
           class="form-textarea-md"
           v-model="form.content"
-          placeholder="使用 Markdown 语法编写简历正文..."
+          placeholder="使用 Markdown 语法编写简历正文"
+          placeholder-style="font-family:system-ui,-apple-system,sans-serif"
           maxlength="10000"
         />
         <view v-else class="preview-box">
-          <rich-text v-if="form.content" :nodes="previewHtml"></rich-text>
+          <rich-text v-if="previewHtml" :nodes="previewHtml"></rich-text>
           <text v-else class="preview-empty">暂无内容</text>
         </view>
       </view>
@@ -61,7 +62,7 @@
         <input class="form-input" v-model="form.title" placeholder="请输入简历标题" maxlength="100" />
         <view class="form-divider" />
         <text class="form-label">简历描述</text>
-        <textarea class="form-textarea-sm" v-model="form.description" placeholder="一句话描述这份简历..." maxlength="200" />
+        <textarea class="form-textarea-sm" v-model="form.description" placeholder="一句话描述这份简历" maxlength="200" />
       </view>
       <view class="form-group">
         <view class="section-header">
@@ -75,10 +76,11 @@
           class="form-textarea"
           v-model="form.content"
           placeholder="使用 Markdown 语法编写简历正文..."
+          placeholder-style="font-family:system-ui,-apple-system,sans-serif"
           maxlength="5000"
         />
         <view v-else class="preview-box preview-mobile">
-          <rich-text v-if="form.content" :nodes="previewHtml"></rich-text>
+          <rich-text v-if="previewHtml" :nodes="previewHtml"></rich-text>
           <text v-else class="preview-empty">暂无内容</text>
         </view>
         <text class="char-count">{{ form.content.length }}/5000</text>
@@ -118,19 +120,19 @@ const { trackAction } = useTracking({ module: 'resume' })
 const isEdit = ref(false)
 const previewMode = ref(false)
 
-/** 预览 HTML */
-const previewHtml = ref('')
-async function updatePreview() {
-  previewHtml.value = await renderMarkdown(form.content)
-}
-watch(() => form.content, updatePreview)
-let editId: string | null = null
-
 const form = reactive({
   title: '',
   description: '',
   content: '',
 })
+
+/** 预览 HTML */
+const previewHtml = ref('')
+async function updatePreview() {
+  previewHtml.value = await renderMarkdown(form.content)
+}
+watch(() => form.content, updatePreview, { immediate: true })
+let editId: string | null = null
 const submitting = ref(false)
 
 onLoad((options?: Record<string, string>) => {
@@ -224,6 +226,7 @@ async function handleSubmit() {
   padding: 4rpx 16rpx;
   border-radius: 8rpx;
   background: var(--brand-light);
+  cursor: pointer;
 }
 
 .section-label {

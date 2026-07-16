@@ -16,7 +16,8 @@
           <text class="header-date">更新于 {{ formatDateTime(resume.updatedAt) }}</text>
         </view>
         <view class="content-card">
-          <rich-text :nodes="html"></rich-text>
+          <rich-text v-if="html" :nodes="html"></rich-text>
+          <text v-else class="content-empty">暂无正文内容</text>
         </view>
       </template>
     </view>
@@ -42,7 +43,8 @@
 
       <!-- Markdown 正文 -->
       <view class="content-card">
-        <rich-text :nodes="html"></rich-text>
+        <rich-text v-if="html" :nodes="html"></rich-text>
+        <text v-else class="content-empty">暂无正文内容</text>
       </view>
     </template>
   </view>
@@ -220,4 +222,8 @@ function formatDateTime(dateStr: string): string {
   margin: 24rpx 0;
 }
 .content-card :deep(a) { color: var(--brand-primary); }
+.content-empty {
+  font-size: 26rpx;
+  color: var(--text-secondary);
+}
 </style>
