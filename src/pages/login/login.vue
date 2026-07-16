@@ -1,16 +1,13 @@
 <template>
   <view class="auth-page" :class="{ 'auth-desktop': appStore.isDesktop }">
     <!-- 桌面端顶栏 -->
-    <view v-if="appStore.isDesktop" class="desktop-topbar">
-      <text class="iconfont icon-a-jobpal-solid topbar-logo" />
-      <text class="topbar-title">AI求职助手 JobPal</text>
-    </view>
+    <DesktopTopbar v-if="appStore.isDesktop" />
 
     <!-- 渐变头部（手机端） -->
     <view v-if="!appStore.isDesktop" class="header">
       <view class="header-title-row">
         <text class="iconfont icon-a-jobpal-solid header-logo" />
-        <text class="header-title">欢迎使用AI求职助手</text>
+        <text class="header-title">JobPal 求职助手</text>
       </view>
       <text class="header-subtitle">简历管理 · AI简历优化 · 智能助手</text>
     </view>
@@ -86,6 +83,7 @@ import { login, register, validateUsername, validatePassword } from '@/apis/auth
 import { useAuthStore } from '@/stores/auth'
 import { useAppStore } from '@/stores/app'
 import { useTracking } from '@/composables/useTracking'
+import DesktopTopbar from '@/components/DesktopTopbar.vue'
 
 const authStore = useAuthStore()
 const appStore = useAppStore()
@@ -194,6 +192,7 @@ async function handleSubmit() {
   font-weight: 700;
   color: #fff;
   letter-spacing: 2rpx;
+  white-space: nowrap;
 }
 
 .header-subtitle {
@@ -320,33 +319,6 @@ async function handleSubmit() {
 /* ===== 桌面端适配 ===== */
 .auth-desktop {
   background: linear-gradient(180deg, #f5fdfc 0%, #e8f6fc 100%);
-}
-
-.desktop-topbar {
-  position: relative;
-  z-index: 1;
-  width: 100%;
-  height: 48px;
-  display: flex;
-  align-items: center;
-  padding: 0 26px;
-  background: #fff;
-  border-bottom: 1px solid #e8e8e8;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  flex-shrink: 0;
-  box-sizing: border-box;
-}
-
-.topbar-logo {
-  font-size: 28px;
-  color: var(--brand-primary);
-  margin-right: 10px;
-}
-
-.topbar-title {
-  font-size: 16px;
-  font-weight: 600;
-  color: var(--text-primary);
 }
 
 .card-desktop .submit-btn {
